@@ -1,0 +1,14 @@
+XenoChickenBalls.Pi
+© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+
+The XenoChickenBalls.Pi site and its projects may be viewed and used online.
+The source code (HTML, CSS, JavaScript) and all other technical files are
+proprietary and confidential. No part may be copied, modified, distributed,
+or used to create derivative works without written permission from
+Mandeep S. Bhullar.
+
+Every file is digitally signed with the SpinalXeno signing key
+(ECDSA P-256, SHA-256). Key fingerprint:
+25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3
+See signature/VERIFY.txt.

@@ -1,0 +1,8 @@
+To prove these files are authentic and unchanged, run in the site folder (download it from GitHub):
+
+  shasum -a 256 -c signature/SHA256SUMS
+  openssl dgst -sha256 -verify signature/SpinalXeno-public-key.pem -signature signature/SHA256SUMS.sig signature/SHA256SUMS
+
+The first must print OK for every file; the second must print "Verified OK".
+Only the holder of the private SpinalXeno key (kept in ~/.spinalxeno, never shared)
+can produce a valid signature.

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix CryptoGraph</title>
+    <!--! Matrix CryptoGraph
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+    <meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
+    <meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+    <meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
+    <style>/*! Matrix CryptoGraph
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000000;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+        }
+
+        .matrix-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, #000000 100%);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            width: 320px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.3),
+                        inset 0 0 20px rgba(0, 255, 0, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .control-panel::-webkit-scrollbar-track {
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        .control-panel::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 3px;
+        }
+
+        .panel-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #00ff00;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+        }
+
+        .control-label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #00ffaa;
+            margin-bottom: 6px;
+            text-shadow: 0 0 5px rgba(0, 255, 170, 0.5);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .matrix-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, rgba(0, 255, 0, 0.2), rgba(0, 255, 0, 0.5));
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .matrix-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #00ff00;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .matrix-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #00ff00;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .value-display {
+            min-width: 40px;
+            text-align: right;
+            color: #ffff00;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+        }
+
+        .select-control {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .select-control option {
+            background: #000000;
+            color: #00ff00;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #00ff00;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            accent-color: #00ff00;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .matrix-button {
+            padding: 8px 12px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            color: #00ff00;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+        }
+
+        .matrix-button:hover {
+            background: rgba(0, 255, 0, 0.25);
+            box-shadow: 0 0 16px rgba(0, 255, 0, 0.6);
+            transform: scale(1.02);
+        }
+
+        .matrix-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Info Panel */
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            width: 300px;
+            font-size: 0.65rem;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .info-title {
+            color: #ffff00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .info-stat {
+            display: flex;
+            justify-content: space-between;
+            color: #00ff00;
+            margin-bottom: 4px;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+
+        .info-stat-label {
+            color: #00ffaa;
+        }
+
+        .info-stat-value {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: #00ff00;
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+            margin-bottom: 5px;
+            animation: glitch 0.3s infinite;
+        }
+
+        .header-subtitle {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: #00ffaa;
+            text-shadow: 0 0 8px rgba(0, 255, 170, 0.5);
+        }
+
+        .header-copy {
+            margin-top: 6px;
+            font-size: 0.6rem;
+            letter-spacing: 0.5px;
+            color: rgba(0, 255, 170, 0.75);
+        }
+
+        .modal-copy {
+            margin-top: 16px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 255, 0, 0.3);
+            color: #00ffaa;
+            font-size: 0.7rem;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 3px 0 #ff0000, -3px 0 #00ffff, 0 0 15px rgba(0, 255, 0, 0.7); }
+            50% { text-shadow: -3px 0 #ff0000, 3px 0 #00ffff, 0 0 15px rgba(0, 255, 0, 0.7); }
+            100% { text-shadow: 0 0 #ff0000, 0 0 #00ffff, 0 0 15px rgba(0, 255, 0, 0.7); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 0.8s infinite;
+            box-shadow: 0 0 8px #00ff00;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(0, 0, 0, 0.98);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 25px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.4);
+        }
+
+        .modal-header {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #00ff00;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #00ff00;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .modal-close:hover {
+            text-shadow: 0 0 12px #00ff00;
+        }
+
+        .modal-body {
+            color: #00ff00;
+            font-size: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .modal-body h3 {
+            color: #00ffaa;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            margin-left: 12px;
+        }
+
+        .modal-body li:before {
+            content: "▸ ";
+            color: #ffff00;
+            margin-right: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .control-panel {
+                width: 280px;
+            }
+
+            .info-panel {
+                width: 260px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .control-panel {
+                width: 250px;
+                left: 10px;
+            }
+
+            .info-panel {
+                width: 240px;
+                left: 10px;
+            }
+
+            .header {
+                right: 10px;
+                top: 10px;
+            }
+
+            .header-title {
+                font-size: 0.9rem;
+            }
+
+            .header-subtitle {
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .control-panel {
+                width: 100%;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: auto;
+                border-radius: 8px 8px 0 0;
+                max-height: 40vh;
+            }
+
+            .info-panel {
+                display: none;
+            }
+
+            .header {
+                left: 10px;
+                right: 10px;
+                top: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-container">
+        <canvas id="matrixCanvas"></canvas>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <span class="status-indicator"></span>MATRIX
+            </div>
+            <div class="header-subtitle">CryptoGraph · Digital Rain</div>
+            <div class="header-copy">© 2026 Mandeep S. Bhullar · SpinalXeno™ · <span title="Signing key fingerprint (SHA-256): 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">signed 2566 6EB2 CF27 3686</span></div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="panel-title">⟨ Σύστημα Ελέγχου ⟩</div>
+
+            <!-- Speed Control -->
+            <div class="control-group">
+                <label class="control-label">Ταχύτητα Πτώσης:</label>
+                <div class="slider-container">
+                    <input type="range" id="speedSlider" min="1" max="10" step="0.5" value="3" class="matrix-slider">
+                    <span class="value-display" id="speedValue">3.0x</span>
+                </div>
+            </div>
+
+            <!-- Density Control -->
+            <div class="control-group">
+                <label class="control-label">Πυκνότητα Χαρακτήρων:</label>
+                <div class="slider-container">
+                    <input type="range" id="densitySlider" min="0.1" max="1" step="0.1" value="0.5" class="matrix-slider">
+                    <span class="value-display" id="densityValue">0.5</span>
+                </div>
+            </div>
+
+            <!-- Trail Length Control -->
+            <div class="control-group">
+                <label class="control-label">Μήκος Ίχνους:</label>
+                <div class="slider-container">
+                    <input type="range" id="trailSlider" min="5" max="100" step="5" value="30" class="matrix-slider">
+                    <span class="value-display" id="trailValue">30</span>
+                </div>
+            </div>
+
+            <!-- Font Size Control -->
+            <div class="control-group">
+                <label class="control-label">Μέγεθος Γραμματοσειράς:</label>
+                <div class="slider-container">
+                    <input type="range" id="fontSlider" min="8" max="24" step="2" value="14" class="matrix-slider">
+                    <span class="value-display" id="fontValue">14px</span>
+                </div>
+            </div>
+
+            <!-- Glow Intensity Control -->
+            <div class="control-group">
+                <label class="control-label">Ένταση Λάμψης:</label>
+                <div class="slider-container">
+                    <input type="range" id="glowSlider" min="0" max="50" step="2" value="20" class="matrix-slider">
+                    <span class="value-display" id="glowValue">20</span>
+                </div>
+            </div>
+
+            <!-- Alphabet Selection -->
+            <div class="control-group">
+                <label class="control-label">Αλφάβητο:</label>
+                <select id="alphabetSelect" class="select-control">
+                    <option value="greek">Ελληνικά</option>
+                    <option value="latin">Λατινικά</option>
+                    <option value="hebrew">Εβραϊκά</option>
+                    <option value="arabic">Αραβικά</option>
+                    <option value="cyrillic">Κυριλλικά</option>
+                    <option value="chinese">Κινέζικα</option>
+                    <option value="binary">Δυαδικό</option>
+                    <option value="mixed">Μικτά</option>
+                </select>
+            </div>
+
+            <!-- Color Scheme Selection -->
+            <div class="control-group">
+                <label class="control-label">Σχήμα Χρώματος:</label>
+                <select id="colorSelect" class="select-control">
+                    <option value="green">Κλασικό Πράσινο</option>
+                    <option value="cyan">Κυανό</option>
+                    <option value="magenta">Μαγέντα</option>
+                    <option value="rainbow">Ουράνιο Τόξο</option>
+                    <option value="white">Λευκό</option>
+                    <option value="gold">Χρυσό</option>
+                </select>
+            </div>
+
+            <!-- Visualization Options -->
+            <div class="control-group">
+                <label class="control-label">Επιλογές Οπτικοποίησης:</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showGlitch" checked>
+                        Glitch Εφέ
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showPulse" checked>
+                        Pulse Εφέ
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showBlur" checked>
+                        Motion Blur
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showCryptography" checked>
+                        Κρυπτογραφία
+                    </label>
+                </div>
+            </div>
+
+            <!-- Rain Type Selection -->
+            <div class="control-group">
+                <label class="control-label">Τύπος Βροχής:</label>
+                <select id="rainTypeSelect" class="select-control">
+                    <option value="normal">Κανονική</option>
+                    <option value="fast">Γρήγορη</option>
+                    <option value="slow">Αργή</option>
+                    <option value="cascade">Καταρράκτης</option>
+                    <option value="spiral">Σπείρα</option>
+                    <option value="wave">Κύμα</option>
+                </select>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="button-group">
+                <button class="matrix-button" id="pauseBtn">⏸ Παύση</button>
+                <button class="matrix-button" id="resetBtn">↻ Reset</button>
+                <button class="matrix-button" id="infoBtn">ⓘ Πληρ.</button>
+                <button class="matrix-button" id="exportBtn">⬇ Εξαγ.</button>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-title">⟨ Στατιστικά ⟩</div>
+            <div class="info-stat">
+                <span class="info-stat-label">FPS:</span>
+                <span class="info-stat-value" id="fpsCount">60</span>
+            </div>
+            <div class="info-stat">
+                <span class="info-stat-label">Στήλες:</span>
+                <span class="info-stat-value" id="columnCount">0</span>
+            </div>
+            <div class="info-stat">
+                <span class="info-stat-label">Χαρακτήρες:</span>
+                <span class="info-stat-value" id="charCount">0</span>
+            </div>
+            <div class="info-stat">
+                <span class="info-stat-label">Ταχύτητα:</span>
+                <span class="info-stat-value" id="speedStatus">Normal</span>
+            </div>
+            <div class="info-stat">
+                <span class="info-stat-label">Κατάσταση:</span>
+                <span class="info-stat-value" id="statusText">ΕΝΕΡΓΌ</span>
+            </div>
+        </div>
+
+        <!-- Info Modal -->
+        <div class="modal" id="infoModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span>Πληροφορίες Συστήματος</span>
+                    <button class="modal-close" id="closeModal">✕</button>
+                </div>
+                <div class="modal-body">
+                    <h3>Σχετικά με τη Μήτρα</h3>
+                    <p>Αυτή είναι μια πραγματική εφαρμογή ψηφιακής βροχής με κρυπτογραφημένα σύμβολα όπως στην ταινία Matrix με τον Keanu Reeves.</p>
+
+                    <h3>Έλεγχος Παραμέτρων</h3>
+                    <ul>
+                        <li><strong>Ταχύτητα Πτώσης:</strong> Ελέγχει την ταχύτητα της διαδρομής των χαρακτήρων</li>
+                        <li><strong>Πυκνότητα Χαρακτήρων:</strong> Ελέγχει πόσοι χαρακτήρες εμφανίζονται</li>
+                        <li><strong>Μήκος Ίχνους:</strong> Ο αριθμός των χαρακτήρων στο ίχνος πτώσης</li>
+                        <li><strong>Μέγεθος Γραμματοσειράς:</strong> Το μέγεθος της γραμματοσειράς σε pixels</li>
+                        <li><strong>Ένταση Λάμψης:</strong> Η ένταση του λαμπερού αποτελέσματος</li>
+                    </ul>
+
+                    <h3>Αλφάβητα Διαθέσιμα</h3>
+                    <ul>
+                        <li>Ελληνικά (Α-Ω)</li>
+                        <li>Λατινικά (A-Z)</li>
+                        <li>Εβραϊκά</li>
+                        <li>Αραβικά</li>
+                        <li>Κυριλλικά</li>
+                        <li>Κινέζικα</li>
+                        <li>Δυαδικό (0-1)</li>
+                        <li>Μικτά (συνδυασμένα)</li>
+                    </ul>
+
+                    <h3>Σχήματα Χρώματος</h3>
+                    <ul>
+                        <li>Κλασικό Πράσινο - Το αρχικό Matrix style</li>
+                        <li>Κυανό - Μπλε φως</li>
+                        <li>Μαγέντα - Ροζ/Κόκκινο φως</li>
+                        <li>Ουράνιο Τόξο - Κινούμενα χρώματα</li>
+                        <li>Λευκό - Λευκό φως</li>
+                        <li>Χρυσό - Χρυσό φως</li>
+                    </ul>
+
+                    <h3>Τύποι Βροχής</h3>
+                    <ul>
+                        <li>Κανονική - Τυχαία κατακόρυφη κίνηση</li>
+                        <li>Γρήγορη - Πολύ γρήγορη πτώση</li>
+                        <li>Αργή - Αργή κομψή πτώση</li>
+                        <li>Καταρράκτης - Χαρακτήρες σε ομάδες</li>
+                        <li>Σπείρα - Περιστροφική κίνηση</li>
+                        <li>Κύμα - Κυματοειδής κίνηση</li>
+                    </ul>
+
+                    <h3>Πληκτρολόγιο</h3>
+                    <ul>
+                        <li><strong>Space:</strong> Pause/Resume</li>
+                        <li><strong>R:</strong> Reset Animation</li>
+                        <li><strong>S:</strong> Screenshot</li>
+                        <li><strong>I:</strong> Info Dialog</li>
+                    </ul>
+                    <p class="modal-copy">© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>/*! Matrix CryptoGraph
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 */
+        // ===== COMPLETE MATRIX DIGITAL RAIN VISUALIZER =====
+
+        // Global Configuration
+        const CONFIG = {
+            // Alphabets
+            ALPHABETS: {
+                GREEK: {
+                    chars: ['α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 'σ', 'τ', 'υ', 'φ', 'χ', 'ψ', 'ω'],
+                    capitals: ['Α', 'Β', 'Γ', 'Δ', 'Ε', 'Ζ', 'Η', 'Θ', 'Ι', 'Κ', 'Λ', 'Μ', 'Ν', 'Ξ', 'Ο', 'Π', 'Ρ', 'Σ', 'Τ', 'Υ', 'Φ', 'Χ', 'Ψ', 'Ω']
+                },
+                LATIN: {
+                    chars: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+                    capitals: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+                },
+                HEBREW: {
+                    chars: ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק', 'ר', 'ש', 'ת'],
+                    capitals: ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'כ', 'ל', 'מ', 'נ', 'ס', 'ע', 'פ', 'צ', 'ק', 'ר', 'ש', 'ת']
+                },
+                ARABIC: {
+                    chars: ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي'],
+                    capitals: ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي']
+                },
+                CYRILLIC: {
+                    chars: ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'],
+                    capitals: ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я']
+                },
+                CHINESE: {
+                    chars: ['汉', '字', '编', '码', '系', '统', '信', '息', '处', '理', '机', '器', '学', '习', '深', '度', '网', '络', '神', '经'],
+                    capitals: ['汉', '字', '编', '码', '系', '统', '信', '息', '处', '理', '机', '器', '学', '习', '深', '度', '网', '络', '神', '经']
+                },
+                BINARY: {
+                    chars: ['0', '1'],
+                    capitals: ['0', '1']
+                }
+            },
+
+            // Color Schemes
+            COLORS: {
+                green: { primary: '#00ff00', shadow: '#00aa00', secondary: '#00ffaa' },
+                cyan: { primary: '#00ffff', shadow: '#0088ff', secondary: '#00ffaa' },
+                magenta: { primary: '#ff00ff', shadow: '#aa0088', secondary: '#ff00aa' },
+                white: { primary: '#ffffff', shadow: '#aaaaaa', secondary: '#cccccc' },
+                gold: { primary: '#ffaa00', shadow: '#aa6600', secondary: '#ffdd00' }
+            }
+        };
+
+        // State Management
+        const STATE = {
+            speed: 3,
+            density: 0.5,
+            trailLength: 30,
+            fontSize: 14,
+            glowIntensity: 20,
+            alphabet: 'greek',
+            colorScheme: 'green',
+            rainType: 'normal',
+            isRunning: true,
+            showGlitch: true,
+            showPulse: true,
+            showBlur: true,
+            showCryptography: true,
+            fps: 60,
+            frameCount: 0,
+            lastTime: Date.now(),
+            totalChars: 0,
+            totalColumns: 0
+        };
+
+        // Canvas Setup
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        canvas.width = screenWidth;
+        canvas.height = screenHeight;
+
+        // Matrix Column Class
+        class MatrixColumn {
+            constructor(x, speed, density, trailLength, fontSize) {
+                this.x = x;
+                this.y = Math.random() * screenHeight;
+                this.speed = speed;
+                this.density = density;
+                this.trailLength = trailLength;
+                this.fontSize = fontSize;
+                this.characters = [];
+                this.opacity = 1;
+                this.phase = Math.random() * Math.PI * 2;
+                this.wobble = Math.random() * 0.1;
+                this.acceleration = 0;
+            }
+
+            update(rainType, speed) {
+                // Generate characters based on density
+                if (Math.random() < this.density) {
+                    const char = getRandomChar(STATE.alphabet);
+                    this.characters.push({
+                        char: char,
+                        y: this.y,
+                        opacity: 1,
+                        scale: 1,
+                        angle: 0
+                    });
+
+                    if (this.characters.length > this.trailLength) {
+                        this.characters.shift();
+                    }
+                }
+
+                // Update position based on rain type
+                switch(rainType) {
+                    case 'fast':
+                        this.y += speed * 2;
+                        break;
+                    case 'slow':
+                        this.y += speed * 0.5;
+                        break;
+                    case 'cascade':
+                        if (this.characters.length % 3 === 0) {
+                            this.y += speed * 1.5;
+                        }
+                        break;
+                    case 'spiral':
+                        this.y += speed;
+                        this.x += Math.sin(this.phase) * 2;
+                        this.phase += 0.05;
+                        break;
+                    case 'wave':
+                        this.y += speed;
+                        this.wobble = Math.sin(Date.now() / 500 + this.x / 100) * 3;
+                        this.x += this.wobble;
+                        break;
+                    default: // normal
+                        this.y += speed;
+                }
+
+                // Boundary check
+                if (this.y > screenHeight) {
+                    this.y = -this.fontSize * 2;
+                }
+
+                // Constrain X position
+                if (this.x < 0) this.x = screenWidth;
+                if (this.x > screenWidth) this.x = 0;
+
+                // Update character opacities
+                this.characters.forEach((c, i) => {
+                    const position = i / this.characters.length;
+                    c.opacity = 1 - position;
+                    c.scale = 0.7 + position * 0.3;
+
+                    if (STATE.showPulse) {
+                        c.scale *= (0.8 + Math.sin(Date.now() / 200 + i) * 0.2);
+                    }
+
+                    if (STATE.showGlitch && Math.random() < 0.02) {
+                        c.angle = (Math.random() - 0.5) * 0.3;
+                    } else {
+                        c.angle *= 0.9;
+                    }
+                });
+            }
+
+            draw(ctx, colorScheme, showCryptography) {
+                const colors = CONFIG.COLORS[colorScheme] || rainbowColors(this.x);
+                const primaryColor = colors.primary;
+                const shadowColor = colors.shadow;
+
+                this.characters.forEach((c, i) => {
+                    ctx.save();
+
+                    const isLast = i === this.characters.length - 1;
+                    let char = c.char;
+
+                    // Encryption effect
+                    if (showCryptography && Math.random() < 0.1) {
+                        char = getRandomChar(STATE.alphabet);
+                    }
+
+                    // Position
+                    ctx.translate(this.x + 2, c.y + this.fontSize / 2);
+                    ctx.rotate(c.angle);
+                    ctx.scale(c.scale, c.scale);
+
+                    // Shadow/Glow
+                    ctx.fillStyle = `rgba(${hexToRgb(shadowColor).r}, ${hexToRgb(shadowColor).g}, ${hexToRgb(shadowColor).b}, ${c.opacity * STATE.glowIntensity / 100 * 0.5})`;
+                    ctx.shadowColor = shadowColor;
+                    ctx.shadowBlur = STATE.glowIntensity;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+
+                    ctx.font = `bold ${this.fontSize}px 'Courier New'`;
+                    ctx.fillText(char, 0, 0);
+
+                    // Bright character
+                    ctx.fillStyle = `rgba(${hexToRgb(primaryColor).r}, ${hexToRgb(primaryColor).g}, ${hexToRgb(primaryColor).b}, ${c.opacity})`;
+                    ctx.shadowColor = primaryColor;
+                    ctx.shadowBlur = STATE.glowIntensity * 2;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+
+                    if (isLast) {
+                        ctx.font = `bold ${Math.floor(this.fontSize * 1.2)}px 'Courier New'`;
+                        ctx.fillStyle = `rgba(${hexToRgb(primaryColor).r}, ${hexToRgb(primaryColor).g}, ${hexToRgb(primaryColor).b}, 1)`;
+                    }
+
+                    ctx.fillText(char, 0, 0);
+
+                    ctx.restore();
+                });
+            }
+        }
+
+        // Utility Functions
+        function getRandomChar(alphabetName) {
+            const names = Object.keys(CONFIG.ALPHABETS);
+            const key = alphabetName.toUpperCase() === 'MIXED'
+                ? names[Math.floor(Math.random() * names.length)]
+                : alphabetName.toUpperCase();
+            const alphabet = CONFIG.ALPHABETS[key];
+            if (!alphabet) return '?';
+            
+            if (Math.random() > 0.8) {
+                return alphabet.capitals[Math.floor(Math.random() * alphabet.capitals.length)];
+            }
+            return alphabet.chars[Math.floor(Math.random() * alphabet.chars.length)];
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 255, b: 0 };
+        }
+
+        function hslToHex(h, s, l) {
+            s /= 100; l /= 100;
+            const k = n => (n + h / 30) % 12;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))))
+                .toString(16).padStart(2, '0');
+            return `#${f(0)}${f(8)}${f(4)}`;
+        }
+
+        function rainbowColors(x) {
+            const hue = (Date.now() / 20 + x / screenWidth * 360) % 360;
+            return { primary: hslToHex(hue, 100, 55), shadow: hslToHex(hue, 100, 35), secondary: hslToHex((hue + 40) % 360, 100, 60) };
+        }
+
+        function getMixedAlphabet() {
+            return Object.keys(CONFIG.ALPHABETS).map(key => CONFIG.ALPHABETS[key]).flat();
+        }
+
+        // Initialize Columns
+        let columns = [];
+
+        function initColumns() {
+            columns = [];
+            const columnWidth = STATE.fontSize + 4;
+            const numColumns = Math.ceil(screenWidth / columnWidth);
+            
+            for (let i = 0; i < numColumns; i++) {
+                columns.push(new MatrixColumn(
+                    i * columnWidth,
+                    STATE.speed,
+                    STATE.density,
+                    STATE.trailLength,
+                    STATE.fontSize
+                ));
+            }
+
+            STATE.totalColumns = columns.length;
+        }
+
+        // Animation Loop
+        function animate() {
+            // Background with trail effect
+            if (STATE.showBlur) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            } else {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            }
+            ctx.fillRect(0, 0, screenWidth, screenHeight);
+
+            if (STATE.isRunning) {
+                // Update and draw each column
+                columns.forEach(column => {
+                    column.update(STATE.rainType, STATE.speed);
+                    column.draw(ctx, STATE.colorScheme, STATE.showCryptography);
+                });
+
+                // Count total characters
+                STATE.totalChars = columns.reduce((sum, col) => sum + col.characters.length, 0);
+
+                // Rainbow color shift
+                if (STATE.colorScheme === 'rainbow') {
+                    const hue = (Date.now() / 50) % 360;
+                    ctx.globalAlpha = 0.02;
+                    ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+                    ctx.fillRect(0, 0, screenWidth, screenHeight);
+                    ctx.globalAlpha = 1;
+                }
+            }
+
+            // FPS Counter
+            STATE.frameCount++;
+            const now = Date.now();
+            if (now - STATE.lastTime >= 1000) {
+                STATE.fps = STATE.frameCount;
+                STATE.frameCount = 0;
+                STATE.lastTime = now;
+                document.getElementById('fpsCount').textContent = STATE.fps;
+            }
+
+            // Update stats
+            document.getElementById('columnCount').textContent = STATE.totalColumns;
+            document.getElementById('charCount').textContent = STATE.totalChars;
+            document.getElementById('speedStatus').textContent = STATE.rainType.toUpperCase();
+            document.getElementById('statusText').textContent = STATE.isRunning ? 'ΕΝΕΡΓΌ' : 'ΣΤΑΜΑΤΗΜΈΝΟ';
+
+            requestAnimationFrame(animate);
+        }
+
+        // Event Listeners
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            STATE.speed = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = STATE.speed.toFixed(1) + 'x';
+        });
+
+        document.getElementById('densitySlider').addEventListener('input', (e) => {
+            STATE.density = parseFloat(e.target.value);
+            document.getElementById('densityValue').textContent = STATE.density.toFixed(1);
+            columns.forEach(col => col.density = STATE.density);
+        });
+
+        document.getElementById('trailSlider').addEventListener('input', (e) => {
+            STATE.trailLength = parseInt(e.target.value);
+            document.getElementById('trailValue').textContent = STATE.trailLength;
+            columns.forEach(col => col.trailLength = STATE.trailLength);
+        });
+
+        document.getElementById('fontSlider').addEventListener('input', (e) => {
+            STATE.fontSize = parseInt(e.target.value);
+            document.getElementById('fontValue').textContent = STATE.fontSize + 'px';
+            columns.forEach(col => col.fontSize = STATE.fontSize);
+            initColumns();
+        });
+
+        document.getElementById('glowSlider').addEventListener('input', (e) => {
+            STATE.glowIntensity = parseInt(e.target.value);
+            document.getElementById('glowValue').textContent = STATE.glowIntensity;
+        });
+
+        document.getElementById('alphabetSelect').addEventListener('change', (e) => {
+            if (e.target.value === 'mixed') {
+                STATE.alphabet = 'MIXED';
+            } else {
+                STATE.alphabet = e.target.value;
+            }
+        });
+
+        document.getElementById('colorSelect').addEventListener('change', (e) => {
+            STATE.colorScheme = e.target.value;
+        });
+
+        document.getElementById('rainTypeSelect').addEventListener('change', (e) => {
+            STATE.rainType = e.target.value;
+        });
+
+        document.getElementById('showGlitch').addEventListener('change', (e) => {
+            STATE.showGlitch = e.target.checked;
+        });
+
+        document.getElementById('showPulse').addEventListener('change', (e) => {
+            STATE.showPulse = e.target.checked;
+        });
+
+        document.getElementById('showBlur').addEventListener('change', (e) => {
+            STATE.showBlur = e.target.checked;
+        });
+
+        document.getElementById('showCryptography').addEventListener('change', (e) => {
+            STATE.showCryptography = e.target.checked;
+        });
+
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            STATE.isRunning = !STATE.isRunning;
+            document.getElementById('pauseBtn').textContent = STATE.isRunning ? '⏸ Παύση' : '▶ Έναρξη';
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            initColumns();
+            STATE.isRunning = true;
+            document.getElementById('pauseBtn').textContent = '⏸ Παύση';
+        });
+
+        document.getElementById('infoBtn').addEventListener('click', () => {
+            document.getElementById('infoModal').classList.add('active');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('infoModal').classList.remove('active');
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `matrix-rain-${Date.now()}.png`;
+            link.click();
+        });
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    STATE.isRunning = !STATE.isRunning;
+                    document.getElementById('pauseBtn').textContent = STATE.isRunning ? '⏸ Παύση' : '▶ Έναρξη';
+                    break;
+                case 'KeyR':
+                    initColumns();
+                    STATE.isRunning = true;
+                    document.getElementById('pauseBtn').textContent = '⏸ Παύση';
+                    break;
+                case 'KeyS':
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL('image/png');
+                    link.download = `matrix-${Date.now()}.png`;
+                    link.click();
+                    break;
+                case 'KeyI':
+                    document.getElementById('infoModal').classList.toggle('active');
+                    break;
+            }
+        });
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            screenWidth = window.innerWidth;
+            screenHeight = window.innerHeight;
+            canvas.width = screenWidth;
+            canvas.height = screenHeight;
+            initColumns();
+        });
+
+        // Modal Click Outside
+        document.getElementById('infoModal').addEventListener('click', (e) => {
+            if (e.target.id === 'infoModal') {
+                document.getElementById('infoModal').classList.remove('active');
+            }
+        });
+
+        // Initialize
+        initColumns();
+        animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUU 2.0 · Singularity</title>
+    <!--! GUU 2.0 · Grand Unified Universe: Singularity
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+    <meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
+    <meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+    <meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Viewport: background + canvas layers (matter with trails, fields redrawn each frame) -->
+        <div id="viewport" class="viewport bg-void">
+            <canvas id="gridCanvas"></canvas>
+            <canvas id="matterCanvas"></canvas>
+            <canvas id="fieldCanvas"></canvas>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>
+                    <span class="pulse">◉</span>
+                    GUU 2.0 · SINGULARITY
+                    <span class="pulse">◉</span>
+                </h1>
+                <p class="subtitle">
+                    Grand Unified Universe | Every scale falls toward one point
+                </p>
+                <div class="formula-display">
+                    <span class="formula-text">r₊ = ½r<sub>s</sub>(1+√(1−a²)) · Π(K,U) = K√(n+u) × U^√n · T<sub>H</sub> ∝ 1/M · ΣN = N<sub>field</sub> + N<sub>horizon</sub></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- View Mode Switches -->
+        <div class="mode-bar">
+            <label class="switch" title="Cinematic 3D camera (C)">
+                <input type="checkbox" id="cinematicToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Cinematic 3D</span>
+            </label>
+            <label class="switch" title="Spacetime curvature grid (G)">
+                <input type="checkbox" id="gridToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Spacetime Grid</span>
+            </label>
+        </div>
+
+        <!-- Scale Shell Selector -->
+        <div class="layer-selector">
+            <button class="layer-btn" data-layer="0">Planck</button>
+            <button class="layer-btn" data-layer="1">Quantum</button>
+            <button class="layer-btn" data-layer="2">Atomic</button>
+            <button class="layer-btn" data-layer="3">Cosmic</button>
+            <button class="layer-btn" data-layer="4">Meta</button>
+            <button class="layer-btn active" data-layer="5">All Shells</button>
+        </div>
+
+        <!-- Main Control Panel -->
+        <div class="control-panel">
+            <div class="controls-container">
+                <!-- Singularity Parameters -->
+                <div class="control-section singularity-section">
+                    <h3 class="section-toggle">Singularity Parameters</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="massSlider">Core Mass (M₀):</label>
+                            <input type="range" id="massSlider" min="5" max="100" step="1" value="30" class="slider">
+                            <span id="massValue" class="value-display">30</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="spinSlider">Spin (a):</label>
+                            <input type="range" id="spinSlider" min="0" max="0.99" step="0.01" value="0.6" class="slider">
+                            <span id="spinValue" class="value-display">0.60</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="hawkingSlider">Hawking Radiation:</label>
+                            <input type="range" id="hawkingSlider" min="0" max="100" step="5" value="30" class="slider">
+                            <span id="hawkingValue" class="value-display">30%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="bounceSlider">Bounce Threshold:</label>
+                            <input type="range" id="bounceSlider" min="10" max="90" step="5" value="40" class="slider">
+                            <span id="bounceValue" class="value-display">40%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="particleMassSlider">Matter Mass (m):</label>
+                            <input type="range" id="particleMassSlider" min="0" max="0.2" step="0.01" value="0.05" class="slider">
+                            <span id="particleMassValue" class="value-display">0.05</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="viscositySlider">Accretion Viscosity:</label>
+                            <input type="range" id="viscositySlider" min="0" max="100" step="5" value="30" class="slider">
+                            <span id="viscosityValue" class="value-display">30%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="lensingSlider">Gravitational Lensing:</label>
+                            <input type="range" id="lensingSlider" min="0" max="100" step="5" value="50" class="slider">
+                            <span id="lensingValue" class="value-display">50%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spectrum -->
+                <div class="control-section spectrum-section">
+                    <h3 class="section-toggle">Spectrum</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="backgroundSelect">Background:</label>
+                            <select id="backgroundSelect" class="control-select">
+                                <option value="void">Void Violet</option>
+                                <option value="black">Deep Black</option>
+                                <option value="nebula">Nebula Blue</option>
+                                <option value="crimson">Crimson Dust</option>
+                                <option value="aurora">Aurora Green</option>
+                                <option value="white">Observatory White</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="colorModeSelect">Color Mode:</label>
+                            <select id="colorModeSelect" class="control-select">
+                                <option value="natural">Natural</option>
+                                <option value="energy">Spectral Energy</option>
+                                <option value="doppler">Doppler Shift</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="invertColors"> Invert Colors (spectrograph plate)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory Parameters -->
+                <div class="control-section closed">
+                    <h3 class="section-toggle">Theory Parameters</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="knownRatioSlider">Known/Total Ratio:</label>
+                            <input type="range" id="knownRatioSlider" min="0" max="100" step="1" value="5" class="slider">
+                            <span id="knownRatioValue" class="value-display">5%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="infinitySlider">Infinity Parameter (∞):</label>
+                            <input type="range" id="infinitySlider" min="100" max="5000" step="100" value="1000" class="slider">
+                            <span id="infinityValue" class="value-display">1000</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="dimensionalitySlider">Dimensionality (n):</label>
+                            <input type="range" id="dimensionalitySlider" min="2" max="11" step="1" value="4" class="slider">
+                            <span id="dimensionalityValue" class="value-display">4D</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="polaritySlider">Polygarity Strength:</label>
+                            <input type="range" id="polaritySlider" min="0.1" max="5" step="0.1" value="2" class="slider">
+                            <span id="polarityValue" class="value-display">2.0</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="multitaritySlider">Multitarity Density:</label>
+                            <input type="range" id="multitaritySlider" min="0" max="100" step="5" value="50" class="slider">
+                            <span id="multitarityValue" class="value-display">50%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="decoherenceSlider">Decoherence:</label>
+                            <input type="range" id="decoherenceSlider" min="0" max="100" step="5" value="30" class="slider">
+                            <span id="decoherenceValue" class="value-display">30%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualization Options -->
+                <div class="control-section closed">
+                    <h3 class="section-toggle">Visualization</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="speedSlider">Simulation Speed:</label>
+                            <input type="range" id="speedSlider" min="0.2" max="4" step="0.1" value="1" class="slider">
+                            <span id="speedValue" class="value-display">1.0x</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="particleSlider">Particles:</label>
+                            <input type="range" id="particleSlider" min="100" max="2500" step="100" value="1200" class="slider">
+                            <span id="particleValue" class="value-display">1200</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="connectionSlider">Connection Range:</label>
+                            <input type="range" id="connectionSlider" min="50" max="500" step="50" value="200" class="slider">
+                            <span id="connectionValue" class="value-display">200px</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="unknownAlphaSlider">Unknown Universe Alpha:</label>
+                            <input type="range" id="unknownAlphaSlider" min="0" max="100" step="5" value="60" class="slider">
+                            <span id="unknownAlphaValue" class="value-display">60%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="trailSlider">Matter Trails:</label>
+                            <input type="range" id="trailSlider" min="0" max="95" step="5" value="80" class="slider">
+                            <span id="trailValue" class="value-display">80%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="elevationSlider">Camera Elevation:</label>
+                            <input type="range" id="elevationSlider" min="2" max="85" step="1" value="16" class="slider">
+                            <span id="elevationValue" class="value-display">16°</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="orbitSlider">Camera Orbit Speed:</label>
+                            <input type="range" id="orbitSlider" min="0" max="100" step="5" value="15" class="slider">
+                            <span id="orbitValue" class="value-display">15%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="zoomSlider">Zoom:</label>
+                            <input type="range" id="zoomSlider" min="50" max="300" step="5" value="100" class="slider">
+                            <span id="zoomValue" class="value-display">100%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Display Options:</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="showKnown" checked> Known Universe</label>
+                                <label><input type="checkbox" id="showUnknown" checked> Unknown Universe</label>
+                                <label><input type="checkbox" id="showPolarity" checked> Polarity Fields</label>
+                                <label><input type="checkbox" id="showMultitarity" checked> Multitarity Links</label>
+                                <label><input type="checkbox" id="showDisk" checked> Accretion Disk</label>
+                                <label><input type="checkbox" id="showJets" checked> Relativistic Jets</label>
+                                <label><input type="checkbox" id="showRings" checked> Photon Sphere &amp; Ergosphere</label>
+                                <label><input type="checkbox" id="enableBounce" checked> Big Bounce</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-group button-group">
+                    <button id="pauseBtn" class="control-button">⏸ Pause</button>
+                    <button id="resetBtn" class="control-button">↻ Reset</button>
+                    <button id="collapseNowBtn" class="control-button bounce-button">✸ Bounce</button>
+                    <button id="exportBtn" class="control-button">⬇ Export</button>
+                    <button id="infoBtn" class="control-button">ⓘ Info</button>
+                    <button id="hideUiBtn" class="control-button">◌ View</button>
+                </div>
+
+                <div class="brand-copy">© 2026 Mandeep S. Bhullar · SpinalXeno™ · <span title="Signing key fingerprint (SHA-256): 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">signed 2566 6EB2 CF27 3686</span></div>
+            </div>
+
+            <button id="collapseBtn" class="collapse-btn" aria-label="Collapse controls">◀</button>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="stats-panel">
+            <div class="stats-title">Singularity Metrics</div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Known</span><span id="knownSpace" class="stat-value">5%</span></div>
+                <div class="stat-item"><span class="stat-label">Unknown</span><span id="unknownSpace" class="stat-value">95%</span></div>
+                <div class="stat-item"><span class="stat-label">FPS</span><span id="fpsCount" class="stat-value">60</span></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Poles · Q</span><span id="polarityNodes" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Links</span><span id="multitarityLinks" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Deep Index</span><span id="deepIndex" class="stat-value">0</span></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Horizon r₊</span><span id="horizonRadius" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Mass M</span><span id="effectiveMass" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Hawking</span><span id="hawkingCount" class="stat-value">0</span></div>
+            </div>
+
+            <div class="stat-row conservation-row">
+                <div class="stat-item"><span class="stat-label">In Field</span><span id="fieldCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">In Horizon</span><span id="horizonCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Σ Matter</span><span id="conservedTotal" class="stat-value">0</span></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Absorbed</span><span id="absorbedCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Bounces</span><span id="bounceCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Info Back</span><span id="infoRecovered" class="stat-value">0%</span></div>
+            </div>
+        </div>
+
+        <!-- Phase Information -->
+        <div class="phase-info">
+            <div class="phase-item known-phase">
+                <span class="phase-label">Known Phase</span>
+                <span id="knownPhase" class="phase-value">Observable</span>
+            </div>
+            <div class="phase-item unknown-phase">
+                <span class="phase-label">Unknown Phase</span>
+                <span id="unknownPhase" class="phase-value">Latent</span>
+            </div>
+            <div class="phase-item singularity-phase">
+                <span class="phase-label">Singularity</span>
+                <span id="singularityPhase" class="phase-value">Accreting</span>
+                <span class="criticality-track"><span id="criticalityBar" class="criticality-bar"></span></span>
+            </div>
+        </div>
+
+        <!-- Scale Shell Legend -->
+        <div class="dimension-legend">
+            <div class="legend-title">Scale Shells</div>
+            <div class="dimension-items">
+                <div class="dim-item" data-dim="0"><span class="dim-dot"></span><span class="dim-name">Planck (10⁻³⁵m)</span></div>
+                <div class="dim-item" data-dim="1"><span class="dim-dot"></span><span class="dim-name">Quantum (10⁻¹⁵m)</span></div>
+                <div class="dim-item" data-dim="2"><span class="dim-dot"></span><span class="dim-name">Atomic (10⁻¹⁰m)</span></div>
+                <div class="dim-item" data-dim="3"><span class="dim-dot"></span><span class="dim-name">Cosmic (10²⁶m)</span></div>
+                <div class="dim-item" data-dim="4"><span class="dim-dot"></span><span class="dim-name">Meta (∞)</span></div>
+            </div>
+        </div>
+
+        <!-- Info Modal -->
+        <div id="infoModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="modal-close" aria-label="Close">✕</button>
+                <h2>GUU 2.0 · Singularity Theory</h2>
+
+                <div class="info-section">
+                    <h3>◉ The Singularity</h3>
+                    <p>All five scales of the Grand Unified Universe orbit one point. Planck matter circles closest, the Meta shell drifts farthest out, and everything slowly spirals inward. Nothing that crosses the event horizon r₊ comes back as it was.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>⚖ Conservation</h3>
+                    <p>Matter is never created or destroyed. Each particle that crosses the horizon is held inside it and adds its mass m to the singularity, so the horizon grows. Hawking radiation can only return matter the singularity is holding, and each emission takes its mass back out. At every moment <em>In Field + In Horizon = Σ Matter</em>. Polarity poles are created in ± pairs, so net charge Q stays zero. Energy lost to viscosity in the accretion disk leaves as its glow. Gravity on the field follows the shell theorem: matter that falls in was already pulling on everything outside it, so swallowing it grows the horizon without changing the pull on distant orbits.</p>
+                    <p>Knowledge is not conserved. Through <em>decoherence</em>, cold matter far from the singularity slowly drifts back toward the background Known/Total ratio.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎬 Cinematic 3D &amp; the Spacetime Grid</h3>
+                    <p>In cinematic mode the camera orbits the singularity in true 3D perspective. Light from the far side of the disk is lensed over the top of the shadow, and the side of the disk rushing toward you shines brighter (relativistic beaming). The spacetime grid is a rubber-sheet picture of curvature: it sinks into a well that deepens as the singularity gains mass, and each polarity pole dents (+) or lifts (−) it. Switch cinematic mode off for a flat top-down view.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>⟲ Spin &amp; the Ergosphere</h3>
+                    <p>A spinning singularity drags space with it. Higher spin shrinks the event horizon and widens the ergosphere (the dashed violet boundary), forcing nearby matter to co-rotate.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>✧ Hawking Radiation &amp; the Information Paradox</h3>
+                    <p>Matter that falls in is lost to the Unknown. Hawking radiation returns it as Known matter bursting from the horizon. Lighter singularities radiate harder (T<sub>H</sub> ∝ 1/M), so a singularity that grows heavy radiates less. <em>Info Back</em> tracks how much of what fell in has returned.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>✸ The Big Bounce &amp; Relativistic Jets</h3>
+                    <p>When the horizon holds the Bounce Threshold share of all matter, the singularity turns critical and rebounds. Everything it held is released at once as Known matter in a shockwave. While matter pours in quickly, twin jets fire along the spin axis; their length follows the accretion rate.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🌈 Spectrum</h3>
+                    <p><strong>Spectral Energy</strong> colors matter by kinetic energy, from slow red to fast violet. <strong>Doppler Shift</strong> colors matter moving toward the camera blue and matter moving away red. <strong>Invert Colors</strong> renders the field as a photographic negative, like a spectrograph plate.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>📐 Polygarity &amp; 🔗 Multitarity</h3>
+                    <p>Polarity poles orbit inside each shell, pulling (+) or pushing (−) matter into local fields. Multitarity links join particles across scales; they are born, glow and dissolve continuously, and they bend around the singularity under gravitational lensing.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎮 Controls</h3>
+                    <ul>
+                        <li><strong>Drag</strong> to orbit the camera · <strong>scroll</strong> to zoom · <strong>double-click</strong> to reset the view</li>
+                        <li><strong>C</strong> cinematic 3D · <strong>G</strong> spacetime grid · <strong>I</strong> invert colors</li>
+                        <li><strong>Space</strong> pause · <strong>B</strong> trigger a bounce · <strong>R</strong> reset · <strong>H</strong> hide the panels</li>
+                        <li>Click a panel heading to fold or unfold that section</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-title">Components</div>
+            <div class="legend-items">
+                <div class="legend-item known"><span class="legend-color"></span><span>Known Matter</span></div>
+                <div class="legend-item unknown"><span class="legend-color"></span><span>Unknown Matter</span></div>
+                <div class="legend-item hawking"><span class="legend-color"></span><span>Hawking Emission</span></div>
+                <div class="legend-item polarity"><span class="legend-color"></span><span>Polarity Pole ±</span></div>
+                <div class="legend-item multitarity"><span class="legend-color"></span><span>Multitarity Link</span></div>
+                <div class="legend-item horizon"><span class="legend-color"></span><span>Event Horizon</span></div>
+            </div>
+            <div id="spectrumKey" class="spectrum-key hidden">
+                <span id="spectrumBar" class="spectrum-bar"></span>
+                <span class="spectrum-labels"><span id="spectrumLow">Low E</span><span id="spectrumHigh">High E</span></span>
+            </div>
+        </div>
+
+        <button id="showUiBtn" class="ui-toggle">◉ Show Panels (H)</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

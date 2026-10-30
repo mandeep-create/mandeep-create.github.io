@@ -74,37 +74,37 @@ canvas {
     background: linear-gradient(180deg,
                                 rgba(0, 0, 0, 0.95) 0%,
                                 rgba(0, 0, 0, 0) 100%);
-    padding: 15px 20px;
+    padding: 10px 16px;
     text-align: center;
     pointer-events: none;
 }
 
 .header-content h1 {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
     letter-spacing: 2px;
     color: var(--known-color);
     text-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 
 .header-content .subtitle {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     color: var(--multitarity-color);
     letter-spacing: 1px;
     text-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
 }
 
 .formula-display {
-    margin-top: 8px;
-    padding: 8px 15px;
+    margin-top: 5px;
+    padding: 4px 10px;
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(0, 255, 136, 0.3);
     border-radius: 5px;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     color: var(--known-color);
     letter-spacing: 0.5px;
-    max-width: 600px;
+    max-width: 520px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -123,7 +123,7 @@ canvas {
 
 .layer-selector {
     position: fixed;
-    top: 85px;
+    top: 82px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -133,13 +133,13 @@ canvas {
 }
 
 .layer-btn {
-    padding: 6px 12px;
+    padding: 4px 9px;
     background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(0, 255, 136, 0.3);
     border-radius: 5px;
     color: var(--text-light);
     cursor: pointer;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: var(--transition);
@@ -164,14 +164,14 @@ canvas {
 
 .control-panel {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
+    bottom: 12px;
+    left: 12px;
     background: rgba(0, 0, 0, 0.95);
-    border: 2px solid var(--known-color);
-    border-radius: 12px;
-    padding: 16px;
-    max-width: 340px;
-    max-height: 85vh;
+    border: 1px solid var(--known-color);
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 250px;
+    max-height: calc(100vh - 250px);
     overflow-y: auto;
     z-index: 200;
     box-shadow: 0 0 40px rgba(0, 255, 136, 0.25),
@@ -203,12 +203,12 @@ canvas {
 .controls-container {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 7px;
 }
 
 .control-section {
     border-bottom: 1px solid rgba(0, 255, 136, 0.2);
-    padding-bottom: 10px;
+    padding-bottom: 6px;
 }
 
 .control-section:last-child {
@@ -220,7 +220,7 @@ canvas {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--multitarity-color);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 /* ===== CONTROL GROUPS ===== */
@@ -228,14 +228,14 @@ canvas {
 .control-group {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.75rem;
+    gap: 4px 6px;
+    font-size: 0.62rem;
     flex-wrap: wrap;
 }
 
 .control-group label {
     color: var(--multitarity-color);
-    min-width: 100px;
+    min-width: 80px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -250,7 +250,7 @@ canvas {
 .checkbox-group {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
     flex-basis: 100%;
 }
 
@@ -258,15 +258,15 @@ canvas {
     min-width: unset;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.7rem;
+    gap: 6px;
+    font-size: 0.6rem;
 }
 
 .control-select,
 .slider {
     flex: 1;
-    min-width: 70px;
-    padding: 6px;
+    min-width: 60px;
+    padding: 3px;
     background: rgba(0, 255, 136, 0.08);
     border: 1px solid var(--known-color);
     border-radius: 4px;
@@ -311,7 +311,7 @@ canvas {
 }
 
 .value-display {
-    min-width: 45px;
+    min-width: 36px;
     text-align: right;
     color: var(--polarity-color);
     font-weight: bold;
@@ -320,21 +320,21 @@ canvas {
 
 .button-group {
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
+    gap: 4px;
+    margin-top: 4px;
 }
 
 .control-button {
     flex: 1;
-    min-width: 70px;
-    padding: 7px;
+    min-width: 50px;
+    padding: 4px;
     background: rgba(0, 255, 136, 0.1);
     border: 1px solid var(--known-color);
     border-radius: 4px;
     color: var(--known-color);
     cursor: pointer;
     font-family: 'Courier New', monospace;
-    font-size: 0.65rem;
+    font-size: 0.58rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: var(--transition);
@@ -349,10 +349,10 @@ canvas {
 
 .collapse-btn {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
     background: rgba(0, 255, 136, 0.1);
     border: 1px solid var(--known-color);
     border-radius: 50%;
@@ -374,16 +374,16 @@ canvas {
 .stats-panel {
     position: fixed;
     top: 120px;
-    right: 20px;
+    right: 12px;
     background: rgba(0, 0, 0, 0.95);
-    border: 2px solid var(--polarity-color);
-    border-radius: 10px;
-    padding: 12px;
+    border: 1px solid var(--polarity-color);
+    border-radius: 8px;
+    padding: 8px;
     z-index: 200;
     box-shadow: 0 0 40px rgba(255, 0, 136, 0.2),
                 inset 0 0 40px rgba(255, 0, 136, 0.05);
     backdrop-filter: blur(12px);
-    max-width: 380px;
+    max-width: 250px;
 }
 
 .stats-title {
@@ -391,37 +391,37 @@ canvas {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--polarity-color);
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     font-weight: bold;
 }
 
 .stat-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 4px;
+    margin-bottom: 4px;
 }
 
 .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    padding: 8px;
+    gap: 1px;
+    padding: 4px 3px;
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(0, 255, 136, 0.2);
     border-radius: 5px;
 }
 
 .stat-label {
-    font-size: 0.6rem;
+    font-size: 0.5rem;
     color: var(--multitarity-color);
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
 
 .stat-value {
-    font-size: 0.85rem;
+    font-size: 0.72rem;
     color: var(--known-color);
     font-weight: bold;
     text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
@@ -431,24 +431,24 @@ canvas {
 
 .phase-info {
     position: fixed;
-    bottom: 280px;
-    right: 20px;
+    bottom: 12px;
+    right: 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     z-index: 150;
 }
 
 .phase-item {
-    padding: 8px 12px;
+    padding: 4px 8px;
     border-radius: 5px;
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid;
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.7rem;
+    gap: 6px;
+    font-size: 0.6rem;
 }
 
 .phase-item.known-phase {
@@ -490,14 +490,14 @@ canvas {
 
 .dimension-legend {
     position: fixed;
-    bottom: 20px;
-    left: 20px;
+    top: 330px;
+    right: 12px;
     background: rgba(0, 0, 0, 0.9);
     border: 1px solid rgba(0, 255, 136, 0.3);
     border-radius: 8px;
-    padding: 10px;
+    padding: 6px 8px;
     z-index: 150;
-    max-width: 200px;
+    max-width: 170px;
 }
 
 .legend-title {
@@ -505,21 +505,21 @@ canvas {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--known-color);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-weight: bold;
 }
 
 .dimension-items {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
 }
 
 .dim-item {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.6rem;
+    font-size: 0.55rem;
 }
 
 .dim-dot {
@@ -543,12 +543,12 @@ canvas {
 
 .legend {
     position: fixed;
-    bottom: 240px;
-    left: 20px;
+    top: 120px;
+    left: 12px;
     background: rgba(0, 0, 0, 0.85);
     border: 1px solid rgba(0, 255, 136, 0.2);
     border-radius: 8px;
-    padding: 10px;
+    padding: 6px 8px;
     z-index: 150;
 }
 
@@ -557,25 +557,25 @@ canvas {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--known-color);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .legend-items {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 3px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.65rem;
+    gap: 6px;
+    font-size: 0.55rem;
 }
 
 .legend-color {
-    width: 12px;
-    height: 12px;
+    width: 9px;
+    height: 9px;
     border-radius: 3px;
 }
 

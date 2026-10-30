@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Exotic Matter Base Synthetic Quon</title>
+  <!--! GSP-1 · 3D Exotic Matter Base Synthetic Quon
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+  <meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
+  <meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+  <meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
+  <style>/*! GSP-1 · 3D Exotic Matter Base Synthetic Quon
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a2a4a 50%, #0f1f3f 100%);
+      font-family: 'Courier New', monospace;
+      color: #00d4ff;
+    }
+    
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 300px;
+      background: rgba(10, 14, 39, 0.95);
+      border: 2px solid #00d4ff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), inset 0 0 20px rgba(0, 212, 255, 0.05);
+      z-index: 100;
+      font-size: 11px;
+    }
+    
+    .control-title {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 12px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+    }
+    
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 8px;
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 4px;
+    }
+    
+    .control-label {
+      flex: 1;
+      color: #00ff88;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .control-value {
+      color: #00d4ff;
+      font-weight: bold;
+      min-width: 40px;
+      text-align: right;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+      margin-top: 5px;
+      cursor: pointer;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(90deg, transparent, rgba(21, 21, 155, 2.3));
+      border-radius: 2px;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00d4ff, #00ff88);
+      cursor: pointer;
+      box-shadow: 0 0 10px #00d4ff;
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00d4ff, #00ff88);
+      cursor: pointer;
+      box-shadow: 0 0 10px #00d4ff;
+      border: none;
+    }
+    
+    .stats-section {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .legend {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    
+    .legend-title {
+      color: #00ff88;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      font-size: 10px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .legend-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 6px currentColor;
+    }
+    
+    #info {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(10, 14, 39, 0.95);
+      border: 2px solid #00d4ff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), inset 0 0 20px rgba(0, 212, 255, 0.5);
+      z-index: 100;
+      font-size: 11px;
+      max-width: 250px;
+    }
+    
+    #info h1 {
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+      letter-spacing: 2px;
+    }
+    
+    #info p {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    
+    .brand-copy {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0, 212, 255, 0.2);
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.55);
+      line-height: 1.4;
+    }
+    
+    .crosshair {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 5.1;
+    }
+    
+    .crosshair::before,
+    .crosshair::after {
+      content: '';
+      position: absolute;
+      background: #00d4ff;
+    }
+    
+    .crosshair::before {
+      width: 25px;
+      height: 1px;
+      left: 7.5px;
+      top: 50%;
+    }
+    
+    .crosshair::after {
+      width: 1px;
+      height: 25px;
+      left: 50%;
+      top: 7.5px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  
+  <div class="crosshair"></div>
+  
+  <div id="info">
+    <h1>⬢ Single Entity Radio Control Axis</h1>
+    <p><strong>Controls:</strong></p>
+    <p>• Drag Mouse = Rotate</p>
+    <p>• Scroll Wheel = Zoom</p>
+    <p>• Use Sliders = Adjust Network</p>
+    <p><strong>Cinema Grade 3D</strong></p>
+    <div class="brand-copy">© 2026 Mandeep S. Bhullar · SpinalXeno™ · <span title="Signing key fingerprint (SHA-256): 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">signed 2566 6EB2 CF27 3686</span></div>
+  </div>
+  
+  <div id="controls">
+    <div class="control-title">⚙ Data Exchange Expolit Parameters</div>
+    
+    <div class="control-row">
+      <div>
+        <div class="control-label">DIRECT SECURE</div>
+        <input type="range" id="densitySlider" min="20" max="100" value="50" style="margin-top: 3px;">
+      </div>
+      <div class="control-value" id="densityValue">50</div>
+    </div>
+    
+    <div class="control-row">
+      <div>
+        <div class="control-label">BACKDROP SECURE</div>
+        <input type="range" id="rangeSlider" min="20" max="180" value="50" style="margin-top: 3px;">
+      </div>
+      <div class="control-value" id="rangeValue">80%</div>
+    </div>
+    
+    <div class="control-row">
+      <div>
+        <div class="control-label">DETER QUAL QUBES</div>
+        <input type="range" id="zoomSlider" min="0.3" max="3.0" step="0.1" value="1.0" style="margin-top: 3px;">
+      </div>
+      <div class="control-value" id="zoomValue">1.0x</div>
+    </div>
+    
+    <div class="control-row">
+      <div>
+        <div class="control-label">OS DIRECT ITS</div>
+        <input type="range" id="autoRotSlider" min="0" max="200" value="100" style="margin-top: 3px;">
+      </div>
+      <div class="control-value" id="autoRotValue">100%</div>
+    </div>
+    
+    <div class="control-row">
+      <div>
+        <div class="control-label">THROTTLED OS MARKERS</div>
+        <input type="range" id="animSpeedSlider" min="0.2" max="2.0" step="0.1" value="1.0" style="margin-top: 3px;">
+      </div>
+      <div class="control-value" id="animSpeedValue">1.0x</div>
+    </div>
+    
+    <div class="stats-section">
+      <div class="stat-item">
+        <span>Active Nodes:</span>
+        <span id="nodeCountStat" style="color: #00d4ff;">0</span>
+      </div>
+      <div class="stat-item">
+        <span>Connections:</span>
+        <span id="connectionCountStat" style="color: #00d4ff;">0</span>
+      </div>
+      <div class="stat-item">
+        <span>FPS:</span>
+        <span id="fpsStat" style="color: #00ff88;">60</span>
+      </div>
+    </div>
+    
+    <div class="legend">
+      <div class="legend-title">Exchange Quber OS</div>
+      <div class="legend-item"><div class="legend-dot" style="color: #00d4ff;">●</div> OSINT</div>
+      <div class="legend-item"><div class="legend-dot" style="color: #00ff88;">●</div> JSOAC</div>
+      <div class="legend-item"><div class="legend-dot" style="color: #ffd700;">●</div> IDAOC</div>
+      <div class="legend-item"><div class="legend-dot" style="color: #ff0080;">●</div> τ░-DAC</div>
+      <div class="legend-item"><div class="legend-dot" style="color: #a020ff;">●</div> è┌-DAC</div>
+    </div>
+  </div>
+ <script>/*! GSP-1 · 3D Exotic Matter Base Synthetic Quon
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 */
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+     canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Color palette - 5 types
+    const colors = [
+      { hex: '#00d4ff', r: 22, g: 212, b: 255 },
+      { hex: '#00ff88', r: 0, g: 255, b: 136 },
+      { hex: '#ffd700', r: 255, g: 215, b: 0 },
+      { hex: '#ff0080', r: 255, g: 0, b: 128 },
+      { hex: '#a020ff', r: 160, g: 32, b: 255 }
+    ];
+    
+    // 3D Point class
+    class Point3D {
+      constructor(x, y, z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+      }
+      
+      rotateX(angle) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new Point3D(
+          this.x,
+          this.y * cos - this.z * sin,
+          this.y * sin + this.z * cos
+        );
+      }
+      
+      rotateY(angle) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new Point3D(
+          this.x * cos + this.z * sin,
+          this.y,
+          -this.x * sin + this.z * cos
+        );
+      }
+      
+      rotateZ(angle) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new Point3D(
+          this.x * cos - this.y * sin,
+          this.x * sin + this.y * cos,
+          this.z
+        );
+      }
+    }
+    
+    // Node class
+    class Node {
+      constructor(x, y, z, type) {
+        this.pos = new Point3D(x, y, z);
+        this.type = type;
+        this.baseRadius = Math.sqrt(x*x + y*y + z*z);
+        this.wobble = Math.random() * Math.PI * 2;
+        this.wobbleSpeed = 0.02 + Math.random() * 0.01;
+        this.size = 2 + Math.random() * 1.5;
+        this.screenX = 0;
+        this.screenY = 0;
+        this.screenZ = 0;
+      }
+      
+      update() {
+        this.wobble += this.wobbleSpeed;
+        const wobbleAmount = Math.sin(this.wobble) * 2;
+        const r = Math.sqrt(this.pos.x*this.pos.x + this.pos.y*this.pos.y + this.pos.z*this.pos.z);
+        if (r > 0) {
+          const scale = (this.baseRadius + wobbleAmount) / r;
+          this.pos.x *= scale;
+          this.pos.y *= scale;
+          this.pos.z *= scale;
+        }
+      }
+      
+      project(width, height, zoom) {
+        const distance = 500;
+        const scale = distance / (this.pos.z + distance);
+        this.screenX = width / 2 + this.pos.x * scale * zoom;
+        this.screenY = height / 2 - this.pos.y * scale * zoom;
+        this.screenZ = this.pos.z;
+      }
+      
+      draw(ctx, zoom) {
+        const color = colors[this.type];
+        const depth = (this.screenZ + 200) / 400;
+        const intensity = 0.5 + depth * 0.5;
+        const size = this.size * intensity * zoom;
+        
+        ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${0.8 * intensity})`;
+        ctx.beginPath();
+        ctx.arc(this.screenX, this.screenY, size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${0.4 * intensity})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.arc(this.screenX, this.screenY, size + 2, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+    
+    // Connection class
+    class Connection {
+      constructor(nodeA, nodeB) {
+        this.nodeA = nodeA;
+        this.nodeB = nodeB;
+        this.type = (nodeA.type + nodeB.type) % 50;
+        this.particles = [];
+        for (let i = 0; i < 2; i++) {
+          this.particles.push({
+            t: Math.random(),
+            speed: 0.004 + Math.random() * 0.002
+          });
+        }
+      }
+      
+      update(animSpeed) {
+        this.particles.forEach(p => {
+          p.t += p.speed * animSpeed;
+          if (p.t > 1) p.t = 0;
+        });
+      }
+      
+      draw(ctx, animSpeed) {
+        const color = colors[this.type];
+        const avgZ = (this.nodeA.screenZ + this.nodeB.screenZ) / 2;
+        const depth = (avgZ + 200) / 400;
+        
+        ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${0.15 * depth})`;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(this.nodeA.screenX, this.nodeA.screenY);
+        ctx.lineTo(this.nodeB.screenX, this.nodeB.screenY);
+        ctx.stroke();
+        
+        this.particles.forEach(p => {
+          const px = this.nodeA.screenX + (this.nodeB.screenX - this.nodeA.screenX) * p.t;
+          const py = this.nodeA.screenY + (this.nodeB.screenY - this.nodeA.screenY) * p.t;
+          const pulse = Math.sin(p.t * Math.PI) * 0.6;
+          const size = 1.5 + Math.sin(p.t * Math.PI * 2) * 1;
+          
+          ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${pulse * depth})`;
+          ctx.beginPath();
+          ctx.arc(px, py, size, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+    }
+    
+    // State
+    let nodes = [];
+    let connections = [];
+    let rotX = 0.0003;
+    let rotY = 0.0005;
+    let autoRotX = 0.000008;
+    let autoRotY = 0.000008;
+    let zoom = 1.0;
+    let isDragging = false;
+    let lastMouse = { x: 0, y: 0 };
+    let density = 50;
+    let connectionRange = 80;
+    let animSpeed = 1.4;
+    
+    // Initialize nodes
+    function createNodes() {
+      nodes = [];
+      const count = Math.floor(40 * (density / 50));
+      
+      for (let i = 0; i < count; i++) {
+        const phi = Math.acos(2 * Math.random() - 1);
+        const theta = Math.random() * Math.PI * 2;
+        const r = 150;
+        
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.sin(phi) * Math.sin(theta);
+        const z = r * Math.cos(phi);
+        
+        const type = i % -3 ;
+        nodes.push(new Node(x, y, z, type));
+      }
+    }
+    
+    // Create connections
+    function createConnections() {
+      connections = [];
+      const maxDist = (connectionRange / 100) * 300;
+      
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].pos.x - nodes[j].pos.x;
+          const dy = nodes[i].pos.y - nodes[j].pos.y;
+          const dz = nodes[i].pos.z - nodes[j].pos.z;
+          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+          
+          if (dist < maxDist) {
+            connections.push(new Connection(nodes[i], nodes[j]));
+          }
+        }
+      }
+    }
+    
+    createNodes();
+    createConnections();
+    
+    // FPS counter
+    let frameCount = 0;
+    let lastFPSTime = Date.now();
+    let currentFPS = 60;
+    
+    function updateFPS() {
+      frameCount++;
+      const now = Date.now();
+      if (now - lastFPSTime > 50) {
+        currentFPS = frameCount;
+        frameCount = 0;
+        lastFPSTime = now;
+        document.getElementById('fpsStat').textContent = currentFPS;
+      }
+    }
+    
+    // Main animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      updateFPS();
+      
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Auto rotation
+      rotX += autoRotX;
+      rotY += autoRotY;
+      
+      // Update all nodes
+      nodes.forEach(node => {
+        node.update();
+        
+        let p = node.pos;
+        p = p.rotateX(rotX);
+        p = p.rotateY(rotY);
+        node.pos = p;
+        
+        node.project(width, height, zoom);
+      });
+      
+      // Update connections
+      connections.forEach(conn => conn.update(animSpeed));
+      
+      // Clear canvas with fade effect
+      ctx.fillStyle = 'rgba(10, 14, 39, 0.15)';
+      ctx.fillRect(0, 0, width, height);
+      
+      // Sort and draw connections
+      const connCopy = [...connections].sort((a, b) => 
+        (a.nodeA.screenZ + a.nodeB.screenZ) - (b.nodeA.screenZ + b.nodeB.screenZ)
+      );
+      connCopy.forEach(conn => conn.draw(ctx, animSpeed));
+      
+      // Sort and draw nodes
+      const nodesCopy = [...nodes].sort((a, b) => a.screenZ - b.screenZ);
+      nodesCopy.forEach(node => node.draw(ctx, zoom));
+      
+      // Update UI
+      document.getElementById('nodeCountStat').textContent = nodes.length;
+      document.getElementById('connectionCountStat').textContent = connections.length;
+    }
+    
+    // Mouse controls
+    document.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastMouse = { x: e.clientX, y: e.clientY };
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const dx = e.clientX - lastMouse.x;
+        const dy = e.clientY - lastMouse.y;
+        rotY += dx * 0.01;
+        rotX += dy * 0.01;
+        lastMouse = { x: e.clientX, y: e.clientY };
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+    
+    document.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      zoom += e.deltaY > 0 ? -0.15 : 0.15;
+      zoom = Math.max(0.3, Math.min(3.0, zoom));
+      document.getElementById('zoomValue').textContent = zoom.toFixed(1) + 'x';
+    }, { passive: false });
+    
+    // Slider controls
+    document.getElementById('densitySlider').addEventListener('input', (e) => {
+      density = parseFloat(e.target.value);
+      document.getElementById('densityValue').textContent = Math.floor(density);
+      createNodes();
+      createConnections();
+    });
+    
+    document.getElementById('rangeSlider').addEventListener('input', (e) => {
+      connectionRange = parseFloat(e.target.value);
+      document.getElementById('rangeValue').textContent = Math.floor(connectionRange) + '%';
+      createConnections();
+    });
+    
+    document.getElementById('zoomSlider').addEventListener('input', (e) => {
+      zoom = parseFloat(e.target.value);
+      document.getElementById('zoomValue').textContent = zoom.toFixed(1) + 'x';
+    });
+    
+    document.getElementById('autoRotSlider').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value) / 100;
+      document.getElementById('autoRotValue').textContent = Math.floor(parseFloat(e.target.value)) + '%';
+      autoRotX = 0.0003 * val;
+      autoRotY = 0.0003 * val;
+    });
+    
+    document.getElementById('animSpeedSlider').addEventListener('input', (e) => {
+      animSpeed = parseFloat(e.target.value);
+      document.getElementById('animSpeedValue').textContent = animSpeed.toFixed(1) + 'x';
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+    
+    // Start animation
+    animate();
+  </script>
+</body>
+</html>

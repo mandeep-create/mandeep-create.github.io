@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OI.IO · Black Hole Singularity</title>
+    <!--! OI.IO · Single Black Hole Singularity Mechanism
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+    <meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
+    <meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+    <meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Michroma&display=swap">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Viewport: background + canvas layers (sky & grid, matter with trails, fields, bloom) -->
+        <div id="viewport" class="viewport cinematic">
+            <canvas id="gridCanvas"></canvas>
+            <canvas id="matterCanvas"></canvas>
+            <canvas id="fieldCanvas"></canvas>
+            <canvas id="bloomCanvas"></canvas>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">OI.IO</h1>
+            <p class="subtitle">Single Black Hole Singularity Mechanism</p>
+        </header>
+
+        <!-- View Mode Switches -->
+        <div class="mode-bar">
+            <label class="switch" title="Cinematic 3D camera (C)">
+                <input type="checkbox" id="cinematicToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Cinematic 3D</span>
+            </label>
+            <label class="switch" title="Spacetime curvature grid (G)">
+                <input type="checkbox" id="gridToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Spacetime Grid</span>
+            </label>
+            <label class="switch neon-gravity" title="Gravity field lines (1)">
+                <input type="checkbox" id="gravityToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Gravity Field</span>
+            </label>
+            <label class="switch neon-magnetic" title="Magnetic field lines (2)">
+                <input type="checkbox" id="magneticToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Magnetic Field</span>
+            </label>
+            <label class="switch neon-toroidal" title="Toroidal field lines (3)">
+                <input type="checkbox" id="toroidalToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Toroidal Field</span>
+            </label>
+            <label class="switch" title="Bloom glow (L)">
+                <input type="checkbox" id="bloomToggle" checked>
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+                <span class="switch-label">Bloom Glow</span>
+            </label>
+        </div>
+
+        <!-- Scale Shell Selector -->
+        <div class="layer-selector">
+            <button class="layer-btn" data-layer="0">Planck</button>
+            <button class="layer-btn" data-layer="1">Quantum</button>
+            <button class="layer-btn" data-layer="2">Atomic</button>
+            <button class="layer-btn" data-layer="3">Cosmic</button>
+            <button class="layer-btn" data-layer="4">Meta</button>
+            <button class="layer-btn active" data-layer="5">All Shells</button>
+        </div>
+
+        <!-- Main Control Panel -->
+        <div class="control-panel">
+            <div class="controls-container">
+                <!-- Color & Spectrum -->
+                <div class="control-section color-section">
+                    <h3 class="section-toggle">Color &amp; Spectrum</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="themeSelect">Theme</label>
+                            <select id="themeSelect" class="control-select">
+                                <option value="plasma">Iridescent Plasma</option>
+                                <option value="solar">Solar Flare</option>
+                                <option value="emerald">Emerald Nebula</option>
+                                <option value="infrared">Infrared Thermal</option>
+                                <option value="synthwave">Synthwave Sunset</option>
+                                <option value="glacial">Glacial Mono</option>
+                                <option value="aurora">Aurora Borealis</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="backgroundSelect">Background</label>
+                            <select id="backgroundSelect" class="control-select">
+                                <option value="abyss">Abyss Indigo</option>
+                                <option value="black">Absolute Black</option>
+                                <option value="ultraviolet">Ultraviolet</option>
+                                <option value="royal">Royal Purple</option>
+                                <option value="ocean">Deep Ocean</option>
+                                <option value="teal">Midnight Teal</option>
+                                <option value="aurora">Aurora Green</option>
+                                <option value="ember">Ember Red</option>
+                                <option value="crimson">Crimson Night</option>
+                                <option value="rose">Dusk Rose</option>
+                                <option value="slate">Slate Grey</option>
+                                <option value="white">Observatory White</option>
+                                <option value="cream">Paper Cream</option>
+                                <option value="custom">Custom…</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="customBgInput">Custom Color</label>
+                            <input type="color" id="customBgInput" value="#1a0b3d" class="color-input">
+                            <span class="value-display" id="customBgValue">#1a0b3d</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="filterSelect">Filter</label>
+                            <select id="filterSelect" class="control-select">
+                                <option value="none">None</option>
+                                <option value="invert">Invert · Spectrograph Plate</option>
+                                <option value="invertHue">Invert · Keep Hues</option>
+                                <option value="xray">X-Ray</option>
+                                <option value="infrared">Infrared</option>
+                                <option value="night">Night Vision</option>
+                                <option value="uv">Ultraviolet</option>
+                                <option value="vivid">Hyper Vivid</option>
+                                <option value="mono">Monochrome</option>
+                                <option value="sepia">Sepia Archive</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="gammaSlider">Gamma γ</label>
+                            <input type="range" id="gammaSlider" min="0.4" max="2.5" step="0.05" value="1" class="slider">
+                            <span id="gammaValue" class="value-display">1.00</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="brightnessSlider">Brightness</label>
+                            <input type="range" id="brightnessSlider" min="40" max="160" step="5" value="100" class="slider">
+                            <span id="brightnessValue" class="value-display">100%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="contrastSlider">Contrast</label>
+                            <input type="range" id="contrastSlider" min="50" max="200" step="5" value="100" class="slider">
+                            <span id="contrastValue" class="value-display">100%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="saturationSlider">Saturation</label>
+                            <input type="range" id="saturationSlider" min="0" max="250" step="5" value="100" class="slider">
+                            <span id="saturationValue" class="value-display">100%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="hueSlider">Hue Shift</label>
+                            <input type="range" id="hueSlider" min="-180" max="180" step="5" value="0" class="slider hue-slider">
+                            <span id="hueValue" class="value-display">0°</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="colorModeSelect">Color Mode</label>
+                            <select id="colorModeSelect" class="control-select">
+                                <option value="natural">Theme Colors</option>
+                                <option value="energy">Spectral Energy</option>
+                                <option value="doppler">Doppler Shift</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="showStars" checked> Lensed Starfield &amp; Nebulae</label>
+                            </div>
+                        </div>
+
+                        <button id="resetColorsBtn" class="control-button wide-button">↺ Reset Colors</button>
+                    </div>
+                </div>
+
+                <!-- Singularity Parameters -->
+                <div class="control-section closed">
+                    <h3 class="section-toggle">Singularity</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="massSlider">Core Mass M₀</label>
+                            <input type="range" id="massSlider" min="5" max="100" step="1" value="30" class="slider">
+                            <span id="massValue" class="value-display">30</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="spinSlider">Spin ⟳ · ⟲</label>
+                            <input type="range" id="spinSlider" min="-0.99" max="0.99" step="0.01" value="0.6" class="slider spin-slider">
+                            <span id="spinValue" class="value-display">⟲ 0.60</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="hawkingSlider">Hawking Radiation</label>
+                            <input type="range" id="hawkingSlider" min="0" max="100" step="5" value="30" class="slider">
+                            <span id="hawkingValue" class="value-display">30%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="bounceSlider">Bounce Threshold</label>
+                            <input type="range" id="bounceSlider" min="10" max="90" step="5" value="40" class="slider">
+                            <span id="bounceValue" class="value-display">40%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="particleMassSlider">Matter Mass m</label>
+                            <input type="range" id="particleMassSlider" min="0" max="0.2" step="0.01" value="0.05" class="slider">
+                            <span id="particleMassValue" class="value-display">0.05</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="viscositySlider">Accretion Viscosity</label>
+                            <input type="range" id="viscositySlider" min="0" max="100" step="5" value="30" class="slider">
+                            <span id="viscosityValue" class="value-display">30%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="lensingSlider">Gravitational Lensing</label>
+                            <input type="range" id="lensingSlider" min="0" max="100" step="5" value="60" class="slider">
+                            <span id="lensingValue" class="value-display">60%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Camera & Focus -->
+                <div class="control-section">
+                    <h3 class="section-toggle">Camera &amp; Focus</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="focusSelect">Focus On</label>
+                            <select id="focusSelect" class="control-select">
+                                <option value="whole">Whole System</option>
+                                <option value="core">Singularity Core</option>
+                                <option value="photon">Photon Ring</option>
+                                <option value="disk">Accretion Disk</option>
+                                <option value="toroidal">Toroidal Field</option>
+                                <option value="jetN">North Quasar Jet</option>
+                                <option value="jetS">South Quasar Jet</option>
+                                <option value="shell0">Planck Shell</option>
+                                <option value="shell1">Quantum Shell</option>
+                                <option value="shell2">Atomic Shell</option>
+                                <option value="shell3">Cosmic Shell</option>
+                                <option value="shell4">Meta Shell</option>
+                                <option value="pole">Follow a Polarity Pole</option>
+                                <option value="particle">Follow a Particle</option>
+                                <option value="hawking">Follow next Hawking Emission</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="zoomSlider">Zoom</label>
+                            <input type="range" id="zoomSlider" min="0" max="100" step="0.5" value="27.3" class="slider">
+                            <span id="zoomValue" class="value-display">1.0×</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="elevationSlider">Camera Elevation</label>
+                            <input type="range" id="elevationSlider" min="2" max="85" step="1" value="14" class="slider">
+                            <span id="elevationValue" class="value-display">14°</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="orbitSlider">Camera Orbit</label>
+                            <input type="range" id="orbitSlider" min="0" max="100" step="5" value="15" class="slider">
+                            <span id="orbitValue" class="value-display">15%</span>
+                        </div>
+
+                        <p class="hint">Click anything to fly to it · scroll or pinch to zoom · double-click for the whole system</p>
+                    </div>
+                </div>
+
+                <!-- Fields & Quasar -->
+                <div class="control-section closed">
+                    <h3 class="section-toggle">Fields &amp; Quasar</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="fieldIntensitySlider">Field Intensity</label>
+                            <input type="range" id="fieldIntensitySlider" min="0" max="200" step="5" value="100" class="slider">
+                            <span id="fieldIntensityValue" class="value-display">100%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="blinkSlider">Neon Blink Rate</label>
+                            <input type="range" id="blinkSlider" min="0" max="100" step="5" value="50" class="slider">
+                            <span id="blinkValue" class="value-display">50%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="fieldDensitySlider">Field Line Density</label>
+                            <input type="range" id="fieldDensitySlider" min="1" max="3" step="1" value="2" class="slider">
+                            <span id="fieldDensityValue" class="value-display">2</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="jetPowerSlider">Quasar Jet Power</label>
+                            <input type="range" id="jetPowerSlider" min="0" max="200" step="5" value="100" class="slider">
+                            <span id="jetPowerValue" class="value-display">100%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Theory Parameters -->
+                <div class="control-section closed">
+                    <h3 class="section-toggle">Theory</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="knownRatioSlider">Known / Total</label>
+                            <input type="range" id="knownRatioSlider" min="0" max="100" step="1" value="5" class="slider">
+                            <span id="knownRatioValue" class="value-display">5%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="infinitySlider">Infinity ∞</label>
+                            <input type="range" id="infinitySlider" min="100" max="5000" step="100" value="1000" class="slider">
+                            <span id="infinityValue" class="value-display">1000</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="dimensionalitySlider">Dimensionality n</label>
+                            <input type="range" id="dimensionalitySlider" min="2" max="11" step="1" value="4" class="slider">
+                            <span id="dimensionalityValue" class="value-display">4D</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="polaritySlider">Polygarity Strength</label>
+                            <input type="range" id="polaritySlider" min="0.1" max="5" step="0.1" value="2" class="slider">
+                            <span id="polarityValue" class="value-display">2.0</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="multitaritySlider">Multitarity Density</label>
+                            <input type="range" id="multitaritySlider" min="0" max="100" step="5" value="50" class="slider">
+                            <span id="multitarityValue" class="value-display">50%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="decoherenceSlider">Decoherence</label>
+                            <input type="range" id="decoherenceSlider" min="0" max="100" step="5" value="30" class="slider">
+                            <span id="decoherenceValue" class="value-display">30%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualization -->
+                <div class="control-section closed">
+                    <h3 class="section-toggle">Visualization</h3>
+                    <div class="section-body">
+                        <div class="control-group">
+                            <label for="speedSlider">Simulation Speed</label>
+                            <input type="range" id="speedSlider" min="0.2" max="4" step="0.1" value="1" class="slider">
+                            <span id="speedValue" class="value-display">1.0x</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="particleSlider">Particles</label>
+                            <input type="range" id="particleSlider" min="100" max="2500" step="100" value="1400" class="slider">
+                            <span id="particleValue" class="value-display">1400</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="connectionSlider">Connection Range</label>
+                            <input type="range" id="connectionSlider" min="50" max="500" step="50" value="200" class="slider">
+                            <span id="connectionValue" class="value-display">200px</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="unknownAlphaSlider">Unknown Alpha</label>
+                            <input type="range" id="unknownAlphaSlider" min="0" max="100" step="5" value="60" class="slider">
+                            <span id="unknownAlphaValue" class="value-display">60%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="trailSlider">Matter Trails</label>
+                            <input type="range" id="trailSlider" min="0" max="95" step="5" value="75" class="slider">
+                            <span id="trailValue" class="value-display">75%</span>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" id="showKnown" checked> Known Universe</label>
+                                <label><input type="checkbox" id="showUnknown" checked> Unknown Universe</label>
+                                <label><input type="checkbox" id="showPolarity" checked> Polarity Poles</label>
+                                <label><input type="checkbox" id="showMultitarity" checked> Multitarity Links</label>
+                                <label><input type="checkbox" id="showDisk" checked> Accretion Disk</label>
+                                <label><input type="checkbox" id="showJets" checked> Quasar Jets</label>
+                                <label><input type="checkbox" id="showRings" checked> Photon Sphere &amp; Ergosphere</label>
+                                <label><input type="checkbox" id="enableBounce" checked> Big Bounce</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="button-group">
+                    <button id="pauseBtn" class="control-button">⏸ Pause</button>
+                    <button id="resetBtn" class="control-button">↻ Reset</button>
+                    <button id="collapseNowBtn" class="control-button bounce-button">✸ Bounce</button>
+                    <button id="exportBtn" class="control-button">⬇ Export</button>
+                    <button id="infoBtn" class="control-button">ⓘ Info</button>
+                    <button id="hideUiBtn" class="control-button">◌ View</button>
+                </div>
+
+                <div class="brand-copy">© 2026 Mandeep S. Bhullar · SpinalXeno™ · <span title="Signing key fingerprint (SHA-256): 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">signed 2566 6EB2 CF27 3686</span></div>
+            </div>
+
+            <button id="collapseBtn" class="collapse-btn" aria-label="Collapse controls">◀</button>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="stats-panel">
+            <div class="stats-title">Singularity Telemetry</div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Spin</span><span id="spinDisplay" class="stat-value">⟲ 0.60</span></div>
+                <div class="stat-item"><span class="stat-label">Field Twist</span><span id="twistDisplay" class="stat-value">0.00</span></div>
+                <div class="stat-item"><span class="stat-label">Zoom</span><span id="zoomDisplay" class="stat-value">1.0×</span></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Horizon r₊</span><span id="horizonRadius" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Mass M</span><span id="effectiveMass" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Jet Power</span><span id="jetDisplay" class="stat-value">0%</span></div>
+            </div>
+
+            <div class="stat-row conservation-row">
+                <div class="stat-item"><span class="stat-label">In Field</span><span id="fieldCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">In Horizon</span><span id="horizonCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Σ Matter</span><span id="conservedTotal" class="stat-value">0</span></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Known</span><span id="knownSpace" class="stat-value">5%</span></div>
+                <div class="stat-item"><span class="stat-label">Unknown</span><span id="unknownSpace" class="stat-value">95%</span></div>
+                <div class="stat-item"><span class="stat-label">Info Back</span><span id="infoRecovered" class="stat-value">0%</span></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Absorbed</span><span id="absorbedCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Hawking</span><span id="hawkingCount" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Bounces</span><span id="bounceCount" class="stat-value">0</span></div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-label">Poles · Q</span><span id="polarityNodes" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Links</span><span id="multitarityLinks" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">FPS</span><span id="fpsCount" class="stat-value">60</span></div>
+            </div>
+        </div>
+
+        <!-- Phase Information -->
+        <div class="phase-info">
+            <div class="phase-item focus-phase">
+                <span class="phase-label">Focus</span>
+                <span id="focusPhase" class="phase-value">Whole System</span>
+            </div>
+            <div class="phase-item known-phase">
+                <span class="phase-label">Known Phase</span>
+                <span id="knownPhase" class="phase-value">Observable</span>
+            </div>
+            <div class="phase-item singularity-phase">
+                <span class="phase-label">Singularity</span>
+                <span id="singularityPhase" class="phase-value">Accreting</span>
+                <span class="criticality-track"><span id="criticalityBar" class="criticality-bar"></span></span>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-title">Components</div>
+            <div class="legend-items">
+                <div class="legend-item known"><span class="legend-color"></span><span>Known Matter</span></div>
+                <div class="legend-item unknown"><span class="legend-color"></span><span>Unknown Matter</span></div>
+                <div class="legend-item hawking"><span class="legend-color"></span><span>Hawking Emission</span></div>
+                <div class="legend-item polarity"><span class="legend-color"></span><span>Polarity Pole ±</span></div>
+                <div class="legend-item gravity-line"><span class="legend-color"></span><span>Gravity Field</span></div>
+                <div class="legend-item magnetic-line"><span class="legend-color"></span><span>Magnetic Field</span></div>
+                <div class="legend-item toroidal-line"><span class="legend-color"></span><span>Toroidal Field</span></div>
+                <div class="legend-item jet-line"><span class="legend-color"></span><span>Quasar Jet</span></div>
+                <div class="legend-item multitarity"><span class="legend-color"></span><span>Multitarity Link</span></div>
+            </div>
+            <div id="spectrumKey" class="spectrum-key hidden">
+                <span id="spectrumBar" class="spectrum-bar"></span>
+                <span class="spectrum-labels"><span id="spectrumLow">Low E</span><span id="spectrumHigh">High E</span></span>
+            </div>
+        </div>
+
+        <!-- Info Modal -->
+        <div id="infoModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="modal-close" aria-label="Close">✕</button>
+                <h2>OI.IO · Single Black Hole Singularity Mechanism</h2>
+
+                <div class="info-section">
+                    <h3>◉ The Mechanism</h3>
+                    <p>One spinning black hole sits at the heart of the Grand Unified Universe. Five scales of matter, from Planck to Meta, orbit it in nested shells and slowly spiral in through a blazing accretion disk. Nothing that crosses the event horizon r₊ comes back as it was.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>⚖ Conservation</h3>
+                    <p>Matter is never created or destroyed. Each particle that crosses the horizon is held inside it and adds its mass m to the singularity, so the horizon grows. Hawking radiation can only return matter the singularity holds, and each emission takes that mass back out: <em>In Field + In Horizon = Σ Matter</em> at every instant. Polarity poles are born in ± pairs, so net charge Q stays zero. Gravity on the field follows the shell theorem, so swallowing matter grows the horizon without changing the pull on distant orbits. Energy lost to viscosity leaves as the disk's light.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>⟲ Spin &amp; Frame Dragging</h3>
+                    <p>The spin slider runs from clockwise ⟳ (left) through zero to anticlockwise ⟲ (right), seen from above the north pole; its size is the spin speed. The disk, the orbits, the poles and every field line turn with it. Faster spin shrinks the horizon and widens the ergosphere.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>⚡ Gravity, Magnetic &amp; Toroidal Fields</h3>
+                    <p><strong>Gravity</strong> lines (neon lime) pour into the singularity, twisted into spirals by frame dragging. <strong>Magnetic</strong> loops (electric cyan) are anchored to the spinning horizon; the spin winds them up and the <em>Field Twist</em> climbs until the Big Bounce snaps them back in a reconnection flash. Open magnetic lines coil around each jet and collimate it. <strong>Toroidal</strong> lines (neon magenta) wind around nested tori that wrap the disk and blaze while matter pours in. Pulses of light race along every line.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>✦ Quasar Jets</h3>
+                    <p>While the singularity feeds it fires two razor-thin relativistic beams along its spin axis. Knots of energy race outward along each beam and radiation sparks off its sides. Their reach follows the accretion rate and the Jet Power control.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🌌 Lensing &amp; Gravitational Waves</h3>
+                    <p>Starlight passing the black hole is bent into an Einstein ring around its shadow, and light from the far side of the disk is lifted over the top. Every Big Bounce sends gravitational-wave ripples racing across the spacetime grid.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>✧ Hawking Radiation &amp; the Big Bounce</h3>
+                    <p>Hawking radiation returns swallowed matter as Known matter; lighter singularities radiate harder (T<sub>H</sub> ∝ 1/M). When the horizon holds the Bounce Threshold share of all matter it turns critical and rebounds, throwing everything it held back into its shells.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎨 Color &amp; Spectrum</h3>
+                    <p><strong>Theme</strong> recolors the whole mechanism: disk, matter, fields, jets, grid and panels. Pick any <strong>Background</strong> or your own custom color, then grade the image with a <strong>Filter</strong> (Invert gives a spectrograph plate, plus X-Ray, Infrared, Night Vision, Ultraviolet and more) and the <strong>Gamma</strong>, brightness, contrast, saturation and hue controls. <strong>Spectral Energy</strong> colors matter by kinetic energy; <strong>Doppler Shift</strong> colors it blue toward you and red away. Exports keep your look.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎮 Controls</h3>
+                    <ul>
+                        <li><strong>Drag</strong> orbit · <strong>scroll / pinch</strong> zoom 0.25×–40× · <strong>click</strong> any pole, particle, jet or the black hole to fly to it · <strong>double-click</strong> whole system</li>
+                        <li><strong>C</strong> cinematic · <strong>G</strong> grid · <strong>1 2 3</strong> gravity / magnetic / toroidal · <strong>L</strong> bloom · <strong>I</strong> invert · <strong>T</strong> next theme</li>
+                        <li><strong>F</strong> next focus · <strong>+ −</strong> zoom · <strong>Space</strong> pause · <strong>B</strong> bounce · <strong>R</strong> reset · <strong>H</strong> hide panels</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <button id="showUiBtn" class="ui-toggle">◉ Show Panels (H)</button>
+    </div>
+
+    <!-- Gamma correction filter (exponents set from the Gamma slider) -->
+    <svg class="svg-defs" width="0" height="0" aria-hidden="true">
+        <filter id="gammaFilter" color-interpolation-filters="sRGB">
+            <feComponentTransfer>
+                <feFuncR id="gammaR" type="gamma" amplitude="1" exponent="1" offset="0"/>
+                <feFuncG id="gammaG" type="gamma" amplitude="1" exponent="1" offset="0"/>
+                <feFuncB id="gammaB" type="gamma" amplitude="1" exponent="1" offset="0"/>
+            </feComponentTransfer>
+        </filter>
+    </svg>
+
+    <script src="script.js"></script>
+</body>
+</html>

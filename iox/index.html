@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Unified Universe Visualizer - Polygarity & Multitarity</title>
+    <!--! IOX · Grand Unified Universe
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+    <meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
+    <meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+    <meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Main Canvas Layers -->
+        <canvas id="universeCanvas"></canvas>
+        <canvas id="unknownCanvas"></canvas>
+        <canvas id="fieldCanvas"></canvas>
+        
+        <!-- Header with Theory Info -->
+        <header class="header">
+            <div class="header-content">
+                <h1>
+                    <span class="pulse">◆</span>
+                    GRAND UNIFIED UNIVERSE
+                    <span class="pulse">◆</span>
+                </h1>
+                <p class="subtitle">
+                    Polygarity & Multitarity Theory | Known ⟷ Unknown Duality
+                </p>
+                <div class="formula-display">
+                    <span class="formula-text">Π(K,U) = K√(n+u) × U^√n - Known Universe Ratio = K/(K+U)</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Universe Layer Selector -->
+        <div class="layer-selector">
+            <button class="layer-btn active" data-layer="0">Planck Scale</button>
+            <button class="layer-btn" data-layer="1">Atomic Scale</button>
+            <button class="layer-btn" data-layer="2">Cosmic Scale</button>
+            <button class="layer-btn" data-layer="3">Meta Scale</button>
+            <button class="layer-btn" data-layer="4">All Layers</button>
+        </div>
+
+        <!-- Main Control Panel -->
+        <div class="control-panel">
+            <div class="controls-container">
+                <!-- Theory Parameters -->
+                <div class="control-section">
+                    <h3>Theory Parameters</h3>
+                    
+                    <div class="control-group">
+                        <label for="knownRatioSlider">Known/Total Ratio:</label>
+                        <input type="range" id="knownRatioSlider" min="0" max="100" step="1" value="5" class="slider">
+                        <span id="knownRatioValue" class="value-display">5%</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="infinitySlider">Infinity Parameter (∞):</label>
+                        <input type="range" id="infinitySlider" min="100" max="5000" step="100" value="1000" class="slider">
+                        <span id="infinityValue" class="value-display">1000</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="dimensionalitySlider">Dimensionality (n):</label>
+                        <input type="range" id="dimensionalitySlider" min="2" max="11" step="1" value="4" class="slider">
+                        <span id="dimensionalityValue" class="value-display">4D</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="polaritySlider">Polygarity Strength:</label>
+                        <input type="range" id="polaritySlider" min="0.1" max="5" step="0.1" value="2" class="slider">
+                        <span id="polarityValue" class="value-display">2.0</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="multitaritySlider">Multitarity Density:</label>
+                        <input type="range" id="multitaritySlider" min="0" max="100" step="5" value="50" class="slider">
+                        <span id="multitarityValue" class="value-display">50%</span>
+                    </div>
+                </div>
+
+                <!-- Visualization Options -->
+                <div class="control-section">
+                    <h3>Visualization</h3>
+                    
+                    <div class="control-group">
+                        <label for="speedSlider">Simulation Speed:</label>
+                        <input type="range" id="speedSlider" min="0.1" max="50" step="1" value="5" class="slider">
+                        <span id="speedValue" class="value-display">5x</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="particleSlider">Particles:</label>
+                        <input type="range" id="particleSlider" min="100" max="2000" step="100" value="600" class="slider">
+                        <span id="particleValue" class="value-display">600</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="connectionSlider">Connection Range:</label>
+                        <input type="range" id="connectionSlider" min="50" max="500" step="50" value="200" class="slider">
+                        <span id="connectionValue" class="value-display">200px</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="unknownAlphaSlider">Unknown Universe Alpha:</label>
+                        <input type="range" id="unknownAlphaSlider" min="0" max="100" step="5" value="40" class="slider">
+                        <span id="unknownAlphaValue" class="value-display">40%</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Display Options:</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="showKnown" checked>
+                                Known Universe
+                            </label>
+                            <label>
+                                <input type="checkbox" id="showUnknown" checked>
+                                Unknown Universe
+                            </label>
+                            <label>
+                                <input type="checkbox" id="showPolarity" checked>
+                                Polarity Fields
+                            </label>
+                            <label>
+                                <input type="checkbox" id="showMultitarity" checked>
+                                Multitarity Links
+                            </label>
+                            <label>
+                                <input type="checkbox" id="showDimensions" checked>
+                                Dimensional Axes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-group button-group">
+                    <button id="pauseBtn" class="control-button">⏸ Pause</button>
+                    <button id="resetBtn" class="control-button">↻ Reset</button>
+                    <button id="exportBtn" class="control-button">⬇ Export</button>
+                    <button id="infoBtn" class="control-button">ⓘ Info</button>
+                </div>
+                <div class="brand-copy">© 2026 Mandeep S. Bhullar · SpinalXeno™ · <span title="Signing key fingerprint (SHA-256): 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">signed 2566 6EB2 CF27 3686</span></div>
+            </div>
+
+            <button id="collapseBtn" class="collapse-btn">◀</button>
+        </div>
+
+        <!-- Comprehensive Stats Panel -->
+        <div class="stats-panel">
+            <div class="stats-title">Universe Metrics</div>
+            
+            <div class="stat-row">
+                <div class="stat-item">
+                    <span class="stat-label">Known Space</span>
+                    <span id="knownSpace" class="stat-value">5%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Unknown Space</span>
+                    <span id="unknownSpace" class="stat-value">95%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Dimensional</span>
+                    <span id="dimensional" class="stat-value">4D</span>
+                </div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item">
+                    <span class="stat-label">Polygarity Nodes</span>
+                    <span id="polarityNodes" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Multitarity Links</span>
+                    <span id="multitarityLinks" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Deep Index</span>
+                    <span id="deepIndex" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item">
+                    <span class="stat-label">Coherence (K)</span>
+                    <span id="coherenceK" class="stat-value">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Entropy (U)</span>
+                    <span id="entropyU" class="stat-value">100%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Stability</span>
+                    <span id="stability" class="stat-value">0%</span>
+                </div>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat-item">
+                    <span class="stat-label">FPS</span>
+                    <span id="fpsCount" class="stat-value">60</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Layer</span>
+                    <span id="layerDisplay" class="stat-value">Planck</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Status</span>
+                    <span id="statusDisplay" class="stat-value">Running</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Universe Phase Information -->
+        <div class="phase-info">
+            <div class="phase-item known-phase">
+                <span class="phase-label">Known Phase</span>
+                <span id="knownPhase" class="phase-value">Observable</span>
+            </div>
+            <div class="phase-item unknown-phase">
+                <span class="phase-label">Unknown Phase</span>
+                <span id="unknownPhase" class="phase-value">Latent</span>
+            </div>
+            <div class="phase-item deep-phase">
+                <span class="phase-label">Deep Index</span>
+                <span id="deepPhase" class="phase-value">∞</span>
+            </div>
+        </div>
+
+        <!-- Dimensional Visualization Legend -->
+        <div class="dimension-legend">
+            <div class="legend-title">Dimensional Hierarchy</div>
+            <div class="dimension-items">
+                <div class="dim-item" data-dim="0">
+                    <span class="dim-dot"></span>
+                    <span class="dim-name">Planck (10⁻³⁵m)</span>
+                </div>
+                <div class="dim-item" data-dim="1">
+                    <span class="dim-dot"></span>
+                    <span class="dim-name">Quantum (10⁻¹⁵m)</span>
+                </div>
+                <div class="dim-item" data-dim="2">
+                    <span class="dim-dot"></span>
+                    <span class="dim-name">Atomic (10⁻¹⁰m)</span>
+                </div>
+                <div class="dim-item" data-dim="3">
+                    <span class="dim-dot"></span>
+                    <span class="dim-name">Cosmic (10²⁶m)</span>
+                </div>
+                <div class="dim-item" data-dim="4">
+                    <span class="dim-dot"></span>
+                    <span class="dim-name">Meta (∞)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theory Information Modal -->
+        <div id="infoModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="modal-close">✕</button>
+                <h2>Grand Unified Universe Theory</h2>
+                
+                <div class="info-section">
+                    <h3>📐 Polygarity Principle</h3>
+                    <p>Multiple simultaneous poles/attractors at different scales create competing gravitational, electromagnetic, and dimensional fields. The known universe observes only one pole while infinite poles exist in the unknown universe.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🔗 Multitarity Principle</h3>
+                    <p>Many-to-many dimensional interconnections allow information flow between observed and unobserved scales. A single event at one scale ripples across infinite dimensional hierarchies.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🌌 Deep's Paradox</h3>
+                    <p>The universe exhibits infinite depth that cannot be fully comprehended by finite minds. Each explanation reveals deeper layers. The formula itself becomes paradoxical at infinite depths.</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>📊 Formula Breakdown</h3>
+                    <ul>
+                        <li><strong>K (Known):</strong> Observable density, measurable quantities</li>
+                        <li><strong>U (Unknown):</strong> Hidden density, unobservable structure</li>
+                        <li><strong>n:</strong> Dimensional index (2D to 11D shown)</li>
+                        <li><strong>∞:</strong> Infinity parameter regulating divergence</li>
+                        <li><strong>Π:</strong> Product over all scale levels</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎮 Controls Guide</h3>
+                    <ul>
+                        <li>Adjust Known/Total Ratio to see universe composition</li>
+                        <li>Change dimensionality to explore different scales</li>
+                        <li>Modify polarity strength to observe field effects</li>
+                        <li>Increase multitarity to see dimensional connections</li>
+                        <li>Switch layers to view different scale regimes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-title">Universe Components</div>
+            <div class="legend-items">
+                <div class="legend-item known">
+                    <span class="legend-color"></span>
+                    <span>Known (Bright)</span>
+                </div>
+                <div class="legend-item unknown">
+                    <span class="legend-color"></span>
+                    <span>Unknown (Dark)</span>
+                </div>
+                <div class="legend-item polarity">
+                    <span class="legend-color"></span>
+                    <span>Polarity Node</span>
+                </div>
+                <div class="legend-item multitarity">
+                    <span class="legend-color"></span>
+                    <span>Multitarity Link</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

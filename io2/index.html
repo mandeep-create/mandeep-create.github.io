@@ -121,7 +121,7 @@
                 <div class="control-group">
                     <label for="colorSelect">Visual Theme:</label>
                     <select id="colorSelect" class="control-select">
-                        <option value="cyberpunk">Cyberpunk</option>
+                        <option value="cyberpunk" selected>Cyberpunk</option>
                         <option value="matrix">Matrix</option>
                         <option value="aurora">Aurora</option>
                         <option value="quantum">Quantum</option>
@@ -247,9 +247,9 @@
                 <div class="info-section">
                     <h3>🤖 Three AI Models</h3>
                     <ul>
-                        <li><strong style="color: #00ff88;">Internal AI (Green):</strong> Local processing, fast responses, limited capacity</li>
-                        <li><strong style="color: #ff006e;">Cloud AI (Pink):</strong> Remote processing, distributed compute, latency</li>
-                        <li><strong style="color: #00d9ff;">External AI (Cyan):</strong> Third-party system, specialized tasks, independent</li>
+                        <li><strong style="color: var(--internal-color);">Internal AI (Green):</strong> Local processing, fast responses, limited capacity</li>
+                        <li><strong style="color: var(--cloud-color);">Cloud AI (Pink):</strong> Remote processing, distributed compute, latency</li>
+                        <li><strong style="color: var(--external-color);">External AI (Cyan):</strong> Third-party system, specialized tasks, independent</li>
                     </ul>
                 </div>
 
@@ -325,29 +325,40 @@
                         <li><strong>Rainbow Lines:</strong> Cross-model communication</li>
                     </ul>
                 </div>
+
+                <div class="info-section">
+                    <h3>Controls</h3>
+                    <ul>
+                        <li><strong>Hover:</strong> focus attention: nearby agents drift toward the cursor and fire</li>
+                        <li><strong>Click / tap:</strong> fire a probe pulse: agents scatter, and the nearest agent of each model broadcasts to the others</li>
+                        <li><strong>Space</strong> pause · <strong>R</strong> reset · <strong>C</strong> clusters · <strong>E</strong> export PNG · <strong>H</strong> hide interface · <strong>I</strong> info · <strong>Esc</strong> close</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <!-- Legend -->
         <div class="legend">
             <div class="legend-item">
-                <span class="legend-color" style="background: #00ff88;"></span>
+                <span class="legend-color" style="background: var(--internal-color);"></span>
                 <span>Internal</span>
             </div>
             <div class="legend-item">
-                <span class="legend-color" style="background: #ff006e;"></span>
+                <span class="legend-color" style="background: var(--cloud-color);"></span>
                 <span>Cloud</span>
             </div>
             <div class="legend-item">
-                <span class="legend-color" style="background: #00d9ff;"></span>
+                <span class="legend-color" style="background: var(--external-color);"></span>
                 <span>External</span>
             </div>
             <div class="legend-item">
-                <span class="legend-color" style="border: 2px solid #ffaa00;"></span>
+                <span class="legend-color" style="border: 2px dashed var(--connection-color); border-radius: 50%;"></span>
                 <span>Cluster</span>
             </div>
         </div>
     </div>
+
+    <div class="credit">© 2026 Mandeep S. Bhullar · SpinalXeno™ · <span title="Signing key fingerprint (SHA-256): 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">signed 2566 6EB2 CF27 3686</span> · hover to focus · click to probe · H hides UI</div>
 
     <script src="script.js"></script>
 </body>

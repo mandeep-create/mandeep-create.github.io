@@ -47,9 +47,27 @@ const CONFIG = {
         INTERNAL: { r: 0, g: 255, b: 136 },
         CLOUD: { r: 255, g: 0, b: 110 },
         EXTERNAL: { r: 0, g: 217, b: 255 },
-        CONNECTION: { r: 255, g: 170, b: 0 }
+        CONNECTION: { r: 255, g: 170, b: 0 },
+        BG: { r: 5, g: 8, b: 16 }
     }
 };
+
+// ===== VISUAL THEMES =====
+
+const rgb = (r, g, b) => ({ r, g, b });
+const THEMES = {
+    cyberpunk: { internal: rgb(0, 255, 136),  cloud: rgb(255, 0, 110),   external: rgb(0, 217, 255),  connection: rgb(255, 170, 0),   bg: rgb(5, 8, 16) },
+    matrix:    { internal: rgb(0, 255, 65),   cloud: rgb(170, 255, 0),   external: rgb(0, 200, 170),  connection: rgb(210, 255, 210), bg: rgb(0, 6, 2) },
+    aurora:    { internal: rgb(124, 255, 203), cloud: rgb(179, 136, 255), external: rgb(72, 201, 255), connection: rgb(255, 240, 170), bg: rgb(4, 8, 20) },
+    quantum:   { internal: rgb(164, 107, 255), cloud: rgb(255, 79, 216),  external: rgb(79, 209, 255), connection: rgb(255, 255, 255), bg: rgb(6, 3, 16) },
+    organic:   { internal: rgb(155, 229, 100), cloud: rgb(255, 179, 71),  external: rgb(224, 122, 95), connection: rgb(240, 220, 170), bg: rgb(10, 8, 4) },
+    neon:      { internal: rgb(255, 0, 255),  cloud: rgb(255, 255, 0),   external: rgb(0, 255, 255),  connection: rgb(255, 80, 80),   bg: rgb(0, 0, 0) }
+};
+
+const rgba = (c, a) => `rgba(${c.r | 0}, ${c.g | 0}, ${c.b | 0}, ${a})`;
+const mix = (a, b, t) => rgb(a.r + (b.r - a.r) * t, a.g + (b.g - a.g) * t, a.b + (b.b - a.b) * t);
+
+let nextParticleId = 0;
 
 // ===== ADVANCED PARTICLE CLASS =====
 
@@ -86,15 +104,12 @@ class AdvancedParticle {
         this.messageQueue = [];
         this.lastMessageTime = 0;
         this.communicationPartner = null;
+        this.id = nextParticleId++;
     }
 
-    update(allParticles, mode, speed, connectionRange, interactionMode) {
+    update(sameModelParticles, otherModelParticles, mode, speed, connectionRange, interactionMode) {
         this.ax = 0;
         this.ay = 0;
-
-        // Get particles from same and other models
-        const sameModelParticles = allParticles.filter(p => p.model === this.model);
-        const otherModelParticles = allParticles.filter(p => p.model !== this.model);
 
         // Apply logic mode behavior
         this.applyLogicMode(sameModelParticles, mode, connectionRange);
@@ -107,6 +122,20 @@ class AdvancedParticle {
             connectionRange
         );
 
+        // Cursor probe - attention pulls nearby agents in and wakes them up
+        const mouse = STATE.mouse;
+        if (mouse.active) {
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 160 && dist > 1) {
+                const k = 1 - dist / 160;
+                this.ax += (dx / dist) * 0.02 * k;
+                this.ay += (dy / dist) * 0.02 * k;
+                this.activation += 0.05 * k;
+            }
+        }
+
         // Physics
         this.vx += this.ax;
         this.vy += this.ay;
@@ -116,17 +145,20 @@ class AdvancedParticle {
         this.x += this.vx * speed;
         this.y += this.vy * speed;
 
-        // Boundary wrapping
+        // Boundary wrapping (the trail restarts so it doesn't streak across the screen)
+        let wrapped = true;
         if (this.x < 0) this.x = window.innerWidth;
-        if (this.x > window.innerWidth) this.x = 0;
-        if (this.y < 0) this.y = window.innerHeight;
-        if (this.y > window.innerHeight) this.y = 0;
+        else if (this.x > window.innerWidth) this.x = 0;
+        else if (this.y < 0) this.y = window.innerHeight;
+        else if (this.y > window.innerHeight) this.y = 0;
+        else wrapped = false;
+        if (wrapped) this.trail.length = 0;
 
         // Update distance from home
         this.distanceFromHome = Math.hypot(this.x - this.homeX, this.y - this.homeY);
 
         // Decay activation
-        this.activation = Math.max(0, this.activation - 0.015);
+        this.activation = Math.min(1, Math.max(0, this.activation - 0.015));
         this.pulsePhase += 0.05;
 
         // Update trail
@@ -722,11 +754,13 @@ class AdvancedParticle {
     }
 
     draw(ctx) {
+        const color = this.getColor();
+        const a = this.activation;
+
         // Draw trail
-        if (this.trail.length > 1) {
-            const color = this.getColor();
-            ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${this.activation * 0.15})`;
-            ctx.lineWidth = 0.5;
+        if (this.trail.length > 1 && a > 0.02) {
+            ctx.strokeStyle = rgba(color, a * 0.25);
+            ctx.lineWidth = 0.6;
             ctx.beginPath();
             ctx.moveTo(this.trail[0].x, this.trail[0].y);
             for (let i = 1; i < this.trail.length; i++) {
@@ -735,19 +769,31 @@ class AdvancedParticle {
             ctx.stroke();
         }
 
-        // Draw particle
-        const color = this.getColor();
-        const radius = Math.max(1.5, 2.5 + this.activation * 3);
+        const radius = 1.5 + a * 3.5;
 
-        ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${0.5 + this.activation * 0.5})`;
-        ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, ${this.activation * 0.8})`;
-        ctx.shadowBlur = 12 * this.activation;
+        // Glow halo (additive, much cheaper than shadowBlur)
+        if (a > 0.15) {
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.fillStyle = rgba(color, a * 0.12);
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, radius * 3.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+        }
 
+        // Core
+        ctx.fillStyle = rgba(color, 0.55 + a * 0.45);
         ctx.beginPath();
         ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.shadowColor = 'transparent';
+        // Hot white centre when fully fired
+        if (a > 0.6) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${(a - 0.6) * 1.5})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, radius * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+        }
     }
 }
 
@@ -779,7 +825,19 @@ const STATE = {
     neuralActivity: { internal: 0, cloud: 0, external: 0 },
     coherence: 0,
     latency: 0,
-    synchronization: 0
+    synchronization: 0,
+
+    all: [],
+    packets: [],
+    rings: [],
+    clusters: [],
+    shocks: [],
+    latencySamples: [],
+    mouse: { x: 0, y: 0, active: false },
+    frame: 0,
+    dpr: 1,
+    W: 0,
+    H: 0
 };
 
 // ===== DOM ELEMENTS =====
@@ -846,18 +904,54 @@ const DOM = {
 
 function init() {
     DOM.ctx = DOM.canvas.getContext('2d');
-    
+
     resizeCanvas();
+    applyTheme(DOM.colorSelect.value);
     initializeParticles();
     setupEventListeners();
-    animate();
-    
+    requestAnimationFrame(animate);
+
     addSystemMessage('System initialized...');
 }
 
 function resizeCanvas() {
-    DOM.canvas.width = window.innerWidth;
-    DOM.canvas.height = window.innerHeight;
+    // Render at device resolution so the network stays sharp on Retina screens
+    STATE.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    STATE.W = window.innerWidth;
+    STATE.H = window.innerHeight;
+    DOM.canvas.width = Math.round(STATE.W * STATE.dpr);
+    DOM.canvas.height = Math.round(STATE.H * STATE.dpr);
+    DOM.ctx.setTransform(STATE.dpr, 0, 0, STATE.dpr, 0, 0);
+    paintBackground(1);
+    if (!STATE.isRunning) STATE.all.forEach(p => p.draw(DOM.ctx));
+}
+
+function paintBackground(alpha) {
+    DOM.ctx.fillStyle = rgba(CONFIG.COLORS.BG, alpha);
+    DOM.ctx.fillRect(0, 0, STATE.W, STATE.H);
+}
+
+function applyTheme(name) {
+    const theme = THEMES[name] || THEMES.cyberpunk;
+    STATE.theme = name;
+    CONFIG.COLORS = {
+        INTERNAL: theme.internal,
+        CLOUD: theme.cloud,
+        EXTERNAL: theme.external,
+        CONNECTION: theme.connection,
+        BG: theme.bg
+    };
+
+    // Re-colour the whole interface to match
+    const css = c => `rgb(${c.r}, ${c.g}, ${c.b})`;
+    const root = document.documentElement.style;
+    root.setProperty('--internal-color', css(theme.internal));
+    root.setProperty('--cloud-color', css(theme.cloud));
+    root.setProperty('--external-color', css(theme.external));
+    root.setProperty('--connection-color', css(theme.connection));
+    root.setProperty('--bg-darker', css(theme.bg));
+
+    paintBackground(1);
 }
 
 function initializeParticles() {
@@ -891,6 +985,16 @@ function initializeParticles() {
             new AdvancedParticle(x, y, CONFIG.MODELS.EXTERNAL)
         );
     }
+
+    STATE.all = [
+        ...STATE.particles[CONFIG.MODELS.INTERNAL],
+        ...STATE.particles[CONFIG.MODELS.CLOUD],
+        ...STATE.particles[CONFIG.MODELS.EXTERNAL]
+    ];
+    STATE.all.forEach((p, i) => { p.idx = i; });
+    STATE.packets = [];
+    STATE.rings = [];
+    STATE.clusters = [];
 
     addSystemMessage(`Initialized ${STATE.particleCount} particles per model`);
 }
@@ -930,6 +1034,15 @@ function setupEventListeners() {
         DOM.communicationValue.textContent = Math.round(parseFloat(e.target.value) * 100) + '%';
     });
 
+    DOM.colorSelect.addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+        addSystemMessage(`Visual theme: ${e.target.value.toUpperCase()}`);
+    });
+
+    DOM.showClusters.addEventListener('change', () => {
+        if (!DOM.showClusters.checked) STATE.clusters = [];
+    });
+
     DOM.pauseBtn.addEventListener('click', togglePause);
     DOM.resetBtn.addEventListener('click', reset);
     DOM.exportBtn.addEventListener('click', exportScreenshot);
@@ -942,51 +1055,133 @@ function setupEventListeners() {
         if (e.target === DOM.infoModal) hideInfo();
     });
 
+    // Cursor probe: hover to focus attention, click to fire a probe pulse
+    DOM.canvas.addEventListener('pointermove', (e) => {
+        STATE.mouse.x = e.clientX;
+        STATE.mouse.y = e.clientY;
+        STATE.mouse.active = true;
+    });
+    DOM.canvas.addEventListener('pointerleave', () => { STATE.mouse.active = false; });
+    DOM.canvas.addEventListener('pointerup', (e) => {
+        if (e.pointerType !== 'mouse') STATE.mouse.active = false;
+    });
+    DOM.canvas.addEventListener('pointerdown', (e) => {
+        STATE.shocks.push({ x: e.clientX, y: e.clientY });
+    });
+
+    window.addEventListener('keydown', onKey);
     window.addEventListener('resize', resizeCanvas);
+}
+
+function onKey(e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.closest('input, select, textarea')) return;
+    if (e.target.closest('button') && (e.key === ' ' || e.key === 'Enter')) return;
+
+    switch (e.key.toLowerCase()) {
+        case ' ': e.preventDefault(); togglePause(); break;
+        case 'r': reset(); break;
+        case 'i': DOM.infoModal.classList.contains('hidden') ? showInfo() : hideInfo(); break;
+        case 'escape': hideInfo(); break;
+        case 'h': document.body.classList.toggle('ui-hidden'); break;
+        case 'e': exportScreenshot(); break;
+        case 'c': DOM.showClusters.click(); break;
+    }
+}
+
+// ===== SPATIAL GRID =====
+// Agents only look at the 3x3 cells around them instead of every agent on screen.
+
+const GRID = { size: 300, cells: new Map() };
+
+function cellKey(cx, cy) {
+    return (cx + 10) * 10000 + (cy + 10);
+}
+
+function buildGrid(all, size) {
+    GRID.size = size;
+    GRID.cells.clear();
+    for (const p of all) {
+        const key = cellKey(Math.floor(p.x / size), Math.floor(p.y / size));
+        let cell = GRID.cells.get(key);
+        if (!cell) GRID.cells.set(key, cell = []);
+        cell.push(p);
+    }
+}
+
+function forNeighbors(p, fn) {
+    const cx = Math.floor(p.x / GRID.size);
+    const cy = Math.floor(p.y / GRID.size);
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+            const cell = GRID.cells.get(cellKey(cx + i, cy + j));
+            if (cell) for (let k = 0; k < cell.length; k++) fn(cell[k]);
+        }
+    }
+}
+
+function nearest(particles, x, y) {
+    let best = null, bestD = Infinity;
+    for (const p of particles) {
+        const d = (p.x - x) ** 2 + (p.y - y) ** 2;
+        if (d < bestD) { bestD = d; best = p; }
+    }
+    return best;
 }
 
 // ===== ANIMATION LOOP =====
 
 function animate() {
-    // Clear canvas with fade effect
-    DOM.ctx.fillStyle = 'rgba(5, 8, 16, 0.08)';
-    DOM.ctx.fillRect(0, 0, DOM.canvas.width, DOM.canvas.height);
-
     if (STATE.isRunning) {
-        // Update all particles
-        Object.values(STATE.particles).forEach(modelParticles => {
-            modelParticles.forEach(particle => {
-                const allParticles = [
-                    ...STATE.particles[CONFIG.MODELS.INTERNAL],
-                    ...STATE.particles[CONFIG.MODELS.CLOUD],
-                    ...STATE.particles[CONFIG.MODELS.EXTERNAL]
-                ];
-                
-                particle.update(
-                    allParticles,
-                    STATE.logicMode,
-                    STATE.speed,
-                    STATE.connectionRange,
-                    STATE.interactionMode
-                );
-            });
-        });
+        // Fade the previous frame for motion trails
+        paintBackground(0.1);
+
+        const all = STATE.all;
+        // Cell size covers the furthest reach of any behaviour (2x connection range)
+        buildGrid(all, STATE.connectionRange * 2);
+
+        const same = [], other = [];
+        for (const particle of all) {
+            same.length = 0;
+            other.length = 0;
+            forNeighbors(particle, q => (q.model === particle.model ? same : other).push(q));
+            particle.update(
+                same,
+                other,
+                STATE.logicMode,
+                STATE.speed,
+                STATE.connectionRange,
+                STATE.interactionMode
+            );
+        }
+
+        applyShocks();
+        computePairs(all);
 
         // Draw connections
         drawConnections();
 
+        // Clusters
+        if (DOM.showClusters.checked) {
+            if (STATE.frame % 15 === 0) findClusters();
+            drawClusters();
+        }
+
         // Draw particles
-        Object.values(STATE.particles).forEach(modelParticles => {
-            modelParticles.forEach(particle => particle.draw(DOM.ctx));
-        });
+        all.forEach(particle => particle.draw(DOM.ctx));
+
+        // Messages in flight
+        updatePackets();
+        drawProbe();
 
         // Generate cross-model communications
         if (Math.random() < STATE.crossModelCommunication * 0.05) {
             generateCrossModelCommunication();
         }
 
-        // Update statistics
-        updateStats();
+        // Update statistics (a few times a second is plenty for the DOM)
+        if (STATE.frame % 6 === 0) updateStats();
+        STATE.frame++;
     }
 
     // FPS counter
@@ -1002,118 +1197,296 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+// ===== CONNECTIONS =====
+
+const PAIRS = { same: [], cross: [], counts: { internal: 0, cloud: 0, external: 0, cross: 0 } };
+
+function computePairs(all) {
+    const range = STATE.connectionRange;
+    const far = range * 1.5;
+    const r2 = range * range;
+    const f2 = far * far;
+    const counts = PAIRS.counts;
+
+    // Flat [p1, p2, distance, ...] lists, rebuilt each frame
+    PAIRS.same.length = 0;
+    PAIRS.cross.length = 0;
+    counts.internal = counts.cloud = counts.external = counts.cross = 0;
+
+    for (const p of all) {
+        forNeighbors(p, q => {
+            if (q.id <= p.id) return;
+            const dx = q.x - p.x;
+            const dy = q.y - p.y;
+            const d2 = dx * dx + dy * dy;
+            if (q.model === p.model) {
+                if (d2 < r2) {
+                    PAIRS.same.push(p, q, Math.sqrt(d2));
+                    counts[p.model]++;
+                }
+            } else if (d2 < f2) {
+                PAIRS.cross.push(p, q, Math.sqrt(d2));
+                counts.cross++;
+            }
+        });
+    }
+}
+
 function drawConnections() {
-    const threshold = STATE.connectionRange;
+    const ctx = DOM.ctx;
+    const range = STATE.connectionRange;
+    const far = range * 1.5;
 
-    // Internal model connections (green solid lines)
-    drawModelConnections(
-        STATE.particles[CONFIG.MODELS.INTERNAL],
-        CONFIG.COLORS.INTERNAL,
-        threshold
-    );
+    // Same-model links (solid), batched by model and opacity band: one stroke per band
+    if (DOM.showConnections.checked) {
+        const bands = new Map();
+        const s = PAIRS.same;
+        for (let i = 0; i < s.length; i += 3) {
+            const p1 = s[i], p2 = s[i + 1], d = s[i + 2];
+            const opacity = (1 - d / range) * (p1.activation + p2.activation) / 2 * 0.6;
+            if (opacity <= 0.02) continue;
 
-    // Cloud model connections (pink solid lines)
-    drawModelConnections(
-        STATE.particles[CONFIG.MODELS.CLOUD],
-        CONFIG.COLORS.CLOUD,
-        threshold
-    );
+            const band = Math.min(9, (opacity * 10) | 0);
+            const key = p1.model + band;
+            let b = bands.get(key);
+            if (!b) bands.set(key, b = { color: p1.getColor(), band, pts: [] });
+            b.pts.push(p1.x, p1.y, p2.x, p2.y);
 
-    // External model connections (cyan solid lines)
-    drawModelConnections(
-        STATE.particles[CONFIG.MODELS.EXTERNAL],
-        CONFIG.COLORS.EXTERNAL,
-        threshold
-    );
-
-    // Cross-model connections (rainbow/orange lines)
-    if (DOM.showCommunication.checked) {
-        drawCrossModelConnections(threshold);
-    }
-}
-
-function drawModelConnections(particles, color, threshold) {
-    if (!DOM.showConnections.checked) return;
-
-    for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-            const p1 = particles[i];
-            const p2 = particles[j];
-
-            const dx = p2.x - p1.x;
-            const dy = p2.y - p1.y;
-            const distance = Math.hypot(dx, dy);
-
-            if (distance < threshold) {
-                const opacity = (1 - distance / threshold) * 
-                               (p1.activation + p2.activation) / 2 * 0.6;
-
-                if (opacity > 0.02) {
-                    DOM.ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity})`;
-                    DOM.ctx.lineWidth = 0.5 + opacity * 1.5;
-                    DOM.ctx.beginPath();
-                    DOM.ctx.moveTo(p1.x, p1.y);
-                    DOM.ctx.lineTo(p2.x, p2.y);
-                    DOM.ctx.stroke();
-                }
+            // Strong links occasionally carry a data pulse
+            if (opacity > 0.3 && STATE.packets.length < 60 && Math.random() < 0.0008) {
+                sendPacket(p1, p2, null);
             }
+        }
+
+        bands.forEach(b => {
+            const o = (b.band + 0.5) / 10;
+            ctx.strokeStyle = rgba(b.color, o);
+            ctx.lineWidth = 0.5 + o * 1.5;
+            ctx.beginPath();
+            for (let i = 0; i < b.pts.length; i += 4) {
+                ctx.moveTo(b.pts[i], b.pts[i + 1]);
+                ctx.lineTo(b.pts[i + 2], b.pts[i + 3]);
+            }
+            ctx.stroke();
+        });
+    }
+
+    // Cross-model links: faint ones dotted, strong ones as rainbow gradients between the two models
+    if (DOM.showCommunication.checked && STATE.crossModelCommunication > 0) {
+        const comm = STATE.crossModelCommunication;
+        const c = PAIRS.cross;
+        const dotted = new Map();
+        const bright = [];
+
+        for (let i = 0; i < c.length; i += 3) {
+            const p1 = c[i], p2 = c[i + 1], d = c[i + 2];
+            const opacity = (1 - d / far) * (p1.activation + p2.activation) / 2 * comm * 0.4;
+            if (opacity <= 0.01) continue;
+
+            if (opacity > 0.1 && bright.length < 240) {
+                bright.push(p1, p2, opacity);
+            } else {
+                const band = Math.min(9, (opacity * 20) | 0);
+                let pts = dotted.get(band);
+                if (!pts) dotted.set(band, pts = []);
+                pts.push(p1.x, p1.y, p2.x, p2.y);
+            }
+        }
+
+        ctx.setLineDash([2, 3]);
+        dotted.forEach((pts, band) => {
+            const o = (band + 0.5) / 20;
+            ctx.strokeStyle = rgba(CONFIG.COLORS.CONNECTION, o);
+            ctx.lineWidth = 0.3 + o;
+            ctx.beginPath();
+            for (let i = 0; i < pts.length; i += 4) {
+                ctx.moveTo(pts[i], pts[i + 1]);
+                ctx.lineTo(pts[i + 2], pts[i + 3]);
+            }
+            ctx.stroke();
+        });
+        ctx.setLineDash([]);
+
+        for (let i = 0; i < bright.length; i += 3) {
+            const p1 = bright[i], p2 = bright[i + 1], o = bright[i + 2];
+            const g = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+            g.addColorStop(0, rgba(p1.getColor(), o * 1.6));
+            g.addColorStop(0.5, rgba(CONFIG.COLORS.CONNECTION, o * 1.6));
+            g.addColorStop(1, rgba(p2.getColor(), o * 1.6));
+            ctx.strokeStyle = g;
+            ctx.lineWidth = 0.6 + o * 2;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
         }
     }
 }
 
-function drawCrossModelConnections(threshold) {
-    const models = [
-        { particles: STATE.particles[CONFIG.MODELS.INTERNAL], color: CONFIG.COLORS.INTERNAL },
-        { particles: STATE.particles[CONFIG.MODELS.CLOUD], color: CONFIG.COLORS.CLOUD },
-        { particles: STATE.particles[CONFIG.MODELS.EXTERNAL], color: CONFIG.COLORS.EXTERNAL }
-    ];
+// ===== CLUSTERS =====
 
-    for (let i = 0; i < models.length; i++) {
-        for (let j = i + 1; j < models.length; j++) {
-            const p1Array = models[i].particles;
-            const p2Array = models[j].particles;
+function findClusters() {
+    const all = STATE.all;
+    const parent = new Int32Array(all.length);
+    for (let i = 0; i < parent.length; i++) parent[i] = i;
+    const find = i => {
+        while (parent[i] !== i) i = parent[i] = parent[parent[i]];
+        return i;
+    };
 
-            // Sample connections (not all for performance)
-            const sampleRate = Math.max(0.05, 1 - STATE.crossModelCommunication);
-            
-            for (let a = 0; a < p1Array.length; a += Math.ceil(1 / sampleRate)) {
-                const p1 = p1Array[a];
-                for (let b = 0; b < p2Array.length; b += Math.ceil(1 / sampleRate)) {
-                    const p2 = p2Array[b];
+    // Union tightly-linked agents of the same model
+    const limit = STATE.connectionRange * 0.55;
+    const s = PAIRS.same;
+    for (let i = 0; i < s.length; i += 3) {
+        if (s[i + 2] < limit) parent[find(s[i].idx)] = find(s[i + 1].idx);
+    }
 
-                    const dx = p2.x - p1.x;
-                    const dy = p2.y - p1.y;
-                    const distance = Math.hypot(dx, dy);
+    const groups = new Map();
+    all.forEach(p => {
+        const root = find(p.idx);
+        let g = groups.get(root);
+        if (!g) groups.set(root, g = []);
+        g.push(p);
+    });
 
-                    if (distance < threshold * 1.5) {
-                        const opacity = (1 - distance / (threshold * 1.5)) * 
-                                       (p1.activation + p2.activation) / 2 * STATE.crossModelCommunication * 0.4;
+    STATE.clusters = [...groups.values()]
+        .filter(g => g.length >= 6)
+        .sort((a, b) => b.length - a.length)
+        .slice(0, 12)
+        .map((members, n) => {
+            members.forEach(p => { p.clusterId = n + 1; });
+            return { id: n + 1, members };
+        });
+}
 
-                        if (opacity > 0.01) {
-                            // Rainbow gradient for cross-model
-                            DOM.ctx.strokeStyle = `rgba(${CONFIG.COLORS.CONNECTION.r}, ${CONFIG.COLORS.CONNECTION.g}, ${CONFIG.COLORS.CONNECTION.b}, ${opacity})`;
-                            DOM.ctx.lineWidth = 0.3 + opacity;
-                            DOM.ctx.setLineDash([2, 2]); // Dotted line for cross-model
-                            DOM.ctx.beginPath();
-                            DOM.ctx.moveTo(p1.x, p1.y);
-                            DOM.ctx.lineTo(p2.x, p2.y);
-                            DOM.ctx.stroke();
-                            DOM.ctx.setLineDash([]);
-                        }
-                    }
-                }
+function drawClusters() {
+    const ctx = DOM.ctx;
+    ctx.save();
+    ctx.setLineDash([4, 6]);
+    ctx.lineDashOffset = -STATE.frame * 0.5;
+    ctx.font = '10px "Courier New", monospace';
+
+    for (const cl of STATE.clusters) {
+        let cx = 0, cy = 0;
+        cl.members.forEach(p => { cx += p.x; cy += p.y; });
+        cx /= cl.members.length;
+        cy /= cl.members.length;
+
+        let r = 0;
+        cl.members.forEach(p => { r = Math.max(r, Math.hypot(p.x - cx, p.y - cy)); });
+        r += 14;
+        if (r > 280) continue; // a member wrapped to the other side of the screen
+
+        ctx.strokeStyle = rgba(CONFIG.COLORS.CONNECTION, 0.55);
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.fillStyle = rgba(CONFIG.COLORS.CONNECTION, 0.85);
+        ctx.fillText(`C${cl.id} · ${cl.members.length}`, cx + r * 0.72, cy - r * 0.72);
+    }
+    ctx.restore();
+}
+
+// ===== MESSAGES IN FLIGHT =====
+
+function sendPacket(from, to, label) {
+    if (!from || !to || STATE.packets.length > 80) return;
+    STATE.packets.push({
+        from,
+        to,
+        label,
+        t: 0,
+        dur: 25 + Math.random() * 25,
+        born: performance.now(),
+        cross: from.model !== to.model
+    });
+}
+
+function updatePackets() {
+    const ctx = DOM.ctx;
+    const maxDist = Math.hypot(STATE.W, STATE.H) * 0.45;
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (let i = STATE.packets.length - 1; i >= 0; i--) {
+        const k = STATE.packets[i];
+        k.t += STATE.speed;
+
+        const f = k.from, g = k.to;
+        const dx = g.x - f.x;
+        const dy = g.y - f.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > maxDist) { STATE.packets.splice(i, 1); continue; }
+
+        const e = Math.min(1, k.t / k.dur);
+        const x = f.x + dx * e;
+        const y = f.y + dy * e;
+        const c = mix(f.getColor(), g.getColor(), e);
+
+        // Comet tail
+        const tail = Math.max(0, e - 0.18);
+        ctx.strokeStyle = rgba(c, 0.8);
+        ctx.lineWidth = k.cross ? 2 : 1.2;
+        ctx.beginPath();
+        ctx.moveTo(f.x + dx * tail, f.y + dy * tail);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        // Head
+        ctx.fillStyle = rgba(c, 0.95);
+        ctx.beginPath();
+        ctx.arc(x, y, k.cross ? 3 : 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Arrowhead shows the direction of cross-model traffic
+        if (k.cross && dist > 1) {
+            const ux = dx / dist, uy = dy / dist;
+            ctx.beginPath();
+            ctx.moveTo(x + ux * 9, y + uy * 9);
+            ctx.lineTo(x - uy * 4 + ux * 2, y + ux * 4 + uy * 2);
+            ctx.lineTo(x + uy * 4 + ux * 2, y - ux * 4 + uy * 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        if (e >= 1) {
+            g.activation = Math.min(1, g.activation + 0.7);
+            STATE.rings.push({ x: g.x, y: g.y, r: 2, max: k.cross ? 26 : 12, life: 1, c: g.getColor() });
+            if (k.cross) {
+                STATE.latencySamples.push(performance.now() - k.born);
+                if (STATE.latencySamples.length > 20) STATE.latencySamples.shift();
             }
+            STATE.packets.splice(i, 1);
         }
     }
+
+    // Arrival and probe rings
+    for (let i = STATE.rings.length - 1; i >= 0; i--) {
+        const r = STATE.rings[i];
+        r.r += (r.max - r.r) * 0.15;
+        r.life -= 0.05;
+        if (r.life <= 0) { STATE.rings.splice(i, 1); continue; }
+        ctx.strokeStyle = rgba(r.c, r.life * 0.8);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
 }
 
 function generateCrossModelCommunication() {
     const models = [CONFIG.MODELS.INTERNAL, CONFIG.MODELS.CLOUD, CONFIG.MODELS.EXTERNAL];
     const model1 = models[Math.floor(Math.random() * models.length)];
-    const model2 = models.find(m => m !== model1);
+    const others = models.filter(m => m !== model1);
+    const model2 = others[Math.floor(Math.random() * others.length)];
 
     const p1 = STATE.particles[model1][Math.floor(Math.random() * STATE.particles[model1].length)];
-    const p2 = STATE.particles[model2][Math.floor(Math.random() * STATE.particles[model2].length)];
+    if (!p1) return;
+    // The closest agent of the target model receives it
+    const p2 = nearest(STATE.particles[model2], p1.x, p1.y);
 
     const messages = [
         'sync_request',
@@ -1127,8 +1500,57 @@ function generateCrossModelCommunication() {
     ];
 
     const message = messages[Math.floor(Math.random() * messages.length)];
+    sendPacket(p1, p2, message);
     addModelMessage(model1, `${model1} → ${model2}: ${message}`);
 }
+
+// ===== CURSOR PROBE =====
+
+function applyShocks() {
+    while (STATE.shocks.length) {
+        const s = STATE.shocks.shift();
+        const R = 240;
+        let hit = 0;
+
+        STATE.all.forEach(p => {
+            const dx = p.x - s.x;
+            const dy = p.y - s.y;
+            const d = Math.hypot(dx, dy);
+            if (d < R && d > 0) {
+                const k = 1 - d / R;
+                p.vx += (dx / d) * 6 * k;
+                p.vy += (dy / d) * 6 * k;
+                p.activation = Math.max(p.activation, k);
+                hit++;
+            }
+        });
+
+        STATE.rings.push({ x: s.x, y: s.y, r: 4, max: R, life: 1, c: CONFIG.COLORS.CONNECTION });
+
+        // The nearest agent of each model answers and broadcasts to the other two
+        const heads = Object.values(STATE.particles).map(list => nearest(list, s.x, s.y));
+        heads.forEach(a => heads.forEach(b => { if (a !== b) sendPacket(a, b, null); }));
+
+        addSystemMessage(`Probe pulse · ${hit} agents excited`);
+    }
+}
+
+function drawProbe() {
+    const m = STATE.mouse;
+    if (!m.active) return;
+    const ctx = DOM.ctx;
+    ctx.strokeStyle = rgba(CONFIG.COLORS.CONNECTION, 0.5);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, 10, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = rgba(CONFIG.COLORS.CONNECTION, 0.05);
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, 160, 0, Math.PI * 2);
+    ctx.stroke();
+}
+
+// ===== STATISTICS =====
 
 function updateStats() {
     // Calculate activity levels
@@ -1137,74 +1559,34 @@ function updateStats() {
         particles.forEach(p => {
             totalActivation += p.activation;
         });
-        STATE.neuralActivity[model] = Math.round((totalActivation / particles.length) * 100);
+        STATE.neuralActivity[model] = particles.length ? Math.min(100, Math.round((totalActivation / particles.length) * 100)) : 0;
     });
 
     DOM.internalActivity.textContent = STATE.neuralActivity.internal + '%';
     DOM.cloudActivity.textContent = STATE.neuralActivity.cloud + '%';
     DOM.externalActivity.textContent = STATE.neuralActivity.external + '%';
 
-    // Count connections per model
-    let internalConn = 0, cloudConn = 0, externalConn = 0;
-    
-    for (let i = 0; i < STATE.particles[CONFIG.MODELS.INTERNAL].length; i++) {
-        for (let j = i + 1; j < STATE.particles[CONFIG.MODELS.INTERNAL].length; j++) {
-            const dist = Math.hypot(
-                STATE.particles[CONFIG.MODELS.INTERNAL][j].x - STATE.particles[CONFIG.MODELS.INTERNAL][i].x,
-                STATE.particles[CONFIG.MODELS.INTERNAL][j].y - STATE.particles[CONFIG.MODELS.INTERNAL][i].y
-            );
-            if (dist < STATE.connectionRange) internalConn++;
-        }
-    }
-
-    for (let i = 0; i < STATE.particles[CONFIG.MODELS.CLOUD].length; i++) {
-        for (let j = i + 1; j < STATE.particles[CONFIG.MODELS.CLOUD].length; j++) {
-            const dist = Math.hypot(
-                STATE.particles[CONFIG.MODELS.CLOUD][j].x - STATE.particles[CONFIG.MODELS.CLOUD][i].x,
-                STATE.particles[CONFIG.MODELS.CLOUD][j].y - STATE.particles[CONFIG.MODELS.CLOUD][i].y
-            );
-            if (dist < STATE.connectionRange) cloudConn++;
-        }
-    }
-
-    for (let i = 0; i < STATE.particles[CONFIG.MODELS.EXTERNAL].length; i++) {
-        for (let j = i + 1; j < STATE.particles[CONFIG.MODELS.EXTERNAL].length; j++) {
-            const dist = Math.hypot(
-                STATE.particles[CONFIG.MODELS.EXTERNAL][j].x - STATE.particles[CONFIG.MODELS.EXTERNAL][i].x,
-                STATE.particles[CONFIG.MODELS.EXTERNAL][j].y - STATE.particles[CONFIG.MODELS.EXTERNAL][i].y
-            );
-            if (dist < STATE.connectionRange) externalConn++;
-        }
-    }
-
-    DOM.internalConnections.textContent = `Conn: ${internalConn}`;
-    DOM.cloudConnections.textContent = `Conn: ${cloudConn}`;
-    DOM.externalConnections.textContent = `Conn: ${externalConn}`;
-
-    // Count cross-model connections
-    let crossModelConn = 0;
-    for (let i = 0; i < STATE.particles[CONFIG.MODELS.INTERNAL].length; i++) {
-        for (let j = 0; j < STATE.particles[CONFIG.MODELS.CLOUD].length; j++) {
-            const dist = Math.hypot(
-                STATE.particles[CONFIG.MODELS.CLOUD][j].x - STATE.particles[CONFIG.MODELS.INTERNAL][i].x,
-                STATE.particles[CONFIG.MODELS.CLOUD][j].y - STATE.particles[CONFIG.MODELS.INTERNAL][i].y
-            );
-            if (dist < STATE.connectionRange * 1.5) crossModelConn++;
-        }
-    }
-
-    DOM.crossModelConnections.textContent = Math.min(9999, crossModelConn);
+    // Connections per model and across models (counted from this frame's pairs)
+    const counts = PAIRS.counts;
+    DOM.internalConnections.textContent = `Conn: ${counts.internal}`;
+    DOM.cloudConnections.textContent = `Conn: ${counts.cloud}`;
+    DOM.externalConnections.textContent = `Conn: ${counts.external}`;
+    DOM.crossModelConnections.textContent = Math.min(9999, counts.cross);
 
     // Calculate metrics
     const totalActivity = (STATE.neuralActivity.internal + STATE.neuralActivity.cloud + STATE.neuralActivity.external) / 3;
-    DOM.coherenceLevel.textContent = Math.round(totalActivity) + '%';
+    STATE.coherence = Math.round(totalActivity);
+    DOM.coherenceLevel.textContent = STATE.coherence + '%';
 
-    const avgConnectivity = (internalConn + cloudConn + externalConn) / 3;
-    DOM.latencyLevel.textContent = Math.round((1 - (avgConnectivity / 100)) * 50) + 'ms';
+    // Latency: measured transit time of recent cross-model messages
+    const samples = STATE.latencySamples;
+    STATE.latency = samples.length ? Math.round(samples.reduce((a, b) => a + b, 0) / samples.length) : 0;
+    DOM.latencyLevel.textContent = samples.length ? STATE.latency + 'ms' : '—';
 
     const sync = Math.abs(STATE.neuralActivity.internal - STATE.neuralActivity.cloud) +
                  Math.abs(STATE.neuralActivity.cloud - STATE.neuralActivity.external);
-    DOM.syncLevel.textContent = Math.max(0, Math.round(100 - sync)) + '%';
+    STATE.synchronization = Math.max(0, Math.round(100 - sync));
+    DOM.syncLevel.textContent = STATE.synchronization + '%';
 
     // Update particle counts
     DOM.internalCount.textContent = STATE.particles[CONFIG.MODELS.INTERNAL].length;

@@ -1,0 +1,118 @@
+<!doctype html>
+<!--! HEPTA-7 · Seven-Edge Plasma Sword
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HEPTA-7 Plasma Sword</title>
+<meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
+<meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
+<meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+<meta name="description" content="A seven-edge plasma sword — each edge a different color and power — slicing solids, liquids, gases, plasma and Bose–Einstein condensates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<header class="title">
+  <h1>HEPTA-7</h1>
+  <p>Seven-Edge Plasma Sword · slice every state of matter</p>
+</header>
+
+<div class="score" id="score">
+  <div><span>Score</span><b id="scScore">0</b></div>
+  <div><span>Combo</span><b id="scCombo">×0</b></div>
+  <div><span>Hits</span><b id="scHits">0</b></div>
+  <div><span>Misses</span><b id="scMiss">0</b></div>
+  <div><span>Accuracy</span><b id="scAcc">–</b></div>
+  <div><span>Level</span><b id="scLvl">1</b></div>
+</div>
+
+<aside class="panel left" id="bladePanel">
+  <div class="phead"><span>② Blade</span><button class="fold" aria-label="Fold panel">–</button></div>
+  <div class="pbody">
+    <button id="energize" class="energize" title="Energize (E)">
+      <span class="ring"><span class="dot"></span></span>
+      <span class="lbl">ENERGIZE</span>
+      <kbd>E</kbd>
+    </button>
+
+    <div class="xwrap">
+      <canvas id="xsec" width="300" height="300"></canvas>
+      <div class="xcap">Blade cross-section<br><span>7 edges · spinning</span></div>
+    </div>
+
+    <div class="edges" id="edges"></div>
+
+    <label class="sl"><span>Power <b id="powerVal">100%</b></span><input id="power" type="range" min="0.2" max="1.5" step="0.01" value="1"></label>
+    <label class="sl"><span>Edge spin <b id="spinVal">0.8 rev/s</b></span><input id="spin" type="range" min="-4" max="4" step="0.1" value="0.8"></label>
+    <label class="sl"><span>Blade length <b id="lenVal">300</b></span><input id="len" type="range" min="160" max="700" step="1" value="420"></label>
+    <label class="sl"><span>Time flow (4th dimension) <b id="timeflowVal">1.00×</b></span><input id="timeflow" type="range" min="0.05" max="1" step="0.01" value="1"></label>
+
+    <div class="seg" id="sndStyle"><span>Sound style <kbd>Y</kbd></span><div><button data-v="xylo" class="on">Xylophone</button><button data-v="real">Realistic</button></div></div>
+    <label class="sl"><span>Volume <b id="volVal">100%</b></span><input id="vol" type="range" min="0" max="1.5" step="0.01" value="1"></label>
+
+    <div class="meter"><span>Overheat</span><div class="bar"><i id="heatBar"></i></div></div>
+
+    <div class="tgs">
+      <button class="tg" data-k="ocLatch" title="Overcharge (O, or hold Shift)">Overcharge <kbd>O</kbd></button>
+      <button class="tg" data-k="slowmo" title="Bullet time (S)">Slow-mo <kbd>S</kbd></button>
+      <button class="tg" data-k="cine" title="Cinematic camera: impact zoom, letterbox, auto slow-mo">Cinematic</button>
+      <button class="tg" data-k="freeze" title="Freeze time (X)">Freeze <kbd>X</kbd></button>
+      <button class="tg" data-k="trails" title="Swing trails">Trails</button>
+      <button class="tg" data-k="sound" title="Sound (M)">Sound <kbd>M</kbd></button>
+      <button class="tg" data-k="demo" title="Auto-demo when idle (D)">Demo <kbd>D</kbd></button>
+    </div>
+  </div>
+</aside>
+
+<aside class="panel right" id="matterPanel">
+  <div class="phead"><span>① Choose Target</span><button class="fold" aria-label="Fold panel">–</button></div>
+  <div class="pbody">
+    <button id="autoBtn" class="autobtn"><b>◎ Auto Target Practice <kbd>A</kbd></b><small>Real objects pop up at random — pipes, gongs, glass, bricks, fruit, bulbs, balloons… slice them before they vanish</small></button>
+    <p class="pick">…or pick one state of matter and attack it. ← → cycles targets.</p>
+    <div class="mats" id="mats"></div>
+    <div class="row">
+      <button id="lineup" class="act">Gallery (7) <kbd>L</kbd></button>
+      <button id="clear" class="act">Clear <kbd>C</kbd></button>
+    </div>
+    <div class="tgs">
+      <button class="tg" data-k="restock">Auto-restock</button>
+      <button class="tg" data-k="toss" title="Toss solids &amp; water into the air (T)">Toss mode <kbd>T</kbd></button>
+    </div>
+    <div class="stats">
+      <div><b id="stCuts">0</b><span>cuts</span></div>
+      <div><b id="stShat">0</b><span>shatters</span></div>
+      <div><b id="stDefl">0</b><span>deflects</span></div>
+      <div><b id="stPeak">0</b><span>peak kJ</span></div>
+    </div>
+    <h3>Impact log</h3>
+    <ul id="log" class="log"><li class="hint">Swing through the matter to log impacts…</li></ul>
+  </div>
+</aside>
+
+<div class="hud" id="hud">
+  <div><span>Tip speed</span><b id="hSpeed">0</b><i>m/s</i></div>
+  <div><span>Edge temp</span><b id="hTemp">0</b><i>K</i></div>
+  <div><span>Power draw</span><b id="hDraw">0</b><i>MW</i></div>
+  <div><span>Edge spin</span><b id="hRpm">0</b><i>rpm</i></div>
+  <div class="mode" id="hMode">STANDBY</div>
+</div>
+
+<div id="banner" class="banner"><b></b><span></span></div>
+
+<div class="keys" id="keys">
+  Pick a target → swing the mouse through it to slice (faster = harder) · Space = auto-slash · Wheel / pinch / + − = zoom · Shift+wheel / [ ] = tilt · 1–7 edges · Shift = overcharge · F fullscreen · P snapshot · H hide UI
+</div>
+<div class="zoomctl"><button id="zOut" title="Zoom out (−)">−</button><span id="zoomVal">100%</span><button id="zIn" title="Zoom in (+)">+</button><button id="zReset" title="Reset zoom (0)">⟲</button></div>
+<div class="credit">© 2026 Mandeep S. Bhullar · SpinalXeno™ · <span title="Signing key fingerprint (SHA-256): 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">signed 2566 6EB2 CF27 3686</span></div>
+
+<script src="script.js"></script>
+</body>
+</html>

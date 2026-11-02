@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<!--! IO2 · Multi-Agent AI Network
+   © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+   Unauthorized copying, modification or redistribution of this code is prohibited.
+   Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced AI Visualizer - Multi-Agent Networks</title>
+    <meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
+    <meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
+    <meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+    <meta name="description" content="Three AI models — internal, cloud and external — as living particle networks across 15 logic modes and 5 interaction modes.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Background Canvas -->
+        <canvas id="canvas"></canvas>
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><span class="pulse">◆</span> MULTI-AGENT AI NETWORK <span class="pulse">◆</span></h1>
+                <p class="subtitle">Internal | Cloud | External Neural Collaboration</p>
+            </div>
+        </header>
+
+        <!-- Model Indicators -->
+        <div class="model-indicators">
+            <div class="model-indicator internal-model">
+                <span class="model-dot"></span>
+                <span class="model-name">Internal AI</span>
+                <span class="model-count">0</span>
+            </div>
+            <div class="model-indicator cloud-model">
+                <span class="model-dot"></span>
+                <span class="model-name">Cloud AI</span>
+                <span class="model-count">0</span>
+            </div>
+            <div class="model-indicator external-model">
+                <span class="model-dot"></span>
+                <span class="model-name">External AI</span>
+                <span class="model-count">0</span>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="controls-container">
+                <!-- Main Mode Selector -->
+                <div class="control-group">
+                    <label for="logicModeSelect">Logic Mode:</label>
+                    <select id="logicModeSelect" class="control-select">
+                        <!-- Original Modes -->
+                        <optgroup label="Foundation Modes">
+                            <option value="dream">Dreaming</option>
+                            <option value="thinking">Thinking</option>
+                            <option value="memory">Remembering</option>
+                            <option value="learning">Learning</option>
+                            <option value="chaos">Chaos Mode</option>
+                        </optgroup>
+                        <!-- Advanced Logic Modes -->
+                        <optgroup label="Advanced Logic Modes">
+                            <option value="reasoning">Reasoning</option>
+                            <option value="pattern_recognition">Pattern Recognition</option>
+                            <option value="reinforcement">Reinforcement</option>
+                            <option value="gradient_descent">Gradient Descent</option>
+                            <option value="clustering">Clustering</option>
+                            <option value="optimization">Optimization</option>
+                            <option value="prediction">Prediction</option>
+                            <option value="anomaly_detection">Anomaly Detection</option>
+                            <option value="consensus">Consensus Building</option>
+                            <option value="adversarial">Adversarial Training</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- AI Model Control -->
+                <div class="control-group">
+                    <label for="modelInteraction">Agent Interaction:</label>
+                    <select id="modelInteraction" class="control-select">
+                        <option value="cooperative">Cooperative</option>
+                        <option value="competitive">Competitive</option>
+                        <option value="independent">Independent</option>
+                        <option value="hierarchical">Hierarchical</option>
+                        <option value="swarm">Swarm Intelligence</option>
+                    </select>
+                </div>
+
+                <!-- Speed Control -->
+                <div class="control-group">
+                    <label for="speedSlider">Simulation Speed:</label>
+                    <input type="range" id="speedSlider" min="0.1" max="3" step="0.1" value="1" class="slider">
+                    <span id="speedValue" class="value-display">1.0x</span>
+                </div>
+
+                <!-- Particle Density -->
+                <div class="control-group">
+                    <label for="particleSlider">Particles per Model:</label>
+                    <input type="range" id="particleSlider" min="30" max="200" step="10" value="80" class="slider">
+                    <span id="particleValue" class="value-display">80</span>
+                </div>
+
+                <!-- Connection Range -->
+                <div class="control-group">
+                    <label for="connectionSlider">Connection Range:</label>
+                    <input type="range" id="connectionSlider" min="50" max="300" step="20" value="150" class="slider">
+                    <span id="connectionValue" class="value-display">150px</span>
+                </div>
+
+                <!-- Cross-Model Communication -->
+                <div class="control-group">
+                    <label for="communicationSlider">Cross-Model Comm:</label>
+                    <input type="range" id="communicationSlider" min="0" max="1" step="0.1" value="0.5" class="slider">
+                    <span id="communicationValue" class="value-display">50%</span>
+                </div>
+
+                <!-- Color Scheme -->
+                <div class="control-group">
+                    <label for="colorSelect">Visual Theme:</label>
+                    <select id="colorSelect" class="control-select">
+                        <option value="cyberpunk">Cyberpunk</option>
+                        <option value="matrix">Matrix</option>
+                        <option value="aurora">Aurora</option>
+                        <option value="quantum">Quantum</option>
+                        <option value="organic">Organic</option>
+                        <option value="neon">Neon</option>
+                    </select>
+                </div>
+
+                <!-- Display Options -->
+                <div class="control-group">
+                    <label>Display Options:</label>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="showConnections" checked>
+                            Show Connections
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showCommunication" checked>
+                            Show Messages
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showClusters" checked>
+                            Highlight Clusters
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-group button-group">
+                    <button id="pauseBtn" class="control-button pause-btn">
+                        <span class="btn-icon">⏸</span> Pause
+                    </button>
+                    <button id="resetBtn" class="control-button reset-btn">
+                        <span class="btn-icon">↻</span> Reset
+                    </button>
+                    <button id="exportBtn" class="control-button export-btn">
+                        <span class="btn-icon">⬇</span> Export
+                    </button>
+                    <button id="infoBtn" class="control-button info-btn">
+                        <span class="btn-icon">ⓘ</span> Info
+                    </button>
+                </div>
+            </div>
+
+            <!-- Collapse Button -->
+            <button id="collapseBtn" class="collapse-btn">
+                <span class="collapse-icon">◀</span>
+            </button>
+        </div>
+
+        <!-- Advanced Stats Panel -->
+        <div class="stats-panel">
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-label">FPS:</span>
+                    <span id="fpsCount" class="stat-value">60</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Logic Mode:</span>
+                    <span id="modeDisplay" class="stat-value">DREAMING</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Interaction:</span>
+                    <span id="interactionDisplay" class="stat-value">COOPERATIVE</span>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-item model-stat internal-stat">
+                    <span class="stat-label">Internal</span>
+                    <span id="internalActivity" class="stat-value">0%</span>
+                    <span id="internalConnections" class="stat-label-small">Conn: 0</span>
+                </div>
+                <div class="stat-item model-stat cloud-stat">
+                    <span class="stat-label">Cloud</span>
+                    <span id="cloudActivity" class="stat-value">0%</span>
+                    <span id="cloudConnections" class="stat-label-small">Conn: 0</span>
+                </div>
+                <div class="stat-item model-stat external-stat">
+                    <span class="stat-label">External</span>
+                    <span id="externalActivity" class="stat-value">0%</span>
+                    <span id="externalConnections" class="stat-label-small">Conn: 0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Cross-Model:</span>
+                    <span id="crossModelConnections" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-label">Network Coherence:</span>
+                    <span id="coherenceLevel" class="stat-value">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Communication Latency:</span>
+                    <span id="latencyLevel" class="stat-value">0ms</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Synchronization:</span>
+                    <span id="syncLevel" class="stat-value">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Communication Feed (Live Messages) -->
+        <div class="communication-feed">
+            <div class="feed-header">
+                <span class="feed-title">Neural Messages</span>
+                <button id="feedClearBtn" class="feed-clear">✕</button>
+            </div>
+            <div id="messageFeed" class="message-feed">
+                <div class="feed-message">System initialized...</div>
+            </div>
+        </div>
+
+        <!-- Info Modal -->
+        <div id="infoModal" class="modal hidden">
+            <div class="modal-content">
+                <button class="modal-close">✕</button>
+                <h2>Advanced AI Visualizer</h2>
+                
+                <div class="info-section">
+                    <h3>🤖 Three AI Models</h3>
+                    <ul>
+                        <li><strong style="color: #00ff88;">Internal AI (Green):</strong> Local processing, fast responses, limited capacity</li>
+                        <li><strong style="color: #ff006e;">Cloud AI (Pink):</strong> Remote processing, distributed compute, latency</li>
+                        <li><strong style="color: #00d9ff;">External AI (Cyan):</strong> Third-party system, specialized tasks, independent</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h3>15 Logic Modes</h3>
+                    <div class="mode-grid">
+                        <div class="mode-info">
+                            <strong>Dreaming:</strong> Unstructured neural firing
+                        </div>
+                        <div class="mode-info">
+                            <strong>Thinking:</strong> Organized processing
+                        </div>
+                        <div class="mode-info">
+                            <strong>Remembering:</strong> Memory retrieval
+                        </div>
+                        <div class="mode-info">
+                            <strong>Learning:</strong> Network strengthening
+                        </div>
+                        <div class="mode-info">
+                            <strong>Chaos:</strong> Maximum entropy
+                        </div>
+                        <div class="mode-info">
+                            <strong>Reasoning:</strong> Logical inference chains
+                        </div>
+                        <div class="mode-info">
+                            <strong>Pattern Recognition:</strong> Feature extraction
+                        </div>
+                        <div class="mode-info">
+                            <strong>Reinforcement:</strong> Reward optimization
+                        </div>
+                        <div class="mode-info">
+                            <strong>Gradient Descent:</strong> Loss minimization
+                        </div>
+                        <div class="mode-info">
+                            <strong>Clustering:</strong> Group formation
+                        </div>
+                        <div class="mode-info">
+                            <strong>Optimization:</strong> Parameter tuning
+                        </div>
+                        <div class="mode-info">
+                            <strong>Prediction:</strong> Future modeling
+                        </div>
+                        <div class="mode-info">
+                            <strong>Anomaly Detection:</strong> Outlier identification
+                        </div>
+                        <div class="mode-info">
+                            <strong>Consensus:</strong> Agreement seeking
+                        </div>
+                        <div class="mode-info">
+                            <strong>Adversarial:</strong> Competitive training
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>Interaction Modes</h3>
+                    <ul>
+                        <li><strong>Cooperative:</strong> Agents assist each other toward shared goals</li>
+                        <li><strong>Competitive:</strong> Agents compete for resources and dominance</li>
+                        <li><strong>Independent:</strong> Agents operate separately without coordination</li>
+                        <li><strong>Hierarchical:</strong> Agents follow command structure (Internal → Cloud → External)</li>
+                        <li><strong>Swarm:</strong> Agents follow local rules creating emergent behavior</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h3>Connector Types</h3>
+                    <ul>
+                        <li><strong>Solid Lines:</strong> Strong, stable connections within models</li>
+                        <li><strong>Dotted Lines:</strong> Weak or temporary connections</li>
+                        <li><strong>Pulsing Lines:</strong> Active communication with data flow</li>
+                        <li><strong>Arrow Lines:</strong> Directional information flow</li>
+                        <li><strong>Rainbow Lines:</strong> Cross-model communication</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-color" style="background: #00ff88;"></span>
+                <span>Internal</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #ff006e;"></span>
+                <span>Cloud</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="background: #00d9ff;"></span>
+                <span>External</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-color" style="border: 2px solid #ffaa00;"></span>
+                <span>Cluster</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+Electron Dissection (2D and 3D editions)
+© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+Narration verses © 2026 Mandeep S. Bhullar.
+
+The film may be viewed and used through its published link.
+The source code (HTML, CSS, JavaScript) and all other technical files are
+proprietary and confidential. No part may be copied, modified, distributed,
+or used to create derivative works without written permission from
+Mandeep S. Bhullar.
+
+Sound synthesis and rendering
+The generative score, sound effects, particle optics and 3D rendering in
+Electron Dissection are produced by custom Web Audio synthesis engines and
+Canvas/WebGL rendering engines (instruments, arrangements, timing, shaders
+and parameters) designed by Claude, an AI model made by Anthropic, for
+SpinalXeno. These engines are part of the proprietary work described above:
+they may not be copied, extracted, adapted or reused without written
+permission from Mandeep S. Bhullar.
+
+Third-party library: the 3D edition loads three.js (MIT licence) from a public
+CDN; it is not part of this proprietary work.
+
+Every file is digitally signed with the SpinalXeno signing key
+(ECDSA P-256, SHA-256). Key fingerprint:
+25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3
+See signature/VERIFY.txt.

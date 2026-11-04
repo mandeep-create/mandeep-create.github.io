@@ -1,0 +1,24 @@
+ISTOORFIRMXS
+© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+Instrument concept and string-field layout © 2026 Mandeep S. Bhullar.
+
+The instrument may be viewed and played through its published link.
+The source code (HTML, CSS, JavaScript) and all other technical files are
+proprietary and confidential. No part may be copied, modified, distributed,
+or used to create derivative works without written permission from
+Mandeep S. Bhullar.
+
+String physics, sound synthesis and effects
+The string models (plucked and bowed digital waveguides), instrument voicings,
+amp models, effects, orchestral and cinematic layers and the visual string
+renderer in ISTOORFIRMXS are produced by custom engines designed by Claude,
+an AI model made by Anthropic, for SpinalXeno. These engines are part of the
+proprietary work described above: they may not be copied, extracted, adapted
+or reused without written permission from Mandeep S. Bhullar.
+No samples from any third-party product are used; every sound is synthesized
+live in the browser.
+
+Every file is digitally signed with the SpinalXeno signing key
+(ECDSA P-256, SHA-256). Key fingerprint:
+25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3

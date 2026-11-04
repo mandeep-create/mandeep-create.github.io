@@ -4,79 +4,124 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Atalina Biblique</title>
-<!--! Atalina Biblique · Procureur Fustredis
+<!--! Atalina Biblique · Procureur Fustredis · the movie
    © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.
-   Scripture: Biblia Sacra Vulgata (public domain).
+   Scripture: Biblia Sacra Vulgata, Latin Bible (Vul) from The Unbound Bible via Christian Classics Ethereal Library (public domain).
+   English renderings of the key verses, and the Hebrew and Greek lines, are given for reading alongside the Latin.
    Unauthorized copying, modification or redistribution of this code is prohibited.
-   Sound synthesis engine (FX54) designed by Claude (Anthropic AI) for SpinalXeno™; it is part of this proprietary work and may not be copied or reused without written permission.
+   The FX166 electro and cinema sound engine, the Xeno Seam™ transitions, the Codex stream and the VCR shuttle were designed by Claude (Anthropic AI) for SpinalXeno™; they are part of this proprietary work and may not be copied or reused without written permission.
    Digitally signed by SpinalXeno, signing key fingerprint (SHA-256) 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
 <meta name="author" content="Mandeep S. Bhullar · SpinalXeno™">
 <meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. SpinalXeno™ is a trademark of Mandeep S. Bhullar.">
 <meta name="signature-key-sha256" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
-<meta name="description" content="Atalina Biblique · Procureur Fustredis: a 7:77 film in 4D in seven acts of the Latin Vulgate, from Fiat Lux to Alpha et Omega, with the FX54 engine of 54 live-synthesised sound effects.">
+<meta name="description" content="Atalina Biblique · Procureur Fustredis: a 16:66 movie in 4D. All 77 books of the Latin Vulgate as trailers in nine acts, the whole 1,797-page book streaming as a codex, cryptographs in 16 ancient scripts, Hebrew and Greek with their numbers, an FX166 electro score and a VCR that shuttles from ten times backwards to ten times forwards.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;700&family=Michroma&family=Noto+Serif:wght@400&family=Noto+Sans+Hebrew&family=Noto+Sans+Coptic&family=Noto+Sans+Syriac&family=Noto+Sans+Imperial+Aramaic&family=Noto+Sans+Phoenician&family=Noto+Sans+Samaritan&family=Noto+Sans+Gothic&family=Noto+Sans+Glagolitic&family=Noto+Sans+Armenian&family=Noto+Sans+Georgian&family=Noto+Sans+Ethiopic&family=Noto+Sans+Arabic&family=Noto+Sans+Runic&family=Noto+Sans+Old+Italic&display=swap">
 <style>
-:root{--gold:#ffd27a;--ink:#f4ead2;--dim:#a99c80;--line:rgba(255,210,122,.22);--bg:#030205;color-scheme:dark}
+:root{--gold:#ffd27a;--ink:#f4ead2;--dim:#a99c80;--line:rgba(255,210,122,.22);--panel:rgba(8,5,2,.66);--bg:#030205;--disp:'Michroma','Eurostile','Arial Black',sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);overflow:hidden;font-family:'Cormorant Garamond',Georgia,serif}
+/* A single dark look by choice: a film of light, shown in a dark room. */
 #stage{position:fixed;inset:0}#stage canvas{display:block;width:100%;height:100%}
-.gate,.end{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;background:radial-gradient(ellipse at center,rgba(40,24,6,.85),#030205 70%);text-align:center}
-.gate>div,.end>div{max-width:640px}
-.k{font:11px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}.k a{color:var(--gold)}
-.gate h1{font:700 clamp(28px,7vw,64px)/1.05 'Cinzel',serif;margin:14px 0 4px;color:var(--gold);text-shadow:0 0 30px rgba(255,190,90,.45);letter-spacing:.04em}
-.gate h2{font:400 clamp(16px,3.4vw,26px) 'Cinzel',serif;margin:0 0 18px;color:#e9c9ff;letter-spacing:.2em}
-.gate p{font-size:19px;color:#d8ccb0;line-height:1.5}
+#rain,#hud{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}#rain{z-index:2}#hud{z-index:3}
+.gate,.end{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;overflow:auto;background:radial-gradient(ellipse at center,rgba(30,18,4,.62),rgba(3,2,5,.88) 72%);text-align:center}
+.gate>div,.end>div{max-width:760px}
+.k{font:11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}.k a{color:var(--gold)}
+.gate .eb{font:11px var(--disp);letter-spacing:.32em;color:var(--gold);margin:16px 0 0}
+.gate h1{font:700 clamp(30px,7.4vw,70px)/1.05 'Cinzel',serif;margin:10px 0 4px;color:var(--gold);text-shadow:0 0 34px rgba(255,190,90,.5);letter-spacing:.04em}
+.gate h2{font:400 clamp(15px,3.2vw,24px) 'Cinzel',serif;margin:0 0 14px;color:#e9c9ff;letter-spacing:.2em}
+.gate p{font-size:18px;color:#d8ccb0;line-height:1.5;margin:10px 0}
+.acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:12px 0;font:10px var(--mono);letter-spacing:.08em;color:var(--dim)}
+.acts span{border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+.opts{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:center;align-items:center;margin:12px 0 6px;font:11px var(--mono);letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.chips{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.chips button{font:11px var(--mono);letter-spacing:.1em;padding:7px 12px;border:0;background:transparent;color:var(--dim);cursor:pointer}
+.chips button[aria-pressed=true]{background:rgba(255,210,122,.18);color:var(--gold)}
+select,input[type=color]{font:11px var(--mono);background:rgba(10,6,2,.7);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 6px}
+input[type=color]{width:30px;height:24px;padding:1px;vertical-align:middle}
 .go{font:700 14px 'Cinzel',serif;letter-spacing:.2em;margin:10px 6px;padding:14px 26px;border-radius:999px;border:1px solid var(--gold);background:rgba(255,210,122,.08);color:var(--gold);cursor:pointer}
 .go:hover{background:rgba(255,210,122,.22)}.go:disabled{opacity:.4;cursor:wait}
-.warn{font:12px 'JetBrains Mono',monospace!important;color:var(--dim)!important}
+.warn{font:12px var(--mono)!important;color:var(--dim)!important}
 .end{display:none}.end.on{display:grid}.end h2{font:700 clamp(24px,5vw,44px) 'Cinzel',serif;color:var(--gold)}
-.cap{position:fixed;left:50%;bottom:12vh;transform:translateX(-50%);width:min(92vw,1100px);text-align:center;z-index:5;pointer-events:none;opacity:0;transition:opacity 1.4s}
-.cap.on{opacity:1}.cap .la{font:400 clamp(22px,4.2vw,50px)/1.15 'Cinzel',serif;color:#fff3d6;text-shadow:0 0 18px rgba(255,200,110,.7),0 2px 8px #000}
-.cap .en{margin-top:8px;font:italic 400 clamp(15px,2.2vw,24px) 'Cormorant Garamond',serif;color:#e8dcc0;text-shadow:0 2px 6px #000}
-.cap .ref{margin-top:6px;font:11px 'JetBrains Mono',monospace;letter-spacing:.18em;color:var(--gold);opacity:.8}
-.cap.card .la{font-size:clamp(30px,7vw,84px);color:var(--gold);letter-spacing:.06em}
-.dashp{position:fixed;top:16px;right:16px;z-index:6;width:250px;padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(10,6,2,.55);backdrop-filter:blur(8px);font:11px 'JetBrains Mono',monospace;color:var(--dim);display:none}
-body.dash .dashp{display:block}body.playing .gate{display:none}
-.dashp b{color:var(--ink);font-weight:400}.dashp .row{display:flex;justify-content:space-between;gap:8px;margin:3px 0}
-.dashp .fx{color:var(--gold);min-height:1.3em}.dashp canvas{width:100%;height:56px;margin-top:6px;border-top:1px solid var(--line)}
-.bar{position:fixed;left:0;right:0;bottom:0;height:3px;z-index:6;background:rgba(255,255,255,.06)}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd27a,#a46bff)}
-.clock{position:fixed;left:16px;bottom:30px;z-index:6;font:12px 'JetBrains Mono',monospace;color:var(--dim)}
-.ctl{position:fixed;left:16px;top:16px;z-index:6;display:flex;gap:6px}.ctl button{font:11px 'JetBrains Mono',monospace;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:rgba(10,6,2,.5);color:var(--ink);cursor:pointer}
-.credit{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:21;font:10px 'JetBrains Mono',monospace;color:var(--dim);opacity:.7;white-space:nowrap}.credit a{color:var(--gold)}
-body.playing .credit{opacity:.25;z-index:4}
-@media (max-width:760px){.dashp{display:none!important}.credit{white-space:normal;width:92vw;text-align:center}}
+.cap{position:fixed;left:50%;bottom:13vh;transform:translateX(-50%);width:min(56vw,1000px);text-align:center;z-index:5;pointer-events:none;opacity:0;transition:opacity .45s}
+.cap.on{opacity:1}.cap .la{font:400 clamp(19px,2.7vw,40px)/1.16 'Cinzel',serif;color:#fff3d6;text-shadow:0 0 18px rgba(255,200,110,.65),0 2px 8px #000;text-wrap:balance}
+.cap .en{margin-top:8px;font:italic 400 clamp(14px,1.7vw,22px) 'Cormorant Garamond',serif;color:#efe4c8;text-shadow:0 2px 6px #000;text-wrap:balance}
+.cap .ref{margin-top:6px;font:11px var(--mono);letter-spacing:.18em;color:var(--gold);opacity:.9;text-transform:uppercase}
+.cap.card .la{font-size:clamp(28px,5.6vw,80px);color:var(--gold);letter-spacing:.06em}
+.cap.card .en{font:400 clamp(11px,1.3vw,15px) var(--disp);letter-spacing:.22em;font-style:normal;color:#e9c9ff;text-transform:uppercase}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.deck{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:7;padding:8px 10px;display:grid;gap:7px;width:min(96vw,980px);font:11px var(--mono);color:var(--dim);transition:opacity .5s}
+body.idle .deck{opacity:0;pointer-events:none}body.idle{cursor:none}
+.deck .r{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;justify-content:center}
+.deck button{font:12px var(--mono);min-width:34px;padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:rgba(10,6,2,.5);color:var(--ink);cursor:pointer}
+.deck button:hover{border-color:var(--gold);color:var(--gold)}
+.deck button.on{background:rgba(255,210,122,.2);color:var(--gold);border-color:var(--gold)}
+.lcd{font:13px var(--mono);color:#ffe7a8;background:#0b0802;border:1px solid rgba(255,210,122,.35);border-radius:5px;padding:4px 10px;min-width:190px;text-align:center;text-shadow:0 0 8px rgba(255,200,100,.55)}
+.lcd small{display:block;font-size:9px;letter-spacing:.14em;color:var(--dim);text-shadow:none}
+#vScrub{flex:1 1 260px;accent-color:var(--gold)}#vShut{width:170px;accent-color:#7affd4}
+.deck label{display:inline-flex;gap:6px;align-items:center}
+.osd{position:fixed;left:20px;top:9vh;z-index:8;font:700 26px var(--mono);color:#e8ffe8;text-shadow:0 0 10px rgba(120,255,160,.6),2px 2px 0 #000;letter-spacing:.06em;pointer-events:none;opacity:0;transition:opacity .3s}
+.osd.on{opacity:1}.osd small{display:block;font:400 12px var(--mono);letter-spacing:.2em;color:#b8ffcf}
+.bar{position:fixed;left:0;right:0;bottom:0;height:3px;z-index:6;background:rgba(255,255,255,.06)}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd27a,#a46bff,#4fd2ff)}
+.credit{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:21;font:10px var(--mono);color:var(--dim);opacity:.7;white-space:nowrap}.credit a{color:var(--gold)}
+body.playing .credit{display:none}
+@media (max-width:760px){.credit{white-space:normal;width:92vw;text-align:center}.cap{width:92vw;bottom:22vh}.lcd{min-width:140px}.osd{font-size:18px}#vShut{width:120px}}
 </style>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
 </head>
 <body>
 <div id="stage"></div>
+<canvas id="rain" aria-hidden="true"></canvas>
+<canvas id="hud" aria-hidden="true"></canvas>
 <div class="cap" id="cap" aria-live="polite"><div class="la" id="capLa"></div><div class="en" id="capEn"></div><div class="ref" id="capRef"></div></div>
-<aside class="dashp" id="dash">
-  <div class="row"><span>Act</span><b id="dAct">–</b></div>
-  <div class="row"><span>Form</span><b id="dForm">–</b></div>
-  <div class="row"><span>Chant</span><b id="dChord">–</b></div>
-  <div class="row"><span>FX54 heard</span><b id="dHeard">0 / 54</b></div>
-  <div class="fx" id="dFx">FX54 engine idle</div>
-  <canvas id="scope" width="500" height="112"></canvas>
-</aside>
-<div class="ctl" id="ctl" hidden><button id="pause" type="button">Pause</button><button id="dashBtn" type="button">Dashboard</button><button id="fs" type="button">Full screen</button></div>
-<div class="clock" id="clock"></div>
+<div class="osd" id="osd"></div>
+<div class="deck panel" id="deck" hidden>
+  <div class="r">
+    <button id="vHome" type="button" title="Back to the beginning of the tape (Home)">⏮</button>
+    <button id="vPrev" type="button" title="Previous book ([)">|◀</button>
+    <button id="vRew" type="button" title="Rewind: each press is faster, up to 10× (J)">◀◀</button>
+    <button id="vRev" type="button" title="Play backwards at 1×">◀</button>
+    <button id="vPause" type="button" title="Pause (K or Space)">❚❚</button>
+    <button id="vPlay" type="button" title="Play at 1× (Space)">▶</button>
+    <button id="vFf" type="button" title="Fast forward: each press is faster, up to 10× (L)">▶▶</button>
+    <button id="vNext" type="button" title="Next book (])">▶|</button>
+    <button id="vStop" type="button" title="Stop (S)">⏹</button>
+    <div class="lcd" id="lcd"><span>0:00.0 / 16:66</span><small>▶ PLAY ×1</small></div>
+    <label title="Shuttle: drag from −10× to +10×">⟲ <input type="range" id="vShut" min="-10" max="10" step="0.5" value="1" aria-label="Shuttle speed"> ⟳</label>
+  </div>
+  <div class="r"><input type="range" id="vScrub" min="0" max="1026" step="0.1" value="0" aria-label="Film position"></div>
+  <div class="r" id="chap"></div>
+  <div class="r">
+    <label>Scheme <select id="scheme"></select></label>
+    <label><input type="checkbox" id="uniOn"> Unicolor <input type="color" id="uniC" value="#ffd27a"></label>
+    <label><input type="checkbox" id="bgOn"> Background <input type="color" id="bgC" value="#0b1030"></label>
+    <button id="txBtn" type="button" title="Play a Xeno Seam transition now (T)">Transition</button>
+    <button id="hudBtn" type="button" title="Codex and data columns (D)">Codex</button>
+    <button id="fs" type="button" title="Full screen (F)">Full screen</button>
+  </div>
+</div>
 <div class="bar"><i id="prog"></i></div>
 <div class="gate" id="gate"><div>
   <p class="k"><a href="../">← XenoChickenBalls.Pi</a> · SpinalXeno™ · 4D sacred cinema</p>
+  <p class="eb">✦ SPINALXENO™ PRESENTS ✦</p>
   <h1>Atalina Biblique</h1>
-  <h2>PROCUREUR FUSTREDIS</h2>
-  <p>A 7:77 film in 4D, in seven acts of the Latin Vulgate: Fiat Lux, the Waters, Vanitas, the Valley of the Shadow, the Procureur, the Seven Seals, and Alpha et Omega. Twenty-four thousand points of light take seven sacred forms around a turning tesseract, while the FX54 engine synthesises 54 sound effects live, from cathedral bells and Gregorian chant to the gavel of the accuser and the seven trumpets.</p>
-  <button class="go" id="go" type="button" disabled>Enter</button><button class="go" id="goRec" type="button" disabled title="Plays the whole film and saves picture, captions and sound as a .webm video">Enter + record</button>
-  <p class="warn" id="loading">lighting the candles…</p>
-  <p class="warn">Loud sound and bright flashes. Headphones recommended. Space pauses, D toggles the dashboard, F toggles full screen.</p>
+  <h2>PROCUREUR FUSTREDIS · THE MOVIE</h2>
+  <p>A 16:66 film in 4D made from the whole book. All 77 books of the Latin Vulgate play as trailers in nine acts, each with its own scene, colour and key verse. The book's 1,797 pages stream past in a codex column, beside live counts of pages, chapters, verses, words and letters. Cryptographs decode from 16 ancient scripts, and Hebrew and Greek lines appear with their numbers. An electro score runs underneath, with trailer impacts at every cut.</p>
+  <div class="acts" id="actList"></div>
+  <p class="warn">The VCR is part of the film. Shuttle it from ten times backwards to ten times forwards and the tape, the light, the text and the sound all respond.</p>
+  <div class="opts">
+    <span>Definition <span class="chips" id="qual"><button type="button" data-q="ultra">Ultra</button><button type="button" data-q="high">High</button><button type="button" data-q="standard">Standard</button></span></span>
+    <label>Colour scheme <select id="scheme0"></select></label>
+  </div>
+  <button class="go" id="go" type="button" disabled>Enter</button><button class="go" id="goRec" type="button" disabled title="Plays the whole film and saves picture, data, captions and sound as a video">Enter + record</button>
+  <p class="warn" id="loading">opening the book…</p>
+  <p class="warn">Loud sound and bright flashes. Headphones recommended.<br>Space play/pause · J K L shuttle · ← → 10 s · [ ] book · 1–9 acts · S stop · T transition · C scheme · D codex · F full screen · mouse wheel jogs the tape</p>
 </div></div>
-<div class="end" id="end"><div><h2>Ego sum Alpha et Omega.</h2><p class="k">Atalina Biblique · Procureur Fustredis</p><button class="go" id="again" type="button">Play again</button></div></div>
-<div class="credit">Atalina Biblique · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. · Scripture: Vulgate (public domain) · FX54 sound synthesis designed by Claude (Anthropic AI) · <a href="../signature/VERIFY.txt">verify</a> · <a href="../LICENSE.txt">license</a></div>
+<div class="end" id="end"><div><h2>Ego Alpha et Omega.</h2><p class="k">Atalina Biblique · Procureur Fustredis · SpinalXeno™</p><p class="k">Veni Domine Iesu</p><button class="go" id="again" type="button">Play again</button></div></div>
+<div class="credit">Atalina Biblique · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. · signed 2566 6EB2 CF27 3686 · Scripture: Biblia Sacra Vulgata (public domain) · FX166, Xeno Seam™ and the VCR shuttle designed by Claude (Anthropic AI) · <a href="../signature/VERIFY.txt">verify</a> · <a href="../LICENSE.txt">license</a></div>
 
 <script type="module">
-/*! Atalina Biblique · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. FX54 sound synthesis designed by Claude (Anthropic AI) for SpinalXeno™. Unauthorized copying, modification or redistribution is prohibited. */
+/*! Atalina Biblique · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. FX166, Xeno Seam™, the Codex stream and the VCR shuttle designed by Claude (Anthropic AI) for SpinalXeno™. Unauthorized copying, modification or redistribution is prohibited. */
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -85,81 +130,286 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const $ = id => document.getElementById(id);
-const DUR = 497;            // 7:77 = 7 acts × 71 s
-const ACT = 71;
+const ACT_LEN = 114, NACT = 9, DUR = ACT_LEN * NACT;   // 16:66 = 1026 s
 const TAU = Math.PI * 2;
-const MOBILE = innerWidth < 760;
-if (!MOBILE) document.body.classList.add('dash');
+const MOBILE = matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
+const fmt = s => { s = Math.max(0, s); return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') + '.' + Math.floor(s * 10 % 10); };
+// 16:66 is written the way 7:77 was: sixteen minutes and sixty-six seconds
+const fmt1666 = s => { s = Math.max(0, Math.floor(s)); const m = Math.min(16, Math.floor(s / 60)); return m + ':' + String(s - m * 60).padStart(2, '0'); };
 
-// ===== SEVEN ACTS =====
+// ===== THE NINE ACTS =====
 const ACTS = [
-  { name: 'I · Fiat Lux',              form: 'Burst of creation',  col: [1.0, 0.82, 0.48], vow: 'a' },
-  { name: 'II · Super Aquas',          form: 'The waters',         col: [0.37, 0.85, 1.0], vow: 'u' },
-  { name: 'III · Vanitas',             form: 'Hourglass of dust',  col: [0.88, 0.69, 0.50], vow: 'o' },
-  { name: 'IV · Umbra Mortis',         form: 'Cross in the valley', col: [0.72, 1.0, 0.85], vow: 'o' },
-  { name: 'V · Procureur Fustredis',   form: 'Eye of the accuser', col: [1.0, 0.2, 0.33], vow: 'e' },
-  { name: 'VI · Septem Sigilla',       form: 'Seven seals',        col: [0.64, 0.42, 1.0], vow: 'i' },
-  { name: 'VII · Alpha et Omega',      form: 'The singularity',    col: [1.0, 0.95, 0.75], vow: 'a' }
+  { la: 'PENTATEUCHUS', en: 'the five books of Moses' },
+  { la: 'LIBRI HISTORICI', en: 'the books of history' },
+  { la: 'LIBRI SAPIENTIALES', en: 'the books of wisdom' },
+  { la: 'PROPHETAE MAIORES', en: 'the major prophets' },
+  { la: 'PROPHETAE MINORES', en: 'the twelve prophets' },
+  { la: 'EVANGELIA', en: 'the four gospels' },
+  { la: 'ACTUS ET EPISTULAE PAULI', en: 'the acts and the letters of Paul' },
+  { la: 'EPISTULAE CATHOLICAE', en: 'the catholic letters and the appendix' },
+  { la: 'APOCALYPSIS', en: 'the revelation' }
+];
+// One line per act in its original language, with its letter numbers (gematria, isopsephy)
+const ORIG = [
+  ['he', 'בראשית ברא אלהים את השמים ואת הארץ', 'Genesis 1:1 · Hebrew'],
+  ['he', 'עמך עמי ואלהיך אלהי', 'Ruth 1:16 · Hebrew'],
+  ['he', 'יהוה רעי לא אחסר', 'Psalm 23:1 · Hebrew'],
+  ['he', 'קדוש קדוש קדוש יהוה צבאות', 'Isaiah 6:3 · Hebrew'],
+  ['he', 'וצדיק באמונתו יחיה', 'Habakkuk 2:4 · Hebrew'],
+  ['el', 'Ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν', 'John 1:1 · Greek'],
+  ['el', 'νυνὶ δὲ μένει πίστις, ἐλπίς, ἀγάπη', '1 Corinthians 13:13 · Greek'],
+  ['el', 'ὁ θεὸς ἀγάπη ἐστίν', '1 John 4:8 · Greek'],
+  ['el', 'ἐγὼ τὸ Ἄλφα καὶ τὸ Ὦ, ὁ πρῶτος καὶ ὁ ἔσχατος', 'Revelation 22:13 · Greek']
+];
+const HEB = { 'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9, 'י': 10, 'כ': 20, 'ך': 20, 'ל': 30, 'מ': 40, 'ם': 40, 'נ': 50, 'ן': 50, 'ס': 60, 'ע': 70, 'פ': 80, 'ף': 80, 'צ': 90, 'ץ': 90, 'ק': 100, 'ר': 200, 'ש': 300, 'ת': 400 };
+const GRK = { α: 1, β: 2, γ: 3, δ: 4, ε: 5, ϛ: 6, ζ: 7, η: 8, θ: 9, ι: 10, κ: 20, λ: 30, μ: 40, ν: 50, ξ: 60, ο: 70, π: 80, ϙ: 90, ρ: 100, σ: 200, ς: 200, τ: 300, υ: 400, φ: 500, χ: 600, ψ: 700, ω: 800 };
+const numval = (lang, s) => { let n = 0; for (const ch of s.normalize('NFD').toLowerCase()) n += (lang === 'he' ? HEB : GRK)[ch] || 0; return n; };
+ORIG.forEach(o => o.push(numval(o[0], o[1])));
+
+// ===== THE 77 BOOKS =====
+// [act, name in the PDF, Latin title, English, trailer line, scene, word of light, verse as printed in the PDF, English, reference]
+const BOOKS = [
+  [0, 'Genesis', 'LIBER GENESIS', 'Genesis', 'In the beginning, everything.', 'burst', 'FIAT LUX', 'dixitque Deus fiat lux et facta est lux', 'And God said: Let there be light. And there was light.', '1:3'],
+  [0, 'Exodus', 'EXODUS', 'Exodus', 'A sea divided. A people set free.', 'sea', 'EGO SUM', 'dixit Deus ad Mosen ego sum qui sum', 'God said to Moses: I am who am.', '3:14'],
+  [0, 'Leviticus', 'LEVITICUS', 'Leviticus', 'The holy law of fire and altar.', 'tent', 'SANCTUS', 'diliges amicum tuum sicut temet ipsum', 'You shall love your friend as yourself.', '19:18'],
+  [0, 'Numbers', 'NUMERI', 'Numbers', 'Twelve tribes. Forty years. One road.', 'camp', 'XII TRIBUS', 'benedicat tibi Dominus et custodiat te', 'The Lord bless you and keep you.', '6:24'],
+  [0, 'Deuteronomy', 'DEUTERONOMIUM', 'Deuteronomy', 'The law spoken a second time.', 'tablets', 'AUDI ISRAHEL', 'audi Israhel Dominus Deus noster Dominus unus est', 'Hear, O Israel: the Lord our God is one Lord.', '6:4'],
+  [1, 'Joshua', 'IOSUE', 'Joshua', 'Seven trumpets. One shout. The walls fall.', 'walls', 'IERICHO', 'muri ilico corruerunt', 'And at once the walls fell down.', '6:20'],
+  [1, 'Judges', 'IUDICUM', 'Judges', 'Strength, betrayal and two pillars.', 'temple', 'SAMSON', 'moriatur anima mea cum Philisthim', 'Let my soul die with the Philistines.', '16:30'],
+  [1, 'Ruth', 'RUTH', 'Ruth', 'Loyalty in the fields of Bethlehem.', 'sheaf', 'RUTH', 'populus tuus populus meus et Deus tuus Deus meus', 'Your people shall be my people, and your God my God.', '1:16'],
+  [1, '1 Samuel', 'REGUM I', '1 Samuel', 'A shepherd boy. A giant. One stone.', 'sword', 'DAVID', 'tu venis ad me cum gladio et hasta et clypeo', 'You come to me with a sword, a spear and a shield.', '17:45'],
+  [1, '2 Samuel', 'REGUM II', '2 Samuel', 'A crown won. A crown mourned.', 'crown', 'REX DAVID', 'quomodo ceciderunt fortes', 'How the mighty have fallen.', '1:19'],
+  [1, '1 Kings', 'REGUM III', '1 Kings', 'The wisdom of Solomon. The house of God.', 'temple', 'SALOMON', 'dabis ergo servo tuo cor docile', 'Give your servant an understanding heart.', '3:9'],
+  [1, '2 Kings', 'REGUM IV', '2 Kings', 'A chariot of fire. A whirlwind to heaven.', 'chariot', 'HELIAS', 'ascendit Helias per turbinem in caelum', 'And Elijah went up by a whirlwind into heaven.', '2:11'],
+  [1, '1 Chronicles', 'PARALIPOMENON I', '1 Chronicles', 'The songs before the ark.', 'lamp', 'CONFITEMINI', 'confitemini Domino quoniam bonus quoniam in aeternum misericordia eius', 'Give thanks to the Lord, for he is good; his mercy endures for ever.', '16:34'],
+  [1, '2 Chronicles', 'PARALIPOMENON II', '2 Chronicles', 'Fire falls on the Temple.', 'flames', 'IGNIS', 'et sanabo terram eorum', 'And I will heal their land.', '7:14'],
+  [1, 'Ezra', 'ESDRAS', 'Ezra', 'The scribe returns with the law.', 'scroll', 'LEX DOMINI', 'paravit cor suum ut investigaret legem Domini', 'He had set his heart to search the law of the Lord.', '7:10'],
+  [1, 'Nehemiah', 'NEHEMIAS', 'Nehemiah', 'Rebuild the walls.', 'walls', 'MURI', 'venite et aedificemus muros Hierusalem', 'Come, let us build the walls of Jerusalem.', '2:17'],
+  [1, 'Tobit', 'TOBIAS', 'Tobit', 'An angel walks beside him.', 'fish', 'RAFAHEL', 'ego enim sum Rafahel angelus unus ex septem qui adstamus ante Dominum', 'For I am Raphael, one of the seven angels who stand before the Lord.', '12:15'],
+  [1, 'Judith', 'IUDITH', 'Judith', 'One woman against an army.', 'sword', 'IUDITH', 'abscidit caput eius', 'And she cut off his head.', '13:10'],
+  [1, 'Esther', 'ESTHER', 'Esther', 'A queen for such a time as this.', 'crown', 'REGINA', 'quis novit utrum idcirco ad regnum veneris', 'Who knows whether you came to the kingdom for this very hour?', '4:14'],
+  [1, '1 Maccabees', 'MACHABAEORUM I', '1 Maccabees', 'The hammer. The light rekindled.', 'lamp', 'MACHABAEUS', 'non in multitudine exercitus victoria belli sed de caelo fortitudo est', 'Victory in war is not in the size of the army; strength comes from heaven.', '3:19'],
+  [1, '2 Maccabees', 'MACHABAEORUM II', '2 Maccabees', 'Seven brothers. A mother. All from nothing.', 'burst', 'EX NIHILO', 'ex nihilo fecit illa Deus', 'God made them out of nothing.', '7:28'],
+  [2, 'Job', 'IOB', 'Job', 'The accuser comes before God.', 'eye', 'REDEMPTOR', 'scio enim quod redemptor meus vivat', 'For I know that my Redeemer lives.', '19:25'],
+  [2, 'Psalms', 'PSALMI', 'Psalms', 'One hundred and fifty songs.', 'harp', 'PSALTERIUM', 'Dominus pascit me nihil mihi deerit', 'The Lord is my shepherd; I shall lack nothing.', '22:1'],
+  [2, 'Proverbs', 'PROVERBIA', 'Proverbs', 'The beginning of wisdom.', 'scroll', 'SAPIENTIA', 'principium sapientiae timor Domini', 'The fear of the Lord is the beginning of wisdom.', '9:10'],
+  [2, 'Ecclesiastes', 'ECCLESIASTES', 'Ecclesiastes', 'Everything under the sun.', 'hourglass', 'VANITAS', 'vanitas vanitatum', 'Vanity of vanities.', '1:2'],
+  [2, 'Song of Solomon', 'CANTICUM CANTICORUM', 'Song of Songs', 'Love as strong as death.', 'rose', 'DILECTIO', 'fortis est ut mors dilectio', 'For love is as strong as death.', '8:6'],
+  [2, 'Wisdom', 'SAPIENTIA', 'Wisdom', 'The souls of the just.', 'heart', 'IUSTI', 'iustorum autem animae in manu Dei sunt', 'But the souls of the just are in the hand of God.', '3:1'],
+  [2, 'Sirach', 'ECCLESIASTICUS', 'Sirach', 'All wisdom comes from the Lord.', 'tree', 'OMNIS SAPIENTIA', 'omnis sapientia a Deo Domino est', 'All wisdom is from the Lord God.', '1:1'],
+  [3, 'Isaiah', 'ISAIAS', 'Isaiah', 'The seraphim cry holy.', 'dove', 'SANCTUS', 'sanctus sanctus sanctus Dominus exercituum', 'Holy, holy, holy, the Lord of hosts.', '6:3'],
+  [3, 'Jeremiah', 'HIEREMIAS', 'Jeremiah', 'Known before the womb.', 'tree', 'PROPHETA', 'priusquam te formarem in utero novi te', 'Before I formed you in the womb, I knew you.', '1:5'],
+  [3, 'Lamentations', 'LAMENTATIONES', 'Lamentations', 'The city weeps.', 'walls', 'THRENI', 'o vos omnes qui transitis per viam', 'O all you who pass along the road.', '1:12'],
+  [3, 'Baruch', 'BARUCH', 'Baruch', 'Wisdom seen on earth.', 'star', 'BARUCH', 'post haec in terris visus est et cum hominibus conversatus est', 'After this he was seen on earth and lived among men.', '3:38'],
+  [3, 'Ezekiel', 'HIEZECHIHEL', 'Ezekiel', 'Wheels within wheels. Dry bones rise.', 'wheels', 'OSSA ARIDA', 'ossa arida audite verbum Domini', 'Dry bones, hear the word of the Lord.', '37:4'],
+  [3, 'Daniel', 'DANIHEL', 'Daniel', 'Kingdoms fall. One kingdom stands.', 'flames', 'REGNUM', 'suscitabit Deus caeli regnum quod in aeternum non dissipabitur', 'The God of heaven will raise up a kingdom that will never be destroyed.', '2:44'],
+  [4, 'Hosea', 'OSEE', 'Hosea', 'A love that will not let go.', 'heart', 'AMOR', 'ex Aegypto vocavi filium meum', 'Out of Egypt I called my son.', '11:1'],
+  [4, 'Joel', 'IOHEL', 'Joel', 'Spirit on all flesh.', 'dove', 'SPIRITUS', 'effundam spiritum meum super omnem carnem', 'I will pour out my spirit upon all flesh.', '2:28'],
+  [4, 'Amos', 'AMOS', 'Amos', 'Let justice roll like water.', 'sea', 'IUSTITIA', 'et revelabitur quasi aqua iudicium et iustitia quasi torrens fortis', 'Judgment shall be revealed like water, and justice like a mighty torrent.', '5:24'],
+  [4, 'Obadiah', 'ABDIAS', 'Obadiah', 'A nest among the stars.', 'star', 'AQUILA', 'si exaltatus fueris ut aquila', 'Though you rise as high as the eagle.', '1:4'],
+  [4, 'Jonah', 'IONAS', 'Jonah', 'Three days in the belly of the fish.', 'fish', 'IONAS', 'in ventre piscis tribus diebus et tribus noctibus', 'In the belly of the fish three days and three nights.', '2:1'],
+  [4, 'Micah', 'MICHA', 'Micah', 'Do justice. Love mercy. Walk humbly.', 'eye', 'MISERICORDIA', 'facere iudicium et diligere misericordiam et sollicitum ambulare cum Deo tuo', 'To do justice, to love mercy, and to walk carefully with your God.', '6:8'],
+  [4, 'Nahum', 'NAUM', 'Nahum', 'A stronghold in the day of trouble.', 'walls', 'NINEVE', 'bonus Dominus et confortans in die tribulationis', 'The Lord is good, a strength in the day of trouble.', '1:7'],
+  [4, 'Habakkuk', 'ABACUC', 'Habakkuk', 'The just shall live by faith.', 'temple', 'FIDES', 'iustus autem in fide sua vivet', 'But the just shall live by his faith.', '2:4'],
+  [4, 'Zephaniah', 'SOPHONIAS', 'Zephaniah', 'The great day is near.', 'singularity', 'DIES IRAE', 'iuxta est dies Domini magnus', 'The great day of the Lord is near.', '1:14'],
+  [4, 'Haggai', 'AGGEUS', 'Haggai', 'Build the house again.', 'temple', 'DOMUS', 'veniet desideratus cunctis gentibus', 'The one desired by all nations shall come.', '2:8'],
+  [4, 'Zechariah', 'ZACCHARIAS', 'Zechariah', 'Your king comes, humble.', 'lamp', 'REX TUUS', 'ecce rex tuus veniet tibi iustus et salvator', 'Behold, your king comes to you, just and a saviour.', '9:9'],
+  [4, 'Malachi', 'MALACHI', 'Malachi', 'The sun of justice rises.', 'burst', 'SOL IUSTITIAE', 'orietur vobis timentibus nomen meum sol iustitiae', 'For you who fear my name, the sun of justice shall rise.', '4:2'],
+  [5, 'Matthew', 'MATTHEUS', 'Matthew', 'A star over Bethlehem. A prayer for the world.', 'star', 'PATER NOSTER', 'Pater noster qui in caelis es sanctificetur nomen tuum', 'Our Father, who art in heaven, hallowed be thy name.', '6:9'],
+  [5, 'Mark', 'MARCUS', 'Mark', 'Go into the whole world.', 'cross', 'EVANGELIUM', 'euntes in mundum universum praedicate evangelium omni creaturae', 'Go into the whole world and preach the gospel to every creature.', '16:15'],
+  [5, 'Luke', 'LUCAS', 'Luke', 'Glory in the highest.', 'dove', 'GLORIA', 'gloria in altissimis Deo et in terra pax in hominibus bonae voluntatis', 'Glory to God in the highest, and on earth peace to people of good will.', '2:14'],
+  [5, 'John', 'IOHANNES', 'John', 'In the beginning was the Word.', 'burst', 'VERBUM', 'in principio erat Verbum et Verbum erat apud Deum et Deus erat Verbum', 'In the beginning was the Word, and the Word was with God, and the Word was God.', '1:1'],
+  [6, 'Acts', 'ACTUS APOSTOLORUM', 'Acts', 'Tongues of fire.', 'flames', 'PENTECOSTE', 'et apparuerunt illis dispertitae linguae tamquam ignis', 'And there appeared to them divided tongues as of fire.', '2:3'],
+  [6, 'Romans', 'AD ROMANOS', 'Romans', 'If God is for us.', 'cross', 'PRO NOBIS', 'si Deus pro nobis quis contra nos', 'If God is for us, who is against us?', '8:31'],
+  [6, '1 Corinthians', 'AD CORINTHIOS I', '1 Corinthians', 'The greatest of these.', 'heart', 'CARITAS', 'nunc autem manet fides spes caritas tria haec maior autem his est caritas', 'Now faith, hope and love remain, these three; but the greatest of these is love.', '13:13'],
+  [6, '2 Corinthians', 'AD CORINTHIOS II', '2 Corinthians', 'Strength in weakness.', 'lamp', 'VIRTUS', 'nam virtus in infirmitate perficitur', 'For power is made perfect in weakness.', '12:9'],
+  [6, 'Galatians', 'AD GALATAS', 'Galatians', 'Christ lives in me.', 'walls', 'LIBERTAS', 'vivo autem iam non ego vivit vero in me Christus', 'I live, now not I, but Christ lives in me.', '2:20'],
+  [6, 'Ephesians', 'AD EPHESIOS', 'Ephesians', 'The armour of God.', 'sword', 'ARMA DEI', 'induite vos arma Dei', 'Put on the armour of God.', '6:11'],
+  [6, 'Philippians', 'AD PHILIPPENSES', 'Philippians', 'All things through him.', 'crown', 'GAUDIUM', 'omnia possum in eo qui me confortat', 'I can do all things in him who strengthens me.', '4:13'],
+  [6, 'Colossians', 'AD COLOSSENSES', 'Colossians', 'The image of the invisible God.', 'singularity', 'IMAGO DEI', 'qui est imago Dei invisibilis primogenitus omnis creaturae', 'He is the image of the invisible God, the firstborn of all creation.', '1:15'],
+  [6, '1 Thessalonians', 'AD THESSALONICENSES I', '1 Thessalonians', 'Like a thief in the night.', 'star', 'DIES DOMINI', 'dies Domini sicut fur in nocte ita veniet', 'The day of the Lord will come like a thief in the night.', '5:2'],
+  [6, '2 Thessalonians', 'AD THESSALONICENSES II', '2 Thessalonians', 'Work, and eat.', 'sheaf', 'OPUS', 'si quis non vult operari nec manducet', 'If anyone will not work, let him not eat.', '3:10'],
+  [6, '1 Timothy', 'AD TIMOTHEUM I', '1 Timothy', 'The root of all evils.', 'tree', 'RADIX', 'radix enim omnium malorum est cupiditas', 'For greed is the root of all evils.', '6:10'],
+  [6, '2 Timothy', 'AD TIMOTHEUM II', '2 Timothy', 'The race is finished.', 'crown', 'FIDEM SERVAVI', 'bonum certamen certavi cursum consummavi fidem servavi', 'I have fought the good fight, I have finished the race, I have kept the faith.', '4:7'],
+  [6, 'Titus', 'AD TITUM', 'Titus', 'To the pure, all things are pure.', 'lamp', 'MUNDA', 'omnia munda mundis', 'To the pure, all things are pure.', '1:15'],
+  [6, 'Philemon', 'AD PHILEMONEM', 'Philemon', 'No longer a slave: a brother.', 'heart', 'FRATER', 'non ut servum sed plus servo carissimum fratrem', 'No longer as a slave, but more than a slave: a dear brother.', '1:16'],
+  [6, 'Hebrews', 'AD HEBRAEOS', 'Hebrews', 'The substance of things hoped for.', 'tent', 'FIDES', 'est autem fides sperandorum substantia rerum argumentum non parentum', 'Faith is the substance of things hoped for, the evidence of things not seen.', '11:1'],
+  [7, 'James', 'IACOBI', 'James', 'Faith without works is dead.', 'tree', 'OPERA', 'fides sine operibus mortua est', 'Faith without works is dead.', '2:26'],
+  [7, '1 Peter', 'PETRI I', '1 Peter', 'The adversary prowls.', 'eye', 'ADVERSARIUS', 'adversarius vester diabolus tamquam leo rugiens circuit quaerens quem devoret', 'Your adversary the devil prowls like a roaring lion, seeking whom he may devour.', '5:8'],
+  [7, '2 Peter', 'PETRI II', '2 Peter', 'A day like a thousand years.', 'hourglass', 'MILLE ANNI', 'unus dies apud Dominum sicut mille anni et mille anni sicut dies unus', 'With the Lord one day is as a thousand years, and a thousand years as one day.', '3:8'],
+  [7, '1 John', 'IOHANNIS I', '1 John', 'God is love.', 'heart', 'DEUS CARITAS', 'Deus caritas est', 'God is love.', '4:8'],
+  [7, '2 John', 'IOHANNIS II', '2 John', 'Walk in love.', 'scroll', 'MANDATA', 'et haec est caritas ut ambulemus secundum mandata eius', 'And this is love: that we walk by his commandments.', '1:6'],
+  [7, '3 John', 'IOHANNIS III', '3 John', 'Follow what is good.', 'lamp', 'BONUM', 'carissime noli imitari malum sed quod bonum est', 'Beloved, do not imitate evil, but what is good.', '1:11'],
+  [7, 'Jude', 'IUDAE', 'Jude', 'The archangel against the accuser.', 'sword', 'MICHAHEL', 'Michahel archangelus cum diabolo disputans', 'Michael the archangel, disputing with the devil.', '1:9'],
+  [7, 'Prayer of Manasseh', 'ORATIO MANASSE', 'Prayer of Manasseh', 'A king repents.', 'scroll', 'PAENITENTIA', 'Domine Deus omnipotens patrum nostrorum', 'O Lord God almighty, God of our fathers.', '1:1'],
+  [7, '1 Esdras', 'ESDRAE III', '1 Esdras', 'Truth conquers all.', 'crown', 'VERITAS', 'super omnia autem vincit veritas', 'But above all things truth conquers.', '3:12'],
+  [7, '2 Esdras', 'ESDRAE IV', '2 Esdras', 'Light without end.', 'burst', 'LUX PERPETUA', 'quia lux perpetua lucebit vobis per aeternitatem temporis', 'For perpetual light will shine on you through all eternity.', '2:35'],
+  [7, 'Laodiceans', 'AD LAODICENSES', 'Laodiceans', 'A letter of Paul from the appendix.', 'scroll', 'EPISTOLA', 'gratia vobis et pax a Deo Patre et Domino Iesu Christo', 'Grace to you and peace from God the Father and the Lord Jesus Christ.', '1:2'],
+  [8, 'Revelation', 'APOCALYPSIS', 'Revelation', 'The revelation.', 'singularity', 'ALPHA ET OMEGA', 'ego sum Alpha et Omega principium et finis dicit Dominus Deus', 'I am Alpha and Omega, the beginning and the end, says the Lord God.', '1:8']
+];
+// Revelation plays as eight scenes of its own
+const REV = [
+  ['EGO SUM ALPHA ET OMEGA', 'The one who is, who was, who is to come.', 'singularity', 'ALPHA ET OMEGA', 'ego sum Alpha et Omega principium et finis dicit Dominus Deus', 'I am Alpha and Omega, the beginning and the end, says the Lord God.', '1:8'],
+  ['SEPTEM SIGILLA', 'A book sealed with seven seals.', 'seals', 'VII SIGILLA', 'librum scriptum intus et foris signatum sigillis septem', 'A book written within and without, sealed with seven seals.', '5:1'],
+  ['QUATTUOR EQUI', 'White. Red. Black. Pale.', 'horses', 'MORS', 'et ecce equus pallidus et qui sedebat desuper nomen illi Mors', 'And behold a pale horse, and the name of its rider was Death.', '6:8'],
+  ['SILENTIUM · SEPTEM TUBAE', 'Silence in heaven. Then seven trumpets.', 'trumpets', 'SEPTEM TUBAE', 'factum est silentium in caelo', 'There was silence in heaven.', '8:1'],
+  ['PROCUREUR FUSTREDIS', 'The accuser is cast down.', 'sword', 'ACCUSATOR', 'proiectus est accusator fratrum nostrorum qui accusabat illos ante conspectum Dei nostri die ac nocte', 'The accuser of our brothers is cast down, who accused them before our God day and night.', '12:10'],
+  ['NUMERUS BESTIAE', 'Let the wise count the number.', 'eye', 'DCLXVI', 'numerus enim hominis est et numerus eius est sescenti sexaginta sex', 'For it is the number of a man, and his number is six hundred and sixty-six.', '13:18'],
+  ['HIERUSALEM NOVA', 'A new heaven. A new earth.', 'city', 'HIERUSALEM', 'vidi caelum novum et terram novam', 'I saw a new heaven and a new earth.', '21:1'],
+  ['ALPHA ET OMEGA', 'The first and the last.', 'singularity', 'Α Ω', 'ego Alpha et Omega primus et novissimus principium et finis', 'I am Alpha and Omega, the first and the last, the beginning and the end.', '22:13']
 ];
 
-// ===== CAPTIONS: Biblia Sacra Vulgata =====
-const CAPS = [
-  [3,   'ATALINA BIBLIQUE', 'a film in seven acts', '', 1],
-  [10,  'In principio creavit Deus caelum et terram.', 'In the beginning God created heaven and earth.', 'GENESIS 1:1'],
-  [27,  'Terra autem erat inanis et vacua, et tenebrae erant super faciem abyssi.', 'And the earth was void and empty, and darkness was upon the face of the deep.', 'GENESIS 1:2'],
-  [45,  'Dixitque Deus: Fiat lux.', 'And God said: Be light made.', 'GENESIS 1:3'],
-  [56,  'Et facta est lux.', 'And light was made.', 'GENESIS 1:3'],
-  [75,  'Et spiritus Dei ferebatur super aquas.', 'And the spirit of God moved over the waters.', 'GENESIS 1:2'],
-  [95,  'Fiat firmamentum in medio aquarum.', 'Let there be a firmament made amidst the waters.', 'GENESIS 1:6'],
-  [114, 'Rupti sunt omnes fontes abyssi magnae,', 'All the fountains of the great deep were broken up,', 'GENESIS 7:11'],
-  [127, 'et cataractae caeli apertae sunt.', 'and the floodgates of heaven were opened.', 'GENESIS 7:11'],
-  [146, 'Vanitas vanitatum, et omnia vanitas.', 'Vanity of vanities, and all is vanity.', 'ECCLESIASTES 1:2'],
-  [164, 'Generatio praeterit, et generatio advenit.', 'One generation passeth away, and another generation cometh.', 'ECCLESIASTES 1:4'],
-  [182, 'Omnia tempus habent.', 'All things have their season.', 'ECCLESIASTES 3:1'],
-  [198, 'Quia pulvis es, et in pulverem reverteris.', 'For dust thou art, and into dust thou shalt return.', 'GENESIS 3:19'],
-  [217, 'Dominus regit me, et nihil mihi deerit.', 'The Lord ruleth me, and I shall want nothing.', 'PSALMUS 22:1'],
-  [237, 'Nam et si ambulavero in medio umbrae mortis,', 'For though I should walk in the midst of the shadow of death,', 'PSALMUS 22:4'],
-  [255, 'non timebo mala, quoniam tu mecum es.', 'I will fear no evils, for thou art with me.', 'PSALMUS 22:4'],
-  [287, 'PROCUREUR FUSTREDIS', 'the accuser takes the bench', '', 1],
-  [300, 'Projectus est accusator fratrum nostrorum,', 'The accuser of our brethren is cast forth,', 'APOCALYPSIS 12:10'],
-  [317, 'qui accusabat illos ante conspectum Dei die ac nocte.', 'who accused them before our God day and night.', 'APOCALYPSIS 12:10'],
-  [333, 'Mane, Thecel, Phares.', 'Numbered, weighed, divided.', 'DANIEL 5:25'],
-  [343, 'Appensus es in statera, et inventus es minus habens.', 'Thou art weighed in the balance, and art found wanting.', 'DANIEL 5:27'],
-  [359, 'Librum signatum sigillis septem.', 'A book sealed with seven seals.', 'APOCALYPSIS 5:1'],
-  [377, 'Et datae sunt illis septem tubae.', 'And there were given to them seven trumpets.', 'APOCALYPSIS 8:2'],
-  [395, 'Et sol factus est niger tamquam saccus cilicinus.', 'And the sun became black as sackcloth of hair.', 'APOCALYPSIS 6:12'],
-  [410, 'Et stellae de caelo ceciderunt super terram.', 'And the stars from heaven fell upon the earth.', 'APOCALYPSIS 6:13'],
-  [430, 'In principio erat Verbum.', 'In the beginning was the Word.', 'IOANNES 1:1'],
-  [448, 'Et lux in tenebris lucet.', 'And the light shineth in darkness.', 'IOANNES 1:5'],
-  [465, 'Ego sum Alpha et Omega,', 'I am Alpha and Omega,', 'APOCALYPSIS 22:13'],
-  [477, 'primus et novissimus, principium et finis.', 'the first and the last, the beginning and the end.', 'APOCALYPSIS 22:13'],
-  [489, 'ATALINA BIBLIQUE', 'Procureur Fustredis · SpinalXeno™', '', 1]
-];
+// ===== THE TIMELINE =====
+// Each act opens with its card, then its books share the rest by length. Revelation splits into its eight scenes.
+const SEG = [];
+let VUL = null;            // the book itself, loaded from vulgata.json
+const PAGES_TOTAL = 1797;
+function buildTimeline() {
+  SEG.length = 0;
+  const pr = bookPages();
+  for (let a = 0; a < NACT; a++) {
+    const t0 = a * ACT_LEN, intro = a === 0 ? 9 : 3.5;
+    SEG.push({ kind: 'act', act: a, t0, dur: intro, tpl: a === 0 ? 'burst' : 'singularity', word: ROMAN[a], hue: 0, p0: null });
+    const list = BOOKS.map((b, i) => [b, i]).filter(([b]) => b[0] === a);
+    if (a === 8) {
+      const bp = pr[BOOKS.length - 1], d = (ACT_LEN - intro) / REV.length;
+      REV.forEach((r, j) => SEG.push({ kind: 'rev', act: a, bi: BOOKS.length - 1, rv: j, t0: t0 + intro + j * d, dur: d, tpl: r[2], word: r[3], hue: (j - 3.5) * 0.02,
+        p0: bp[0] + Math.floor((bp[1] - bp[0] + 1) * j / REV.length), p1: bp[0] + Math.floor((bp[1] - bp[0] + 1) * (j + 1) / REV.length) - 1 }));
+      continue;
+    }
+    const w = list.map(([, i]) => 5 + Math.sqrt(pr[i][1] - pr[i][0] + 1) * 1.6), W = w.reduce((s, x) => s + x, 0);
+    let t = t0 + intro;
+    list.forEach(([b, i], j) => {
+      const d = (ACT_LEN - intro) * w[j] / W;
+      SEG.push({ kind: 'book', act: a, bi: i, t0: t, dur: d, tpl: b[5], word: b[6], hue: (j / Math.max(1, list.length - 1) - 0.5) * 0.12, p0: pr[i][0], p1: pr[i][1] });
+      t += d;
+    });
+  }
+  SEG.forEach((s, i) => { s.i = i; });
+}
+// Page ranges for each book in the PDF (index into VUL.pages)
+function bookPages() {
+  if (!VUL) return BOOKS.map((b, i) => { const p = Math.floor(i / BOOKS.length * PAGES_TOTAL); return [p, Math.min(PAGES_TOTAL - 1, p + 20)]; });
+  const starts = VUL.books.map(b => b[1]);
+  return BOOKS.map(b => {
+    const k = VUL.books.findIndex(x => x[0] === b[1]);
+    if (k < 0) return [0, 0];
+    const s = starts[k]; let e = PAGES_TOTAL - 1;
+    starts.forEach(x => { if (x > s && x - 1 < e) e = x - 1; });
+    return [s, Math.max(s, e)];
+  });
+}
+const segAt = t => { let i = 0; for (let k = 0; k < SEG.length; k++) if (SEG[k].t0 <= t) i = k; return i; };
 
-// ===== FX54 AUDIO ENGINE =====
-let AC, OUT, REV, AN, RECDEST, NB;
-
-function initAudio() {
-  AC = new (window.AudioContext || window.webkitAudioContext)();
-  const comp = AC.createDynamicsCompressor();
-  comp.threshold.value = -16; comp.ratio.value = 5; comp.attack.value = 0.004; comp.release.value = 0.25;
-  OUT = AC.createGain(); OUT.gain.value = 0.85;
-  OUT.connect(comp); comp.connect(AC.destination);
-  AN = AC.createAnalyser(); AN.fftSize = 2048; comp.connect(AN);
-  RECDEST = AC.createMediaStreamDestination(); comp.connect(RECDEST);
-  // Cathedral: a long, dark generated impulse response
-  REV = AC.createConvolver();
-  const n = AC.sampleRate * 6.5, b = AC.createBuffer(2, n, AC.sampleRate);
-  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.4); }
-  REV.buffer = b;
-  const rg = AC.createGain(); rg.gain.value = 0.5; REV.connect(rg); rg.connect(OUT);
-  NB = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
-  const nd = NB.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+// Captions: a title card, then the key verse exactly as the PDF prints it
+const CAPS = [];
+const cap1 = s => s.charAt(0).toUpperCase() + s.slice(1);
+function buildCaps() {
+  CAPS.length = 0;
+  SEG.forEach(s => {
+    if (s.kind === 'act') {
+      if (s.act === 0) { CAPS.push([0.2, 'SPINALXENO™ PRESENTS', 'a film in nine acts and seventy-seven books', '', 1]); CAPS.push([3, 'ATALINA BIBLIQUE', 'Procureur Fustredis · the movie', '', 1]); CAPS.push([6.2, 'ACTUS I · ' + ACTS[0].la, ACTS[0].en, '', 1]); }
+      else CAPS.push([s.t0 + 0.1, 'ACTUS ' + ROMAN[s.act] + ' · ' + ACTS[s.act].la, ACTS[s.act].en, '', 1]);
+      return;
+    }
+    const card = Math.min(2.4, s.dur * 0.3);
+    if (s.kind === 'rev') {
+      const r = REV[s.rv];
+      CAPS.push([s.t0 + 0.05, r[0], 'Apocalypsis · scene ' + ROMAN[s.rv] + ' / VIII · ' + r[1], '', 1]);
+      CAPS.push([s.t0 + card, cap1(r[4]) + '.', r[5], 'Revelation ' + r[6]]);
+      return;
+    }
+    const b = BOOKS[s.bi], n = s.bi + 1;
+    CAPS.push([s.t0 + 0.05, b[2], 'Liber ' + n + ' / 77 · ' + b[3] + ' · ' + b[4], s.p0 != null ? 'paginae ' + (s.p0 + 1) + '–' + (s.p1 + 1) : '', 1]);
+    CAPS.push([s.t0 + card, cap1(b[7]) + '.', b[8], b[3] + ' ' + b[9]]);
+  });
+  CAPS.sort((x, y) => x[0] - y[0]);
 }
 
-function bus(g = 1, wet = 0.4) {
-  const x = AC.createGain(); x.gain.value = g; x.connect(OUT);
-  if (wet) { const w = AC.createGain(); w.gain.value = wet; x.connect(w); w.connect(REV); }
+// ===== COLOUR SCHEMES: nine vivid act colours and an accent =====
+const SCHEMES = [
+  ['Liturgia', '#ffb347 #2fb8ff #c78bff #ff5a5a #ffd23d #38e0b0 #ff7ae0 #7fa8ff #fff0a0', '#ffffff'],
+  ['Andromeda', '#ff4fd8 #4fe8ff #9a6bff #ff6b9a #6bffcf #c86bff #5f8bff #ff9de8 #e6f0ff', '#9fe6ff'],
+  ['Virgo', '#ffb6d9 #b6dcff #ffe0b6 #d9b6ff #b6ffd9 #ff9fc8 #c8e0ff #ffd0e8 #ffffff', '#fff3fa'],
+  ['Trishula', '#ff9933 #3fa9ff #e8e8ff #ff5522 #40f0ff #b48cff #ffcc66 #2266ff #fff8e0', '#ff9933'],
+  ['Apocalypse Ember', '#ff5a1a #ffb347 #ff2a3d #ffd27a #ff7a00 #ff3d8b #ffa040 #ff1530 #fff0b0', '#ffe08a'],
+  ['Vulgate Ink', '#e6c88a #c84a32 #d9b98a #8a6a3a #f2dfb5 #b0302a #c9a96b #7a5530 #fff4dc', '#d23b2a'],
+  ['Seraphim Aurora', '#39ff88 #4fd2ff #c6ff4f #7affd4 #ff4fc8 #8f7bff #00ffcc #b0ff6b #e8fff2', '#ffd36b'],
+  ['Ultraviolet Gospel', '#b86bff #6b8cff #ff6bf0 #6bffe0 #ff3d9a #7a3dff #d06bff #3dd0ff #f0e0ff', '#ffffff'],
+  ['Infrared Judgment', '#ff3b00 #ffcc00 #ff7700 #ffee88 #ff0044 #cc00ff #ff5500 #ffaa00 #ffffff', '#ffee88'],
+  ['Mother Neon', '#39ff88 #ffb347 #ff4f7b #c9d3ff #4fd2ff #ffd36b #39ff88 #ff4f7b #e8fff2', '#ffd36b']
+].map(([name, v, x]) => ({ name, v: v.split(' ').map(h => new THREE.Color(h)), x: new THREE.Color(x) }));
+let scheme = 0, uniOn = false, bgOn = false;
+const uniCol = new THREE.Color('#ffd27a'), bgCol = new THREE.Color('#0b1030');
+
+// ===== XENO SEAM™ TRANSITIONS =====
+const TX = ['Dissolve', 'Wipe', 'Diagonal Wipe', 'Iris', 'Clock Wipe', 'Barn Doors', 'Venetian Blinds', 'Checkerboard', 'Split', 'Diamond', 'Ripple', 'Shatter', 'Spiral', 'Heptagram™', 'Trishula™', 'Tesseract', 'Honeycomb', 'Curtain', 'Pixel Dissolve', 'Starburst', 'Push'];
+const BIG = new Set([11, 13, 14, 19]);
+const txOf = s => s.kind === 'act' ? (s.act % 2 ? 14 : 13) : [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 20, 2, 0][s.i % 19];
+const txDur = type => BIG.has(type) ? 1.8 : 1.1;
+function segSky(s) {
+  const S = SCHEMES[scheme], a = s.act;
+  const v = (bgOn ? bgCol : S.v[a]).clone().offsetHSL(s.hue, 0, 0);
+  const tone = s.kind === 'rev' && s.rv === 3 ? 0.25 : s.kind === 'act' ? 0.8 : 1;
+  return [v.clone().multiplyScalar(0.05 * tone), v.clone().multiplyScalar(0.62 * tone), S.v[(a + 3) % 9].clone().offsetHSL(s.hue * 2, 0, 0).multiplyScalar(0.38 * tone)];
+}
+
+// ===== FX166 AUDIO ENGINE =====
+// 18 instruments per act × 9 acts, plus the tape shuttle, tape lock, the silence in heaven and the seven trumpets
+const SLOTS = ['Kick', 'Clap', 'Hats', 'Open Hat', 'Bass', 'Arp', 'Supersaw Pad', 'Chant', 'Riser', 'Impact', 'Whoosh', 'Glitch Stutter', 'Growl', 'Braam', 'Bell', 'Taiko', 'Brass', 'Bitcrush Chirp'];
+const SPECIAL = ['Tape Shuttle', 'Tape Lock', 'Silence in Heaven', 'Seven Trumpets'];
+const FXN = SLOTS.length * NACT + SPECIAL.length;
+let heard = new Set(), lastFx = '–';
+const mark = (slot, a) => { const k = typeof slot === 'number' ? slot + '·' + a : slot; if (!heard.has(k)) heard.add(k); lastFx = (typeof slot === 'number' ? SLOTS[slot] + ' · ' + ACTS[a].la : slot); };
+
+let AC, OUT, REV_, AN, RECDEST, NB, SES, SESW, PUMP, DLY, CRUSH;
+const DIST = {};
+function curve(k) {
+  if (DIST[k]) return DIST[k];
+  const n = 1024, c = new Float32Array(n);
+  for (let i = 0; i < n; i++) { const x = i / (n - 1) * 2 - 1; c[i] = Math.tanh(k * x) / Math.tanh(k); }
+  return DIST[k] = c;
+}
+function stairs(steps) { const n = 1024, c = new Float32Array(n); for (let i = 0; i < n; i++) { const x = i / (n - 1) * 2 - 1; c[i] = Math.round(x * steps) / steps; } return c; }
+function initAudio() {
+  AC = new (window.AudioContext || window.webkitAudioContext)();
+  const clip = AC.createWaveShaper(); clip.curve = curve(1.5);
+  const comp = AC.createDynamicsCompressor();
+  comp.threshold.value = -14; comp.ratio.value = 6; comp.attack.value = 0.003; comp.release.value = 0.2;
+  OUT = AC.createGain(); OUT.gain.value = 0.8;
+  OUT.connect(clip); clip.connect(comp); comp.connect(AC.destination);
+  AN = AC.createAnalyser(); AN.fftSize = 2048; comp.connect(AN);
+  RECDEST = AC.createMediaStreamDestination(); comp.connect(RECDEST);
+  REV_ = AC.createConvolver();
+  const n = AC.sampleRate * 5, b = AC.createBuffer(2, n, AC.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.8); }
+  REV_.buffer = b;
+  const rg = AC.createGain(); rg.gain.value = 0.42; REV_.connect(rg); rg.connect(OUT);
+  NB = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+  const nd = NB.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+  newSession();
+}
+// Every jump on the tape opens a new session, so that sounds already scheduled fade away
+function newSession() {
+  const t = AC.currentTime;
+  if (SES) { const o = [SES, SESW]; o.forEach(g => g.gain.setTargetAtTime(0, t, 0.05)); setTimeout(() => o.forEach(g => g.disconnect()), 1200); }
+  SES = AC.createGain(); SES.connect(OUT);
+  SESW = AC.createGain(); SESW.connect(REV_);
+  // Sidechain pump for pads and bass, a dotted-eighth delay and a bitcrusher
+  PUMP = AC.createGain(); PUMP.connect(SES);
+  DLY = AC.createDelay(2); const fb = AC.createGain(); fb.gain.value = 0.34; const dl = AC.createGain(); dl.gain.value = 0.5;
+  DLY.connect(fb); fb.connect(DLY); DLY.connect(dl); dl.connect(SES);
+  CRUSH = AC.createWaveShaper(); CRUSH.curve = stairs(6); CRUSH.connect(SES);
+  OUT.gain.cancelScheduledValues(t); OUT.gain.setValueAtTime(0.8, t);
+}
+function bus(g = 1, wet = 0.3, pan = 0, dest) {
+  const x = AC.createGain(); x.gain.value = g;
+  let o = x;
+  if (pan && AC.createStereoPanner) { const p = AC.createStereoPanner(); p.pan.value = pan; x.connect(p); o = p; }
+  o.connect(dest || SES);
+  if (wet) { const w = AC.createGain(); w.gain.value = wet; o.connect(w); w.connect(SESW); }
   return x;
 }
 function env(g, at, a, peak, dur, rel) {
@@ -175,7 +425,7 @@ function osc(type, f, at, dur, peak, o = {}) {
   if (o.det) s.detune.value = o.det;
   if (o.vib) { const l = AC.createOscillator(), lg = AC.createGain(); l.frequency.value = o.vib; lg.gain.value = o.vibD || 12; l.connect(lg); lg.connect(s.detune); l.start(at); l.stop(at + dur + 0.1); }
   const g = AC.createGain(); env(g, at, o.a ?? 0.01, peak, dur, o.rel ?? dur * 0.5);
-  s.connect(g); g.connect(o.dest || bus(1, o.wet ?? 0.4));
+  s.connect(g); g.connect(o.dest || bus(1, o.wet ?? 0.3, o.pan || 0));
   s.start(at); s.stop(at + dur + 0.05);
 }
 function noise(at, dur, peak, o = {}) {
@@ -184,329 +434,974 @@ function noise(at, dur, peak, o = {}) {
   f.frequency.setValueAtTime(o.f || 800, at);
   if (o.to) f.frequency.exponentialRampToValueAtTime(o.to, at + dur);
   f.Q.value = o.Q || 1;
-  const g = AC.createGain(); env(g, at, o.a ?? 0.01, peak, dur, o.rel ?? dur * 0.6);
-  s.connect(f); f.connect(g); g.connect(o.dest || bus(1, o.wet ?? 0.4));
+  const g = AC.createGain(); env(g, at, o.a ?? 0.005, peak, dur, o.rel ?? dur * 0.6);
+  s.connect(f); f.connect(g); g.connect(o.dest || bus(1, o.wet ?? 0.3, o.pan || 0));
   s.start(at, Math.random()); s.stop(at + dur + 0.05);
 }
 const VOW = { a: [800, 1150], o: [450, 800], u: [325, 700], e: [400, 1700], i: [300, 2300] };
-function choir(freqs, at, dur, peak = 0.05, vow = 'a') {
-  const d = bus(1, 0.75), src = AC.createGain();
+function choir(freqs, at, dur, peak = 0.04, vow = 'a') {
+  const d = bus(1, 0.7), src = AC.createGain();
   VOW[vow].forEach((fr, k) => { const b = AC.createBiquadFilter(); b.type = 'bandpass'; b.frequency.value = fr; b.Q.value = k ? 9 : 6; src.connect(b); b.connect(d); });
   freqs.forEach(f => [-10, 0, 9].forEach(det => osc('sawtooth', f, at, dur, peak, { det, a: dur * 0.3, rel: dur * 0.4, dest: src, vib: 4.6 + Math.random(), vibD: 9 })));
 }
-function organ(freqs, at, dur, peak = 0.03) {
+function bell(f, at, dur = 5, peak = 0.08) {
   const d = bus(1, 0.6);
-  freqs.forEach(f => [[1, 1], [2, 0.6], [3, 0.35], [4, 0.3], [8, 0.12]].forEach(([h, v]) => osc('sine', f * h, at, dur, peak * v, { a: 0.25, rel: dur * 0.3, dest: d })));
-}
-function bell(f, at, dur = 6, peak = 0.12) {
-  const d = bus(1, 0.6);
-  [[0.5, 0.6], [1, 1], [1.19, 0.5], [1.56, 0.45], [2, 0.35], [2.51, 0.25], [3, 0.18], [4.07, 0.1]].forEach(([r, v], k) =>
+  [[0.5, 0.6], [1, 1], [1.19, 0.5], [1.56, 0.45], [2, 0.35], [2.51, 0.25], [3, 0.18]].forEach(([r, v], k) =>
     osc('sine', f * r, at, dur / (1 + k * 0.35), peak * v, { a: 0.003, rel: dur / (1 + k * 0.35) - 0.01, dest: d }));
 }
-function boom(at, k = 1) {
-  osc('sine', 70, at, 2.2, 0.9 * k, { to: 22, glide: 1.6, wet: 0.2 });
-  noise(at, 1.8, 0.6 * k, { f: 900, to: 60, wet: 0.5 });
-}
-function thump(at, f = 60, k = 1) { osc('sine', f * 2, at, 0.35, 0.8 * k, { to: f * 0.6, glide: 0.25, wet: 0.15 }); noise(at, 0.08, 0.25 * k, { f: 1500 }); }
-function brass(f, at, dur, peak = 0.07) {
-  const d = bus(1, 0.5), lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 2;
+function brass(f, at, dur, peak = 0.06) {
+  const d = bus(1, 0.45), lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 2;
   lp.frequency.setValueAtTime(300, at); lp.frequency.linearRampToValueAtTime(3200, at + 0.12); lp.frequency.exponentialRampToValueAtTime(1400, at + dur);
   lp.connect(d);
   [0, 7].forEach(det => osc('sawtooth', f, at, dur, peak, { det, a: 0.05, rel: dur * 0.3, dest: lp, vib: 5.5, vibD: 6 }));
 }
-const rnd = (a, b) => a + Math.random() * (b - a);
+function braam(f, at, dur = 5, peak = 0.12) {
+  const d = bus(1, 0.4), ws = AC.createWaveShaper(); ws.curve = curve(3.5);
+  const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 4;
+  lp.frequency.setValueAtTime(160, at); lp.frequency.exponentialRampToValueAtTime(2600, at + 0.3); lp.frequency.exponentialRampToValueAtTime(380, at + dur);
+  const pre = AC.createGain(); pre.connect(ws); ws.connect(lp); lp.connect(d);
+  [[1, 1], [1.5, 0.6], [2, 0.45]].forEach(([h, v]) => [-14, -5, 6, 15].forEach(det => osc('sawtooth', f * h, at, dur, peak * v * 0.5, { det, a: 0.05, rel: dur * 0.6, dest: pre })));
+  osc('sine', f / 2, at, dur, peak * 2.2, { a: 0.05, rel: dur * 0.6, wet: 0.1 });
+}
+function impact(at, k = 1) {
+  osc('sine', 62, at, 2.2, 0.9 * k, { to: 26, glide: 1.8, a: 0.004, rel: 2, wet: 0.12 });
+  noise(at, 0.4, 0.8 * k, { f: 5000, to: 200, a: 0.002, rel: 0.38, wet: 0.5 });
+  [211, 347, 529, 773].forEach((f, i) => osc('triangle', f, at, 1.2 / (1 + i * 0.4), 0.05 * k, { a: 0.002, rel: 1 / (1 + i * 0.4), wet: 0.8 }));
+}
+function riser(at, dur, k = 1) {
+  noise(at, dur, 0.24 * k, { type: 'bandpass', f: 250, to: 7000, Q: 2, a: dur - 0.04, rel: 0.04, wet: 0.4 });
+  osc('sawtooth', 110, at, dur, 0.03 * k, { to: 880, a: dur - 0.04, rel: 0.04, wet: 0.3, vib: 6, vibD: 20 });
+}
+function whoosh(at, dur = 1.1, k = 1) {
+  const s = AC.createBufferSource(); s.buffer = NB; s.loop = true;
+  const f = AC.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 1.6;
+  f.frequency.setValueAtTime(250, at); f.frequency.exponentialRampToValueAtTime(3200, at + dur * 0.55); f.frequency.exponentialRampToValueAtTime(400, at + dur);
+  const g = AC.createGain(); g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.36 * k, at + dur * 0.55); g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+  s.connect(f); f.connect(g);
+  if (AC.createStereoPanner) { const p = AC.createStereoPanner(), dir = Math.random() < 0.5 ? -1 : 1; p.pan.setValueAtTime(-0.9 * dir, at); p.pan.linearRampToValueAtTime(0.9 * dir, at + dur); g.connect(p); p.connect(bus(1, 0.3)); }
+  else g.connect(bus(1, 0.3));
+  s.start(at, Math.random()); s.stop(at + dur + 0.05);
+}
+function stutter(at, f = 220, n = 8, step = 0.04) { for (let i = 0; i < n; i++) { osc('square', f * (1 + i * 0.12), at + i * step, step * 0.8, 0.05, { a: 0.002, rel: step * 0.5, dest: CRUSH }); noise(at + i * step, step * 0.6, 0.12, { type: 'highpass', f: 3000, dest: CRUSH }); } }
+function chirp(at, up = true) { osc('square', up ? 400 : 2400, at, 0.18, 0.06, { to: up ? 2400 : 300, glide: 0.16, a: 0.002, rel: 0.1, dest: CRUSH }); }
+function gong(f, at, k = 1) {
+  const d = bus(1, 0.7);
+  [[1, 1], [1.48, 0.6], [1.93, 0.5], [2.47, 0.4], [2.91, 0.3], [3.6, 0.2]].forEach(([r, v], i) =>
+    osc('sine', f * r, at, 8 / (1 + i * 0.25), 0.1 * v * k, { a: 0.01 + i * 0.03, rel: 7 / (1 + i * 0.25), dest: d, vib: 0.6 + i * 0.3, vibD: 6 }));
+}
+// Electro instruments
+function kick(at, k = 1) { osc('sine', 150, at, 0.42, 0.95 * k, { to: 42, glide: 0.12, a: 0.002, rel: 0.36, wet: 0.03 }); noise(at, 0.02, 0.3 * k, { type: 'highpass', f: 2500, wet: 0 }); pump(at); }
+function pump(at) { PUMP.gain.cancelScheduledValues(at); PUMP.gain.setValueAtTime(0.25, at); PUMP.gain.linearRampToValueAtTime(1, at + 0.22); }
+function clap(at, k = 1) { for (let i = 0; i < 3; i++) noise(at + i * 0.011, 0.03, 0.45 * k, { type: 'bandpass', f: 1500, Q: 1.2, wet: 0.2 }); noise(at + 0.033, 0.22, 0.32 * k, { type: 'bandpass', f: 1300, Q: 0.9, a: 0.002, rel: 0.2, wet: 0.45 }); }
+function hat(at, open, k = 1) { noise(at, open ? 0.22 : 0.045, (open ? 0.12 : 0.1) * k, { type: 'highpass', f: open ? 7000 : 8500, a: 0.001, rel: open ? 0.2 : 0.04, wet: 0.05, pan: (Math.random() - 0.5) * 0.4 }); }
+function bassNote(at, f, len, o = {}) {
+  const d = bus(0.9, 0.05, 0, PUMP), lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = o.q || 6;
+  lp.frequency.setValueAtTime(200, at); lp.frequency.exponentialRampToValueAtTime(o.open || 1400, at + 0.02); lp.frequency.exponentialRampToValueAtTime(260, at + len); lp.connect(d);
+  osc('sawtooth', f, at, len, 0.11, { a: 0.003, rel: len * 0.6, dest: lp }); osc('square', f * 1.005, at, len, 0.05, { a: 0.003, rel: len * 0.6, dest: lp });
+  osc('sine', f / 2, at, len, 0.22, { a: 0.003, rel: len * 0.6, dest: d });
+}
+function growl(at, f, len) {
+  const d = bus(0.9, 0.1, 0, PUMP), ws = AC.createWaveShaper(); ws.curve = curve(5);
+  const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 9;
+  const lfo = AC.createOscillator(), lg = AC.createGain(); lfo.frequency.value = 4 + Math.random() * 4; lg.gain.value = 1400; lfo.connect(lg); lg.connect(lp.frequency); lp.frequency.value = 1600;
+  lfo.start(at); lfo.stop(at + len + 0.05);
+  const car = AC.createOscillator(), mod = AC.createOscillator(), mg = AC.createGain(); car.type = 'sawtooth'; car.frequency.value = f; mod.frequency.value = f * 2; mg.gain.value = f * 3;
+  mod.connect(mg); mg.connect(car.frequency);
+  const g = AC.createGain(); env(g, at, 0.01, 0.09, len, len * 0.3);
+  car.connect(ws); ws.connect(lp); lp.connect(g); g.connect(d);
+  car.start(at); mod.start(at); car.stop(at + len + 0.05); mod.stop(at + len + 0.05);
+}
+function pluck(at, f, k = 1, type = 'square') { osc(type, f, at, 0.2, 0.045 * k, { a: 0.002, rel: 0.17, dest: bus(1, 0.25, (Math.random() - 0.5) * 0.6) }); osc(type, f, at, 0.2, 0.02 * k, { a: 0.002, rel: 0.17, dest: DLY }); }
+function supersaw(at, freqs, dur, peak = 0.016) {
+  const d = bus(1, 0.35, 0, PUMP), lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200; lp.Q.value = 0.6; lp.connect(d);
+  freqs.forEach(f => [-24, -12, -5, 0, 6, 13, 25].forEach(det => osc('sawtooth', f, at, dur, peak, { det, a: 0.08, rel: dur * 0.3, dest: lp })));
+}
+function taiko(at, k = 1) { osc('sine', 120, at, 0.8, 0.7 * k, { to: 48, glide: 0.3, a: 0.003, rel: 0.7, wet: 0.3 }); noise(at, 0.06, 0.4 * k, { type: 'bandpass', f: 380, Q: 1.5, wet: 0.25 }); }
 
-// Hits drive the visuals in sync with the sound
+// The score: one groove per act
+const MUSIC = [
+  { bpm: 100, root: 73.42, mode: [0, 2, 3, 5, 7, 8, 10], prog: [0, 5, 3, 6], k: 'x.......x.......', c: '....x.......x...', h: '..x...x...x...x.', o: '................', b: 'x..x..x...x..x..', ar: 'x.x.x.x.x.x.x.x.', vow: 'a', growl: 0, taiko: 0 },
+  { bpm: 124, root: 82.41, mode: [0, 2, 3, 5, 7, 8, 10], prog: [0, 3, 5, 4], k: 'x...x...x...x...', c: '....x.......x...', h: 'x.xxx.xxx.xxx.xx', o: '..x...x...x...x.', b: 'xxx.xxx.xxx.xxx.', ar: 'x..x..x..x..x.x.', vow: 'o', growl: 0, taiko: 1 },
+  { bpm: 90, root: 87.31, mode: [0, 2, 4, 6, 7, 9, 11], prog: [0, 4, 5, 3], k: 'x.....x...x.....', c: '........x.......', h: 'x.x.x.x.x.x.x.x.', o: '................', b: 'x.......x...x...', ar: 'xxxxxxxxxxxxxxxx', vow: 'u', growl: 0, taiko: 0, harp: 1 },
+  { bpm: 132, root: 65.41, mode: [0, 2, 3, 5, 7, 8, 11], prog: [0, 5, 4, 0], k: 'x...x...x...x...', c: '....x.......x...', h: 'xxxxxxxxxxxxxxxx', o: '..x.......x.....', b: 'x...x.x...x.x...', ar: '................', vow: 'o', growl: 1, taiko: 0 },
+  { bpm: 140, root: 110, mode: [0, 2, 3, 5, 7, 8, 10], prog: [0, 6, 5, 4], k: 'x.........x.....', c: '....x.......x..x', h: 'x.xxx.xxx.xxx.xx', o: '......x.......x.', b: 'x..x....x.x.....', ar: 'x.xx.xx.x.xx.xx.', vow: 'e', growl: 0, taiko: 0, glitch: 1 },
+  { bpm: 110, root: 98, mode: [0, 2, 4, 5, 7, 9, 10], prog: [0, 6, 3, 4], k: 'x...x...x...x...', c: '....x.......x...', h: '..x...x...x...x.', o: '................', b: 'x.x.x.x.x.x.x.x.', ar: 'xxxxxxxxxxxxxxxx', vow: 'a', growl: 0, taiko: 0 },
+  { bpm: 128, root: 61.74, mode: [0, 2, 3, 5, 7, 8, 10], prog: [0, 5, 2, 6], k: 'x...x...x...x...', c: '....x.......x...', h: 'x.x.x.x.x.x.x.x.', o: '..x...x...x...x.', b: '..x...x...x...x.', ar: 'x.xxx.xxx.xxx.xx', vow: 'e', growl: 0, taiko: 0, glitch: 1 },
+  { bpm: 118, root: 73.42, mode: [0, 2, 3, 5, 7, 9, 10], prog: [0, 3, 4, 3], k: 'x...x...x...x...', c: '....x.......x...', h: '................', o: '..x...x...x...x.', b: 'x..x..x.x..x..x.', ar: '..x....x..x.....', vow: 'i', growl: 0, taiko: 0 },
+  { bpm: 150, root: 73.42, mode: [0, 1, 3, 5, 7, 8, 10], prog: [0, 1, 0, 6], k: 'x.......x.x.....', c: '........x.......', h: 'x.x.x.x.x.x.x.xx', o: '................', b: 'x.......x.x.....', ar: '................', vow: 'a', growl: 1, taiko: 1 }
+];
+const deg = (m, d) => { const n = m.mode.length, o = Math.floor(d / n); return m.mode[((d % n) + n) % n] + 12 * o; };
+const fq = (m, semis) => m.root * Math.pow(2, semis / 12);
+const stepLen = a => 60 / MUSIC[a].bpm / 4;
+let seqNext = 0;
+function seqResync(t) {
+  const a = clamp(Math.floor(t / ACT_LEN), 0, NACT - 1), t0 = a * ACT_LEN, L = stepLen(a);
+  seqNext = t0 + Math.ceil((t - t0) / L - 1e-6) * L;
+}
+function silentAt(t) { const s = SEG[segAt(t)]; return s.kind === 'rev' && s.rv === 3 && t - s.t0 < 5; }
+function seqSchedule(t) {
+  while (seqNext < t + 0.2 && seqNext < DUR) {
+    const tt = seqNext, a = clamp(Math.floor(tt / ACT_LEN), 0, NACT - 1), t0 = a * ACT_LEN, L = stepLen(a);
+    const idx = Math.round((tt - t0) / L);
+    if (!silentAt(tt) && tt - t0 > (a === 0 ? 6 : 0.5)) playStep(start + tt, a, idx, tt);
+    let nx = t0 + (idx + 1) * L; if (nx >= t0 + ACT_LEN - 1e-6) nx = t0 + ACT_LEN;
+    seqNext = nx;
+  }
+}
+function playStep(at, a, idx, tt) {
+  if (at < AC.currentTime) return;
+  const m = MUSIC[a], st = idx % 16, bar = Math.floor(idx / 16), L = stepLen(a);
+  const chord = m.prog[Math.floor(bar / 2) % m.prog.length];
+  const build = clamp((tt - a * ACT_LEN) / 20, 0.35, 1);   // the groove builds through the act's first bars
+  if (m.k[st] === 'x') { kick(at, build); mark(0, a); }
+  if (m.c[st] === 'x') { clap(at, build); mark(1, a); }
+  if (m.h[st] === 'x') { hat(at, false, build * (st % 4 === 2 ? 1 : 0.6)); mark(2, a); }
+  if (m.o[st] === 'x') { hat(at, true, build); mark(3, a); }
+  if (m.b[st] === 'x') {
+    const f = fq(m, deg(m, chord)) * (st % 8 === 6 ? 2 : 1);
+    if (m.growl && st % 8 === 0) { growl(at, f, L * 6); mark(12, a); } else { bassNote(at, f, L * 1.6, { open: m.growl ? 900 : 1600 }); mark(4, a); }
+  }
+  if (m.ar[st] === 'x') {
+    const tones = [0, 2, 4, 7, 9, 11], d = chord + tones[(idx * 3 + bar) % tones.length];
+    pluck(at, fq(m, deg(m, d) + 24), build, m.harp ? 'triangle' : st % 2 ? 'square' : 'sawtooth'); mark(5, a);
+  }
+  if (st === 0 && bar % 2 === 0) {
+    const ch = [0, 2, 4].map(x => fq(m, deg(m, chord + x) + 12));
+    supersaw(at, ch, L * 32, 0.012 * build); mark(6, a);
+    if (bar % 4 === 0) { choir(ch.map(f => f), at, L * 60, 0.022, m.vow); mark(7, a); }
+  }
+  if (m.taiko && (st === 0 || st === 6 || st === 10 || (bar % 4 === 3 && st >= 12))) { taiko(at, 0.6 * build); mark(15, a); }
+  if (m.glitch && bar % 4 === 3 && st === 12) { stutter(at, fq(m, deg(m, chord) + 24), 8, L / 2); mark(11, a); }
+  if (st === 0 && bar % 8 === 0 && bar > 0) { bell(fq(m, deg(m, chord) + 24), at, 4, 0.05); mark(14, a); }
+}
+
+// One-shot cinema effects on every cut of the trailer montage
+const EVENTS = [];
+function buildEvents() {
+  EVENTS.length = 0;
+  SEG.forEach((s, i) => {
+    const a = s.act, prev = SEG[i - 1];
+    if (prev && prev.dur > 4) EVENTS.push({ t: s.t0 - Math.min(2, prev.dur * 0.35), fn: at => { riser(at, Math.min(2, prev.dur * 0.35), 0.9); mark(8, a); } });
+    EVENTS.push({ t: s.t0 - 0.25, fn: at => { whoosh(at, txDur(txOf(s)) + 0.5, s.kind === 'act' ? 1.2 : 0.8); mark(10, a); } });
+    EVENTS.push({ t: s.t0, fn: at => { impact(at, s.kind === 'act' ? 1.2 : 0.75); chirp(at + 0.05, true); mark(9, a); mark(17, a); hit(at, s.kind === 'act' ? 1.2 : 0.6); } });
+    if (s.kind === 'act') EVENTS.push({ t: s.t0 + 0.05, fn: at => { braam(fq(MUSIC[a], 0) / 2, at, 5, 0.12); gong(fq(MUSIC[a], 0), at, 0.8); mark(13, a); } });
+    if (s.kind === 'book' && (a === 4 || a === 6)) EVENTS.push({ t: s.t0 - 0.3, fn: at => { stutter(at, 330, 6, 0.045); mark(11, a); } });
+    if (s.kind === 'book' && a === 1 && i % 3 === 0) EVENTS.push({ t: s.t0 + 0.4, fn: at => { brass(fq(MUSIC[1], 12), at, 0.9); brass(fq(MUSIC[1], 19), at, 0.9); mark(16, a); } });
+    if (s.kind === 'rev' && s.rv === 3) {
+      EVENTS.push({ t: s.t0 + 0.6, fn: at => { OUT.gain.setTargetAtTime(0.04, at, 0.15); OUT.gain.setTargetAtTime(0.8, at + 4, 0.03); mark('Silence in Heaven'); } });
+      EVENTS.push({ t: s.t0 + 4.6, fn: at => { for (let k = 0; k < 7; k++) brass([293.7, 349.2, 392, 440, 523, 587, 698][k], at + k * 1.05, 1.3, 0.07); mark('Seven Trumpets'); } });
+    }
+  });
+  EVENTS.push({ t: DUR - 1.2, fn: at => { impact(at, 1.4); gong(36.7, at, 1); bell(73.4, at, 10, 0.2); } });
+  EVENTS.sort((x, y) => x.t - y.t);
+}
 const HITS = [];
 const hit = (at, k) => HITS.push({ at, k });
 
-// The 54 effects. Each is [name, act, times within the act, fn(at)]
-const FX = [
-  ['Void Drone', 0, [1], at => { osc('sine', 36.7, at, 40, 0.35, { a: 6, rel: 10, wet: 0.2 }); osc('sine', 55, at, 40, 0.15, { a: 8, rel: 10 }); }],
-  ['Abyss Wind', 0, [6, 30], at => noise(at, 16, 0.18, { type: 'bandpass', f: 300, to: 1200, Q: 3, a: 4, rel: 6 })],
-  ['Primordial Heartbeat', 0, [14, 15, 16, 17, 18, 19], at => { thump(at, 48, 0.7); thump(at + 0.28, 44, 0.5); }],
-  ['Creation Riser', 0, [47], at => { noise(at, 8.8, 0.35, { type: 'highpass', f: 300, to: 9000, a: 8, rel: 0.2 }); osc('sawtooth', 110, at, 8.8, 0.06, { to: 880, a: 8, rel: 0.2 }); }],
-  ['Fiat Lux Detonation', 0, [56], at => { boom(at, 1.3); [523, 659, 784, 1047].forEach(f => bell(f, at, 7, 0.06)); hit(at, 1.3); }],
-  ['Light Shimmer', 0, [57, 61, 65], at => { for (let i = 0; i < 9; i++) osc('sine', rnd(2000, 5200), at + i * 0.16, 1.8, 0.03, { a: 0.01, wet: 0.8 }); }],
-  ['Choir of Genesis', 0, [57], at => choir([146.8, 220, 293.7, 370], at, 13, 0.04, 'a')],
-  ['Firmament Hum', 0, [36], at => organ([73.4, 110], at, 18, 0.05)],
-
-  ['Spirit Over the Waters', 1, [2, 30], at => noise(at, 12, 0.12, { type: 'bandpass', f: 2400, to: 900, Q: 6, a: 3, rel: 5 })],
-  ['Water Droplets', 1, [8, 20, 52], at => { for (let i = 0; i < 14; i++) osc('sine', rnd(700, 1600), at + rnd(0, 5), 0.18, 0.08, { to: rnd(1800, 2800), glide: 0.06, wet: 0.7 }); }],
-  ['Ocean Swell', 1, [4, 24, 44], at => noise(at, 14, 0.3, { f: 200, to: 700, a: 5, rel: 7, wet: 0.3 })],
-  ['Deep Whale Call', 1, [16, 38], at => { osc('sine', 120, at, 5, 0.12, { to: 185, glide: 2.5, a: 1, wet: 0.8 }); osc('sine', 180, at + 2.5, 3.5, 0.08, { to: 95, a: 0.6, wet: 0.8 }); }],
-  ['Fountains of the Deep', 1, [43], at => { noise(at, 10, 0.4, { f: 140, to: 400, Q: 4, a: 2 }); for (let i = 0; i < 30; i++) osc('sine', rnd(90, 300), at + rnd(0, 9), 0.25, 0.1, { to: rnd(300, 600), wet: 0.3 }); hit(at + 1, 0.6); }],
-  ['Cataract Roar', 1, [56], at => { noise(at, 12, 0.55, { f: 3000, to: 600, a: 1.5, wet: 0.5 }); hit(at, 0.9); }],
-  ['Rain of Heaven', 1, [57], at => noise(at, 13, 0.18, { type: 'highpass', f: 5000, a: 2, rel: 4 })],
-  ['Thunder Over the Flood', 1, [58, 66], at => { noise(at, 6, 0.7, { f: 400, to: 60, a: 0.02, wet: 0.6 }); osc('sine', 50, at, 3, 0.6, { to: 28 }); hit(at, 1); }],
-
-  ['Hourglass Sand', 2, [3, 34], at => noise(at, 22, 0.08, { type: 'highpass', f: 6500, Q: 0.5, a: 3, rel: 4 })],
-  ['Clock of Ecclesiastes', 2, [8], at => { for (let i = 0; i < 40; i++) osc('square', i % 2 ? 1900 : 1500, at + i, 0.03, 0.05, { wet: 0.5 }); }],
-  ['Reverse Swell', 2, [20, 52], at => osc('sawtooth', 220, at, 4, 0.08, { a: 3.9, rel: 0.05, to: 330, wet: 0.3 })],
-  ['Ash Wind', 2, [26], at => noise(at, 18, 0.16, { type: 'bandpass', f: 500, to: 2000, Q: 2, a: 5, rel: 6 })],
-  ['Dust Crumble', 2, [56, 57.5, 59], at => { noise(at, 1.6, 0.4, { f: 2500, to: 200 }); thump(at, 40, 0.5); hit(at, 0.5); }],
-  ['Funeral Bell', 2, [1, 15, 29, 43, 57], at => bell(98, at, 9, 0.18)],
-  ['Vanitas Choir', 2, [5], at => choir([146.8, 174.6, 220, 261.6], at, 16, 0.04, 'o')],
-  ['Generations Passing', 2, [22], at => { for (let i = 0; i < 16; i++) thump(at + i * 0.62, 70, 0.25 + 0.3 * Math.sin(i / 16 * Math.PI)); }],
-
-  ['Shepherd Pipe', 3, [4, 40], at => { [587, 659, 784, 880, 784, 659, 587, 523, 587].forEach((f, i) => osc('triangle', f, at + i * 0.7, 0.75, 0.07, { a: 0.06, vib: 5, vibD: 15, wet: 0.7 })); }],
-  ['Valley Drone', 3, [1], at => { osc('sawtooth', 73.4, at, 60, 0.03, { a: 8, rel: 12, wet: 0.5 }); osc('sine', 36.7, at, 60, 0.25, { a: 8, rel: 12 }); }],
-  ['Shadow of Death Sub Drop', 3, [24], at => { osc('sine', 90, at, 4, 0.8, { to: 24, glide: 3.5 }); hit(at, 0.8); }],
-  ['Psalm Organ', 3, [5], at => organ([146.8, 220, 293.7], at, 16, 0.04)],
-  ['Rod and Staff Knocks', 3, [30, 31, 32.4], at => { noise(at, 0.12, 0.5, { type: 'bandpass', f: 900, Q: 8 }); osc('sine', 180, at, 0.2, 0.3); }],
-  ['Still Waters', 3, [12], at => noise(at, 14, 0.07, { type: 'bandpass', f: 600, Q: 1, a: 4, rel: 5 })],
-  ['Lullaby Bells', 3, [44], at => { [1175, 1319, 1568, 1319, 1175, 988, 1175].forEach((f, i) => bell(f, at + i * 0.55, 2.2, 0.035)); }],
-  ['Breath of Comfort', 3, [52], at => noise(at, 9, 0.12, { f: 400, to: 1400, a: 4, rel: 4.5 })],
-
-  ['Gavel of the Procureur', 4, [2, 3.2, 4.4, 58], at => { noise(at, 0.09, 0.9, { type: 'bandpass', f: 1200, Q: 4 }); thump(at, 90, 0.9); hit(at, 0.9); }],
-  ['Courtroom Murmur', 4, [6], at => { for (let i = 0; i < 6; i++) noise(at + i, 14, 0.04, { type: 'bandpass', f: rnd(300, 900), to: rnd(300, 900), Q: 7, a: 2, rel: 4 }); }],
-  ['Chains of the Accused', 4, [14, 34], at => { for (let i = 0; i < 26; i++) osc('square', rnd(2500, 5000), at + rnd(0, 2.5), 0.05, 0.03, { wet: 0.6 }); }],
-  ['Whisper of the Accuser', 4, [17, 36], at => noise(at, 6, 0.2, { type: 'bandpass', f: 3200, to: 1800, Q: 9, a: 1, rel: 3 })],
-  ['Scales of Judgment', 4, [57.5], at => { osc('sine', 300, at, 3, 0.1, { to: 220, glide: 2.5 }); bell(660, at + 0.4, 4, 0.06); }],
-  ['Writing on the Wall', 4, [48], at => { for (let i = 0; i < 18; i++) noise(at + i * 0.14, 0.12, 0.25, { type: 'bandpass', f: rnd(2000, 4000), Q: 3 }); }],
-  ['Mene Tekel Stingers', 4, [49, 51, 53], at => { brass(146.8, at, 1.4, 0.09); brass(155.6, at, 1.4, 0.06); hit(at, 0.7); }],
-  ['Verdict Timpani', 4, [59, 59.6, 60.2, 61, 62.5], at => { osc('sine', 98, at, 1.6, 0.8, { to: 82, glide: 0.4, wet: 0.3 }); noise(at, 0.2, 0.3, { f: 600 }); hit(at, 0.6); }],
-
-  ['First Seal Breaking', 6 - 1, [2, 11, 20, 29, 38, 47, 56], at => { noise(at, 0.4, 0.8, { type: 'highpass', f: 2500 }); thump(at, 50, 1); hit(at, 1); }],
-  ['Seven Trumpets', 5, [21.5], at => { for (let i = 0; i < 7; i++) brass([293.7, 349.2, 392, 440, 523, 587, 698][i], at + i * 1.3, 1.5, 0.07); }],
-  ['Black Sun Drone', 5, [39], at => { osc('sawtooth', 55, at, 18, 0.05, { a: 3, rel: 6, wet: 0.5 }); osc('sawtooth', 58.3, at, 18, 0.05, { a: 3, rel: 6 }); }],
-  ['Falling Stars', 5, [55, 59, 63], at => { for (let i = 0; i < 6; i++) osc('sine', rnd(2500, 4000), at + i * 0.3, 1.6, 0.05, { to: rnd(200, 500), wet: 0.6 }); }],
-  ['Earthquake Rumble', 5, [41], at => { noise(at, 12, 0.5, { f: 90, Q: 2, a: 3, rel: 5 }); hit(at + 3, 0.5); }],
-  ['Apocalypse Thunder', 5, [54, 62], at => { noise(at, 6, 0.8, { f: 500, to: 50, wet: 0.6 }); osc('sine', 45, at, 3, 0.7, { to: 24 }); hit(at, 1.2); }],
-  ['Horsemen Hooves', 5, [6], at => { for (let i = 0; i < 24; i++) thump(at + Math.floor(i / 3) * 0.75 + (i % 3) * 0.13, 80, 0.35); }],
-  ['Angelic Scream', 5, [50], at => choir([880, 1174.7], at, 4, 0.03, 'i')],
-
-  ['Verbum Choir', 6, [3], at => choir([146.8, 220, 293.7, 370, 440], at, 18, 0.04, 'a')],
-  ['Lux in Tenebris Shimmer', 6, [22], at => { for (let i = 0; i < 24; i++) osc('sine', rnd(1800, 6000), at + rnd(0, 8), 2.5, 0.025, { wet: 0.9 }); }],
-  ['Cathedral Organ Finale', 6, [37], at => organ([73.4, 146.8, 220, 293.7, 370], at, 24, 0.035)],
-  ['Singularity Collapse', 6, [56], at => { noise(at, 6.5, 0.4, { type: 'highpass', f: 200, to: 12000, a: 6.4, rel: 0.05 }); osc('sawtooth', 55, at, 6.5, 0.08, { to: 1760, a: 6.4, rel: 0.05 }); }],
-  ['Alpha Omega Bell', 6, [62.5, 63], at => { bell(73.4, at, 12, 0.3); boom(at, 1.2); hit(at, 1.5); }],
-  ['Final Amen', 6, [63], at => { choir([196, 246.9, 293.7], at, 3.5, 0.045, 'a'); choir([146.8, 220, 293.7, 370], at + 3.5, 4.5, 0.05, 'a'); }]
-];
-
-// Chant bed: a chord every 8.875 s, D Dorian
-const CHANT = [
-  ['Dm', [146.8, 220, 293.7]], ['C', [130.8, 196, 261.6]], ['Bb', [116.5, 174.6, 233.1]], ['Am', [110, 164.8, 220]],
-  ['Dm', [146.8, 220, 293.7]], ['F', [174.6, 220, 261.6]], ['G', [196, 246.9, 293.7]], ['A', [110, 164.8, 277.2]]
-];
-
-// One sorted list of everything the engine will play
-const EVENTS = [];
-FX.forEach(([name, act, times, fn], id) => times.forEach(tt => EVENTS.push({ t: act * ACT + tt, id, name, fn })));
-for (let a = 0; a < 7; a++) for (let c = 0; c < 8; c++) {
-  const t = a * ACT + c * 8.875;
-  if (t > DUR - 9) continue;
-  const [nm, fr] = CHANT[c];
-  EVENTS.push({ t, chant: nm, fn: at => choir(fr, at, 9.4, 0.02 + a * 0.003, ACTS[a].vow) });
+// ===== THE TAPE SHUTTLE: what you hear at any speed but 1× =====
+let SH = null;
+function shuttleOn() {
+  if (SH || !AC) return;
+  const t = AC.currentTime;
+  const n = AC.createBufferSource(); n.buffer = NB; n.loop = true;
+  const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.2;
+  const ng = AC.createGain(); ng.gain.value = 0;
+  n.connect(bp); bp.connect(ng); ng.connect(OUT);
+  const o = AC.createOscillator(); o.type = 'sawtooth';
+  const lfo = AC.createOscillator(), lg = AC.createGain(); lfo.frequency.value = 7; lg.gain.value = 40; lfo.connect(lg); lg.connect(o.detune);
+  const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 5;
+  const og = AC.createGain(); og.gain.value = 0;
+  o.connect(lp); lp.connect(og); og.connect(OUT);
+  n.start(t); o.start(t); lfo.start(t);
+  SH = { n, bp, ng, o, lp, og, lfo };
+  mark('Tape Shuttle');
 }
-EVENTS.sort((x, y) => x.t - y.t);
+function shuttleSet(sp) {
+  if (!SH) return;
+  const t = AC.currentTime, a = Math.abs(sp);
+  SH.bp.frequency.setTargetAtTime(500 + a * 450, t, 0.05);
+  SH.ng.gain.setTargetAtTime(sp === 0 ? 0.015 : 0.05 + a * 0.012, t, 0.05);
+  SH.o.frequency.setTargetAtTime(sp === 0 ? 30 : 38 * a * (sp < 0 ? 0.7 : 1), t, 0.06);
+  SH.lp.frequency.setTargetAtTime(300 + a * 260, t, 0.05);
+  SH.og.gain.setTargetAtTime(sp === 0 ? 0.01 : 0.035, t, 0.05);
+  SH.lfo.frequency.setTargetAtTime(sp < 0 ? 11 : 7, t, 0.1);
+}
+function shuttleOff() {
+  if (!SH) return;
+  const t = AC.currentTime, s = SH; SH = null;
+  [s.ng, s.og].forEach(g => g.gain.setTargetAtTime(0, t, 0.04));
+  setTimeout(() => { [s.n, s.o, s.lfo].forEach(x => { try { x.stop(); } catch (e) { } }); }, 400);
+}
+function tapeLock() {
+  const at = AC.currentTime + 0.01;
+  osc('sine', 30, at, 0.3, 0.6, { to: 95, glide: 0.2, a: 0.004, rel: 0.2, wet: 0.05 });
+  noise(at, 0.12, 0.25, { type: 'bandpass', f: 900, Q: 2, wet: 0 });
+  mark('Tape Lock');
+}
 
 // ===== VISUALS =====
 const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
+const PXR = Math.min(devicePixelRatio, MOBILE ? 1.5 : 2);
+renderer.setPixelRatio(PXR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 $('stage').appendChild(renderer.domElement);
+if (location.search.includes('debug')) renderer.debug.onShaderError = (gl, prog, vs, fs) => { window.__shaderErr = (gl.getShaderInfoLog(vs) || '') + (gl.getShaderInfoLog(fs) || ''); };
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x030205, 0.012);
 const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 400);
-camera.position.set(0, 0, 34);
+camera.position.set(0, 0, 36);
 
-// Sacred forms: every form is N target positions for the same points
-const N = MOBILE ? 12000 : 24000;
-const g = Math.random;
-function form(i) {
-  const P = new Float32Array(N * 3);
-  for (let k = 0; k < N; k++) {
-    let x = 0, y = 0, z = 0;
-    const u = g(), v = g(), w = g();
-    if (i === 0) {          // burst of creation: shells of light
-      const r = 2 + Math.pow(u, 0.6) * 15 * (k % 5 === 0 ? 1.4 : 1), th = TAU * v, ph = Math.acos(2 * w - 1);
-      x = r * Math.sin(ph) * Math.cos(th); y = r * Math.cos(ph); z = r * Math.sin(ph) * Math.sin(th);
-    } else if (i === 1) {   // the waters
-      x = (u - 0.5) * 60; z = (v - 0.5) * 60; y = -4;
-    } else if (i === 2) {   // hourglass
-      const yy = (u * 2 - 1), r = (Math.abs(yy) * 9 + 0.4) * Math.sqrt(v), th = TAU * w;
-      x = r * Math.cos(th); z = r * Math.sin(th); y = yy * 12;
-      if (k % 7 === 0) { x = (g() - 0.5) * 0.6; z = (g() - 0.5) * 0.6; y = (g() - 0.5) * 2; }
-    } else if (i === 3) {   // the cross in the valley
-      if (k % 3 === 0) { x = (u - 0.5) * 70; z = (v - 0.5) * 50; y = -9 + Math.pow(Math.abs(x) / 35, 2) * 14 + (w - 0.5); }
-      else if (u < 0.62) { x = (v - 0.5) * 2.4; y = -9 + w * 24; z = (g() - 0.5) * 2.4; }
-      else { x = (v - 0.5) * 14; y = 7 + (w - 0.5) * 2.4; z = (g() - 0.5) * 2.4; }
-    } else if (i === 4) {   // the eye of the accuser
-      const th = TAU * u;
-      if (k % 3 === 0) { const r = 4.5 * Math.sqrt(v); x = r * Math.cos(th); y = r * Math.sin(th); z = 1; }
-      else { const s = v * 2 - 1, half = 9 * Math.sqrt(1 - s * s); x = s * 16; y = (w < 0.5 ? 1 : -1) * half * (0.85 + g() * 0.15); z = (g() - 0.5) * 1.5; }
-    } else if (i === 5) {   // seven seals
-      const s = k % 7, a0 = s / 7 * TAU, cx = Math.cos(a0) * 12, cy = Math.sin(a0) * 12, th = TAU * u, r = 3 + (v - 0.5) * 0.6;
-      x = cx + r * Math.cos(th); y = cy + r * Math.sin(th); z = (w - 0.5) * 1.2;
-      if (k % 11 === 0) { const r2 = 12 * Math.sqrt(g()), t2 = TAU * g(); x = r2 * Math.cos(t2); y = r2 * Math.sin(t2); z = 0; }
-    } else {                // the singularity: a vortex disc and a white core
-      const r = 1.5 + Math.pow(u, 1.6) * 20, th = TAU * v + r * 0.45;
-      x = r * Math.cos(th); z = r * Math.sin(th); y = (w - 0.5) * 0.8 * (1 + r * 0.05);
-      if (k % 9 === 0) { y = (g() - 0.5) * 50; x *= 0.02; z *= 0.02; }
+// The sky: centre, edge and nebula colours, with the Xeno Seam™ between two skies
+const C3 = () => new THREE.Color(0, 0, 0);
+const BG = {
+  a0: { value: C3() }, a1: { value: C3() }, a2: { value: C3() }, b0: { value: C3() }, b1: { value: C3() }, b2: { value: C3() },
+  p: { value: 1 }, typ: { value: 0 }, time: { value: 0 }, aspect: { value: innerWidth / innerHeight }, kick: { value: 0 },
+  seamCol: { value: new THREE.Color('#fff0c0') }, res: { value: new THREE.Vector2(innerWidth * PXR, innerHeight * PXR) }
+};
+const bgScene = new THREE.Scene();
+const sky = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+  uniforms: BG, depthTest: false, depthWrite: false,
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+  fragmentShader: `uniform vec3 a0, a1, a2, b0, b1, b2, seamCol; uniform float p, typ, time, aspect, kick; uniform vec2 res; varying vec2 vUv;
+    float h21(vec2 q){ return fract(sin(dot(q, vec2(127.1, 311.7))) * 43758.5453); }
+    float n2(vec2 q){ vec2 i = floor(q), f = fract(q); f = f * f * (3.0 - 2.0 * f);
+      return mix(mix(h21(i), h21(i + vec2(1.0, 0.0)), f.x), mix(h21(i + vec2(0.0, 1.0)), h21(i + vec2(1.0, 1.0)), f.x), f.y); }
+    float fbm(vec2 q){ float s = 0.0, a = 0.5; for (int i = 0; i < 5; i++){ s += a * n2(q); q = q * 2.03 + 7.1; a *= 0.5; } return s; }
+    vec3 sky(vec2 uv, vec3 c0, vec3 c1, vec3 c2){
+      vec2 d = uv - 0.5; d.x *= aspect; float r = length(d);
+      vec3 c = mix(c0, c1, smoothstep(0.12, 0.85, r));
+      float nb = fbm(d * 2.2 + vec2(time * 0.02, -time * 0.013));
+      float nb2 = fbm(d * 4.5 - vec2(time * 0.01, time * 0.017) + nb);
+      c += c2 * smoothstep(0.45, 0.9, nb2) * (0.4 + r);
+      c *= 0.75 + 0.5 * nb;
+      float an = atan(d.y, d.x);
+      float rays = pow(0.5 + 0.5 * sin(an * 11.0 + time * 0.06 + nb * 4.0), 8.0) * smoothstep(0.95, 0.1, r);
+      return c + (c1 + c2) * rays * 0.18;
     }
-    P[k * 3] = x; P[k * 3 + 1] = y; P[k * 3 + 2] = z;
+    float field(vec2 uv){
+      int t = int(typ + 0.5);
+      vec2 d = uv - 0.5; d.x *= aspect;
+      float r = length(d), maxR = length(vec2(0.5 * aspect, 0.5));
+      float an = atan(d.x, d.y) / 6.2831853 + 0.5, th = atan(d.y, d.x);
+      if (t == 0) return clamp((fbm(uv * vec2(aspect, 1.0) * 6.0) - 0.15) * 1.4, 0.0, 1.0) * 0.85 + h21(uv * 500.0) * 0.15;
+      if (t == 1) return uv.x;
+      if (t == 2) return (uv.x + 1.0 - uv.y) * 0.5;
+      if (t == 3) return r / maxR;
+      if (t == 4) return an;
+      if (t == 5) return abs(uv.x - 0.5) * 2.0;
+      if (t == 6) return fract(uv.y * 9.0);
+      if (t == 7) { vec2 g = uv * vec2(10.0, 6.0); return fract(g.x + 0.5 * mod(floor(g.y), 2.0)) * 0.8 + 0.2 * h21(floor(g)); }
+      if (t == 8) return abs(uv.y - 0.5) * 2.0;
+      if (t == 9) return (abs(d.x) + abs(d.y)) / (0.5 * aspect + 0.5);
+      if (t == 10) return clamp(r / maxR + 0.04 * sin(r * 60.0), 0.0, 1.0);
+      if (t == 11) {
+        vec2 g = uv * vec2(aspect, 1.0) * 7.0, i = floor(g), f = fract(g), mi = i; float md = 8.0;
+        for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++) { vec2 o = vec2(float(x), float(y)); vec2 q = o + vec2(h21(i + o), h21(i + o + 17.0)); float dd = length(q - f); if (dd < md) { md = dd; mi = i + o; } }
+        return h21(mi * 1.7) * 0.75 + 0.25 * r / maxR;
+      }
+      if (t == 12) return fract(an + r / maxR * 1.5) * 0.45 + r / maxR * 0.55;
+      if (t == 13) { float star = 0.6 + 0.4 * pow(abs(cos(3.5 * th + 1.5708)), 2.0); return clamp(r / (star * maxR) * 0.95, 0.0, 1.0); }
+      if (t == 14) {
+        vec2 q = vec2(d.x, uv.y);
+        float d1 = abs(q.x) + max(0.0, q.y - 0.95);
+        float side = 0.12 + 0.1 * clamp((q.y - 0.42) / 0.4, 0.0, 1.0);
+        float d2 = abs(abs(q.x) - side) + (q.y < 0.42 ? (0.42 - q.y) * 3.0 : max(0.0, q.y - 0.84));
+        float d3 = abs(q.y - 0.42) + max(0.0, abs(q.x) - side);
+        return clamp(min(d1, min(d2, d3)) * 1.15, 0.0, 1.0);
+      }
+      if (t == 15) { mat2 R = mat2(0.825, -0.565, 0.565, 0.825); vec2 q = R * d; return clamp(max(abs(q.x), abs(q.y)) / (maxR * 0.92), 0.0, 1.0); }
+      if (t == 16) {
+        vec2 g = d * 9.0, s = vec2(1.0, 1.7320508), hs = s * 0.5;
+        vec2 a = mod(g, s) - hs, b = mod(g - hs, s) - hs, gv = dot(a, a) < dot(b, b) ? a : b, id = g - gv;
+        return h21(floor(id * 10.0 + 0.5) * 0.1 + 0.3) * 0.6 + 0.4 * clamp(length(id) / (9.0 * maxR), 0.0, 1.0);
+      }
+      if (t == 17) return clamp(uv.x * 0.9 + 0.05 + 0.05 * sin(uv.y * 14.0 + time * 2.0), 0.0, 1.0);
+      if (t == 18) return h21(floor(uv * vec2(64.0, 36.0)));
+      if (t == 19) return clamp(r / maxR * 0.75 + 0.25 * (0.5 - 0.5 * cos(th * 14.0)), 0.0, 1.0);
+      return 1.0 - uv.y;
+    }
+    void main(){
+      vec3 from = sky(vUv, a0, a1, a2), to = sky(vUv, b0, b1, b2);
+      const float w = 0.05;
+      float pp = p * (1.0 + 2.0 * w) - w, f = field(vUv);
+      float rv = p >= 1.0 ? 1.0 : 1.0 - smoothstep(pp - w * 0.35, pp + w * 0.35, f);
+      vec3 c = mix(from, to, rv);
+      float live = step(0.0001, p) * step(p, 0.9999);
+      float e = exp(-abs(f - pp) / 0.011) * live;
+      float spark = step(0.982, h21(floor(vUv * res / 3.0) + floor(time * 30.0)));
+      c += seamCol * e * (1.3 + spark * 3.5);
+      c += vec3(0.45, 0.05, 0.9) * exp(-abs(f - pp + 0.025) / 0.01) * 0.35 * live;
+      c += b1 * kick * 1.2;
+      gl_FragColor = vec4(c, 1.0); }`
+}));
+sky.frustumCulled = false;
+bgScene.add(sky);
+
+// ===== GLYPH ATLAS: 16 scripts × 16 letters =====
+const SCRIPTS = [
+  ['Hebrew', 'אבגדהוזחטיכלמנסעפצקרשת'], ['Greek', 'ΑΒΓΔΘΛΞΠΣΦΨΩαβγδ'], ['Latin', 'ABCDEFGHILMNOPRS'], ['Coptic', 'ⲀⲂⲄⲆⲈⲌⲎⲐⲒⲔⲖⲘⲚⲜⲞⲠ'],
+  ['Syriac', 'ܐܒܓܕܗܘܙܚܛܝܟܠܡܢܣܥ'], ['Aramaic', '𐡀𐡁𐡂𐡃𐡄𐡅𐡆𐡇𐡈𐡉𐡊𐡋𐡌𐡍𐡎𐡏'], ['Phoenician', '𐤀𐤁𐤂𐤃𐤄𐤅𐤆𐤇𐤈𐤉𐤊𐤋𐤌𐤍𐤎𐤏'], ['Samaritan', 'ࠀࠁࠂࠃࠄࠅࠆࠇࠈࠉࠊࠋࠌࠍࠎࠏ'],
+  ['Gothic', '𐌰𐌱𐌲𐌳𐌴𐌵𐌶𐌷𐌸𐌹𐌺𐌻𐌼𐌽𐌾𐌿'], ['Glagolitic', 'ⰀⰁⰂⰃⰄⰅⰆⰇⰈⰉⰊⰋⰌⰍⰎⰏ'], ['Armenian', 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀ'], ['Georgian', 'აბგდევზთიკლმნოპჟ'],
+  ['Ethiopic', 'ሀለሐመሠረሰቀበተኀነአከወዐ'], ['Arabic', 'ابتثجحخدذرزسشصضط'], ['Runic', 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊ'], ['Old Italic', '𐌀𐌁𐌂𐌃𐌄𐌅𐌆𐌇𐌈𐌉𐌊𐌋𐌌𐌍𐌎𐌏']
+].map(([n, s]) => [n, Array.from(s).slice(0, 16)]);
+const GLYPHS = SCRIPTS.flatMap(s => s[1]);
+const FONTSTACK = "'Noto Serif','Noto Sans Hebrew','Noto Sans Coptic','Noto Sans Syriac','Noto Sans Imperial Aramaic','Noto Sans Phoenician','Noto Sans Samaritan','Noto Sans Gothic','Noto Sans Glagolitic','Noto Sans Armenian','Noto Sans Georgian','Noto Sans Ethiopic','Noto Sans Arabic','Noto Sans Runic','Noto Sans Old Italic',serif";
+const atlasCv = document.createElement('canvas'); atlasCv.width = atlasCv.height = 1024;
+const atlas = new THREE.CanvasTexture(atlasCv);
+function drawAtlas() {
+  const x = atlasCv.getContext('2d'); x.clearRect(0, 0, 1024, 1024);
+  x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `44px ${FONTSTACK}`;
+  GLYPHS.forEach((g, i) => x.fillText(g, (i % 16) * 64 + 32, Math.floor(i / 16) * 64 + 34));
+  atlas.needsUpdate = true;
+}
+const SCOL = SCRIPTS.map((_, i) => new THREE.Color().setHSL(i / 16, 0.85, 0.62));
+
+// ===== SCENES OF LIGHT =====
+// Every point has a fixed layer: core 55%, filament 20%, dust 10%, script glyphs 15%
+const QUALITY = { ultra: 260000, high: 160000, standard: 60000 };
+let quality = MOBILE ? 'standard' : 'high';
+function rng(seed) { let a = seed >>> 0; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const sphR = (r, R) => { const th = TAU * r(), ph = Math.acos(2 * r() - 1); return [R * Math.sin(ph) * Math.cos(th), R * Math.cos(ph), R * Math.sin(ph) * Math.sin(th)]; };
+const ln = (r, a, b, j = 0.05) => { const t = r(); return [a[0] + (b[0] - a[0]) * t + (r() - 0.5) * j, a[1] + (b[1] - a[1]) * t + (r() - 0.5) * j, a[2] + (b[2] - a[2]) * t + (r() - 0.5) * j]; };
+const ring = (r, R, y = 0, z = 0, j = 0.06) => { const th = TAU * r(); return [Math.cos(th) * R + (r() - 0.5) * j, y + Math.sin(th) * R, z + (r() - 0.5) * j]; };
+const ringXZ = (r, R, y = 0, j = 0.06) => { const th = TAU * r(); return [Math.cos(th) * R + (r() - 0.5) * j, y + (r() - 0.5) * j, Math.sin(th) * R]; };
+const box = (r, cx, cy, cz, sx, sy, sz) => { const f = (r() * 6) | 0; let x = (r() * 2 - 1) * sx, y = (r() * 2 - 1) * sy, z = (r() * 2 - 1) * sz; if (f < 2) x = f ? sx : -sx; else if (f < 4) y = f === 3 ? sy : -sy; else z = f === 5 ? sz : -sz; return [cx + x, cy + y, cz + z]; };
+const cyl = (r, cx, cz, R, y0, y1) => { const th = TAU * r(); return [cx + Math.cos(th) * R, y0 + r() * (y1 - y0), cz + Math.sin(th) * R]; };
+const terrain = (r, w, d, y, amp = 1) => { let x = (r() - 0.5) * w; const z = (r() - 0.5) * d; if (r() < 0.5) x = Math.round(x / 0.8) * 0.8; return [x, y + amp * Math.sin(x * 0.2 + z * 0.15) * Math.cos(z * 0.23), z]; };
+const dust = (r, R0, R1) => sphR(r, R0 + r() * (R1 - R0));
+const RAYS = Array.from({ length: 77 }, (_, i) => { const y = 1 - 2 * (i + 0.5) / 77, q = Math.sqrt(1 - y * y), th = i * 2.39996; return [q * Math.cos(th), y, q * Math.sin(th)]; });
+const rp = y => 0.55 + 8.8 * Math.pow(Math.abs(y) / 12, 1.4);
+const SEALP = s => { const a = s / 7 * TAU + Math.PI / 2; return [Math.cos(a) * 13, Math.sin(a) * 13]; };
+// Each scene: fn(layer, k, rng) → [x, y, z], and where its word of light sits [y, scale]
+const TPL = {
+  burst: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.22) return sphR(r, 1.6 * Math.cbrt(r())); const sh = u < 0.5 ? 4 : u < 0.78 ? 9 : 15; return sphR(r, sh + (r() - 0.5) * 0.06 * sh); }
+    if (l === 1) { const d = RAYS[k % 77], t = 1.6 + Math.pow(r(), 0.8) * (15 + (k % 5) * 2.2); return [d[0] * t, d[1] * t, d[2] * t]; }
+    return dust(r, 2, 28);
+  }, [17, 2.8]],
+  sea: [(l, k, r) => {
+    const s = r() < 0.5 ? -1 : 1;
+    if (l === 0) { const u = r(), z = (r() - 0.5) * 60; if (u < 0.45) return [s * (3 + r() * 0.4), -8 + r() * (17 - Math.abs(z) * 0.18), z]; if (u < 0.85) { const x = s * (3 + r() * 30); return [x, 9 - Math.abs(z) * 0.18 + 0.6 * Math.sin(x * 0.5 + z * 0.3), Math.round(z / 0.7) * 0.7]; } return [(r() - 0.5) * 5, -8, z]; }
+    if (l === 1) { const y = -8 + r() * 26, a = y * 0.9 + r() * 0.6; return [Math.cos(a) * (1.4 - y * 0.03) * r(), y, -18 + Math.sin(a) * 1.4 * r()]; }
+    return [s * (3 + r() * 25), 9 + r() * 6, (r() - 0.5) * 60];
+  }, [20, 2.4]],
+  tent: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.5) return box(r, 0, -2, 0, 6, 4, 4); if (u < 0.75) return box(r, 0, -4.5, 9, 1.8, 1.5, 1.8); return terrain(r, 46, 26, -6, 0.1); }
+    if (l === 1) { if (r() < 0.6) { const side = (k % 4); const t = r() * 2 - 1; const p = side < 2 ? [t * 20, -6 + r() * 4, side ? 11 : -11] : [side === 2 ? 20 : -20, -6 + r() * 4, t * 11]; return p; } const h = r(); return [Math.sin(h * 9) * h * 1.6, -3 + h * 20, 9 + Math.cos(h * 7) * h * 1.6]; }
+    return dust(r, 10, 26);
+  }, [15, 2.4]],
+  camp: [(l, k, r) => {
+    const c = k % 12, side = Math.floor(c / 3), j = c % 3, off = (j - 1) * 9;
+    const cx = side === 0 ? off : side === 1 ? 20 : side === 2 ? off : -20, cz = side === 0 ? -20 : side === 1 ? off : side === 2 ? 20 : off;
+    if (l === 0) { if (r() < 0.25) return box(r, 0, -3, 0, 3.5, 2.5, 2.5); return [cx + (r() - 0.5) * 6, -6 + (r() < 0.3 ? r() * 1.4 : 0), cz + (r() - 0.5) * 6]; }
+    if (l === 1) { const h = r(); return [Math.cos(h * 20) * 1.5, -3 + h * 24, Math.sin(h * 20) * 1.5]; }
+    return terrain(r, 70, 70, -6.2, 0.3);
+  }, [18, 2.4]],
+  tablets: [(l, k, r) => {
+    const s = k % 2 ? 1 : -1;
+    if (l === 0) { const x = (r() * 2 - 1) * 3.4, y = (r() * 2 - 1) * 5.5; const top = y > 3 ? Math.sqrt(Math.max(0, 1 - (x / 3.4) ** 2)) * 2.5 + 3 : 9; if (y > top) return [s * 4.4 + x * 0.5, 3 + r() * 2, 0]; const row = Math.abs(((y + 6) * 1.4) % 1 - 0.5) < 0.18; return [s * 4.4 + x, y, row ? 0.25 : 0]; }
+    if (l === 1) { if (r() < 0.6) { const th = r() * Math.PI, R = 16 + r() * 0.3; return [Math.cos(th) * R, -8 + Math.sin(th) * R * 0.7, -10]; } const p = [(r() - 0.5) * 20, 18, -8]; return ln(r, p, [p[0] * 0.3, 8, -6], 0.4); }
+    return terrain(r, 60, 40, -8, 1.5);
+  }, [10, 2]],
+  walls: [(l, k, r, P) => {
+    const th = TAU * r(), seg = Math.floor(th / TAU * 24), broken = P.broken && (seg * 7919 % 5 < 2);
+    if (l === 0) { if (r() < 0.75) { const R = 14 + (r() - 0.5) * 0.8; let y = -6 + r() * 7; const tooth = (Math.floor(th * 30) % 2 === 0) ? 1 : 0; if (y > 0.5 && !tooth) y = 0.5; if (broken) y = -6 + (y + 6) * 0.25 + (r() - 0.5) * 2; return [Math.cos(th) * R, y, Math.sin(th) * R]; } const t = (k % 8) / 8 * TAU; return cyl(r, Math.cos(t) * 14, Math.sin(t) * 14, 2, -6, broken ? -2 : 4); }
+    if (l === 1) { if (r() < 0.5) { const t = (k % 7) / 7 * TAU; const R = 22, p = [Math.cos(t) * R, -2, Math.sin(t) * R]; return ln(r, p, [p[0] * 1.3, 3, p[2] * 1.3], 0.3); } return ringXZ(r, 18 + (k % 3) * 2.5, -5.8, 0.1); }
+    return terrain(r, 70, 70, -6.5, 0.4);
+  }, [13, 2.6]],
+  sword: [(l, k, r) => {
+    const s = k % 2 ? 1 : -1, c = Math.cos(s * 0.75), sn = Math.sin(s * 0.75);
+    const rot = (x, y, z) => [x * c - y * sn, x * sn + y * c, z];
+    if (l === 0) { const u = r(); if (u < 0.55) { const y = -9 + r() * 22, w = 0.8 * (1 - Math.max(0, y - 10) / 3); return rot((r() * 2 - 1) * w, y, (r() - 0.5) * 0.2); } if (u < 0.7) return rot((r() * 2 - 1) * 3.5, -9 + (r() - 0.5) * 0.6, (r() - 0.5) * 0.6); if (u < 0.8) return rot((r() - 0.5) * 0.6, -9 - r() * 4, (r() - 0.5) * 0.6); const th = TAU * r(), R = 9 * Math.sqrt(r()); return [Math.cos(th) * R, Math.sin(th) * R, -3 - (R / 9) ** 2 * 1.5]; }
+    if (l === 1) { if (r() < 0.5) { const th = TAU * r(); return [Math.cos(th) * 9.1, Math.sin(th) * 9.1, -4.4]; } const p = rot(0, 13, 0); return ln(r, p, [p[0] + (r() - 0.5) * 20, p[1] + (r() - 0.5) * 20, (r() - 0.5) * 10], 0.1); }
+    return dust(r, 10, 26);
+  }, [17, 2.4]],
+  sheaf: [(l, k, r) => {
+    const st = k % 70, a = st / 70 * TAU, spread = 0.18 + (st % 7) * 0.03;
+    if (l === 0) { const t = r(); if (t < 0.7) { const h = r() * 14; return [Math.cos(a) * h * spread, -7 + h, Math.sin(a) * h * spread]; } const h = 14 + r() * 3; return [Math.cos(a) * h * spread + (r() - 0.5) * 0.6, -7 + h, Math.sin(a) * h * spread + (r() - 0.5) * 0.6]; }
+    if (l === 1) { if (r() < 0.5) return ringXZ(r, 1.1, -2.5, 0.2); return terrain(r, 70, 40, -7.5, 0.6); }
+    return dust(r, 8, 26);
+  }, [15, 2.4]],
+  crown: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.45) return cyl(r, 0, 0, 8, -2, 1); if (u < 0.85) { const sp = k % 8, a0 = sp / 8 * TAU, t = r(), half = 0.32 * (1 - t); const th = a0 + (r() * 2 - 1) * half; return [Math.cos(th) * 8, 1 + t * 6, Math.sin(th) * 8]; } const sp = k % 8, a0 = sp / 8 * TAU, p = sphR(r, 0.7); return [Math.cos(a0) * 8 + p[0], 7.6 + p[1], Math.sin(a0) * 8 + p[2]]; }
+    if (l === 1) { if (r() < 0.6) return ringXZ(r, 8.4, -2 + (k % 3) * 1.5, 0.05); const th = TAU * r(); return [Math.cos(th) * 12, -6 + Math.sin(th * 3) * 0.5, Math.sin(th) * 12]; }
+    return dust(r, 10, 26);
+  }, [14, 2.4]],
+  temple: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.36) { const s = k % 2 ? 1 : -1; return cyl(r, s * 7, 6, 1.3, -8, 10); } if (u < 0.45) { const s = k % 2 ? 1 : -1; return sphR(r, 1.9).map((v, i) => v + [s * 7, 11, 6][i]); } if (u < 0.85) return box(r, 0, 0, -2, 11, 8, 6); return [(r() - 0.5) * 26, -8 - Math.floor(r() * 4) * 0.5, 8 + Math.floor(r() * 4) * 1.2]; }
+    if (l === 1) { if (r() < 0.6) { const x = (r() * 2 - 1) * 12; return [x, 8 + 6 * (1 - Math.abs(x) / 12), -2 + (r() - 0.5) * 12]; } return [(r() - 0.5) * 22, 8 + r() * 0.2, 6]; }
+    return dust(r, 12, 28);
+  }, [19, 2.4]],
+  chariot: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.45) { const s = k % 2 ? 1 : -1, th = TAU * r(), R = 4.2 + (r() - 0.5) * 0.3; return [s * 4.5, -4 + Math.sin(th) * R, Math.cos(th) * R]; } if (u < 0.6) { const s = k % 2 ? 1 : -1, sp = (k % 12) / 12 * TAU, t = r() * 4.2; return [s * 4.5, -4 + Math.sin(sp) * t, Math.cos(sp) * t]; } return box(r, 0, -1, 0, 4, 2.5, 3); }
+    if (l === 1) { const h = r(), a = h * 30 + (k % 3) * 2; const R = 2 + h * 12; return [Math.cos(a) * R, -2 + h * 26, Math.sin(a) * R]; }
+    const p = sphR(r, 2 + r() * 6); return [p[0], p[1] + 2, p[2] - 7];
+  }, [20, 2.4]],
+  scroll: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.8) { const x = (r() * 2 - 1) * 14, y = (r() * 2 - 1) * 7, row = Math.abs(((y + 7) * 1.2) % 1 - 0.5) < 0.22 && Math.abs(x) < 12.5; return [x, y, -1.4 * Math.cos(x / 14 * 1.2) + (row ? 0.2 : 0)]; } const s = k % 2 ? 1 : -1, th = TAU * r(); return [s * 14.5, (r() * 2 - 1) * 8, -1.4 * Math.cos(1.2) + Math.sin(th) * 1.1]; }
+    if (l === 1) { const s = k % 2 ? 1 : -1, th = TAU * r(); return [s * 14.5 + Math.cos(th) * 1.15, (r() * 2 - 1) * 8.6, -0.5 + Math.sin(th) * 1.15]; }
+    return dust(r, 12, 28);
+  }, [0, 2.2]],
+  harp: [(l, k, r) => {
+    const neck = x => 9 + 3 * Math.sin((x + 8) / 16 * Math.PI);
+    if (l === 0) { const u = r(); if (u < 0.35) { const x = -8 + r() * 16; return [x, neck(x) + (r() - 0.5) * 0.6, (r() - 0.5) * 0.6]; } if (u < 0.6) { const y = -9 + r() * 18; return [-8 + (r() - 0.5) * 0.8 + Math.sin(y * 0.2) * 0.6, y, (r() - 0.5) * 0.8]; } const x = -8 + r() * 16; return [x, -9 + x * 0.25 + (r() - 0.5) * 1.2, (r() - 0.5) * 1.6]; }
+    if (l === 1) { const s = k % 22, x = -7.3 + s / 21 * 14.6, y0 = -9 + x * 0.25, y1 = neck(x); return [x, y0 + r() * (y1 - y0), 0]; }
+    return dust(r, 12, 28);
+  }, [17, 2.4]],
+  hourglass: [(l, k, r) => {
+    const th = TAU * r();
+    if (l === 0) { const u = r(); if (u < 0.45) { const y = (r() * 2 - 1) * 12, R = rp(y); return [R * Math.cos(th), y, R * Math.sin(th)]; } if (u < 0.78) { let R = 9 * Math.sqrt(r()); const top = -5.8 - R * 0.28, y = -12 + r() * (top + 12); R = Math.min(R, rp(y) * 0.94); return [R * Math.cos(th), y, R * Math.sin(th)]; } if (u < 0.9) { let R = 7 * Math.sqrt(r()); const lvl = 3.2 + R * 0.35, y = 0.3 + r() * (lvl - 0.3); R = Math.min(R, rp(y) * 0.93); return [R * Math.cos(th), y, R * Math.sin(th)]; } const R = 0.22 * Math.sqrt(r()); return [R * Math.cos(th), -6 + r() * 6.6, R * Math.sin(th)]; }
+    if (l === 1) { if (r() < 0.5) return ringXZ(r, 10, r() < 0.5 ? 12.6 : -12.6, 0.4); const y = (r() * 2 - 1) * 12.6, a = (k % 3) / 3 * TAU; return [Math.cos(a) * 10.4, y, Math.sin(a) * 10.4]; }
+    const p = sphR(r, 7 + r() * 16); p[1] *= 0.7; return p;
+  }, [16, 2.4]],
+  rose: [(l, k, r) => {
+    if (l === 0) { if (r() < 0.8) { const layer = Math.floor(r() * 6), n = 5, th = TAU * r(), pet = Math.abs(Math.cos(n * th / 2 + layer)), R = (2 + layer * 1.3) * (0.5 + 0.5 * pet) * Math.sqrt(r()); return [Math.cos(th) * R, 4 + layer * 0.5 - R * 0.25 + (r() - 0.5) * 0.15, Math.sin(th) * R]; } const y = -10 + r() * 13; return [Math.sin(y * 0.3) * 0.6, y, (r() - 0.5) * 0.3]; }
+    if (l === 1) { const s = k % 2 ? 1 : -1, t = r(); return [s * t * 6, -4 + Math.sin(t * Math.PI) * 2.5 - t * 1.5, (r() - 0.5) * 0.3 + Math.sin(t * Math.PI) * s * 0.5]; }
+    return dust(r, 10, 26);
+  }, [15, 2.4]],
+  eye: [(l, k, r, P) => {
+    if (l === 0) { const u = r(); if (u < 0.45) { const th = (k % 220) / 220 * TAU, R = 2.1 + Math.pow(r(), 0.8) * 3.4; return [Math.cos(th) * R, Math.sin(th) * R + 1, 1]; } if (u < 0.55) return ring(r, 2, 1, 1.05, 0.1); const v = r(); if (v < 0.4) return [(r() * 2 - 1) * 9.5, -11, (r() - 0.5) * 0.35]; if (v < 0.55) return [(r() - 0.5) * 0.5, -11 - r() * 8, 0]; const s = r() < 0.5 ? -1 : 1, th = TAU * r(), R = 3.2 * Math.sqrt(r()); return [s * 9.5 + R * Math.cos(th), -16.4 + s * 0.6, R * Math.sin(th)]; }
+    if (l === 1) { if (r() < 0.6) { const s = r() * 2 - 1, y = (r() < 0.5 ? 1 : -1) * 8.5 * Math.pow(1 - s * s, 0.8); return [s * 16, y + 1, 0.5]; } const s = (k % 48) / 47 * 1.8 - 0.9, y0 = 8.5 * Math.pow(1 - s * s, 0.8) + 1, len = r() * 2.2 * (1 - Math.abs(s) * 0.6); return [s * 16 + s * 0.8 * len, y0 + len, 0.5]; }
+    const p = sphR(r, 6 + r() * 22); p[2] *= 0.5; return p;
+  }, [14, 2.4]],
+  wheels: [(l, k, r) => {
+    const w = k % 4, c = [[-9, 4], [9, 4], [-9, -8], [9, -8]][w];
+    if (l === 0) { const th = TAU * r(), R = 5.2 + (r() - 0.5) * 0.25, pl = k % 2; return pl ? [c[0] + Math.cos(th) * R, c[1] + Math.sin(th) * R, 0] : [c[0] + Math.cos(th) * R * 0.15, c[1] + Math.sin(th) * R, Math.cos(th) * R]; }
+    if (l === 1) { if (r() < 0.5) { const th = (k % 16) / 16 * TAU; return [c[0] + Math.cos(th) * 5.2, c[1] + Math.sin(th) * 5.2, 0.4]; } const p = sphR(r, 2.2 * Math.cbrt(r())); return [p[0], p[1] - 2, p[2]]; }
+    return dust(r, 10, 26);
+  }, [16, 2.4]],
+  flames: [(l, k, r) => {
+    const f = k % 12, a = f / 12 * TAU, cx = Math.cos(a) * 9, cz = Math.sin(a) * 9;
+    if (l === 0) { const h = Math.pow(r(), 0.7), R = 1.6 * Math.sin(Math.PI * Math.min(1, h * 1.15)) * (1 - h * 0.6), th = TAU * r(); return [cx + Math.cos(th) * R + Math.sin(h * 8 + f) * 0.4, -5 + h * 9, cz + Math.sin(th) * R]; }
+    if (l === 1) { if (r() < 0.5) return ringXZ(r, 9, -5.2, 0.4); const h = r(); return [Math.sin(h * 6 + f) * 0.3 * h + cx, -5 + h * 13, cz]; }
+    return dust(r, 6, 24);
+  }, [11, 2.4]],
+  fish: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.65) { const t = r() * 2 - 1, R = 4.6 * Math.sqrt(1 - t * t) * (1 - 0.3 * t), th = TAU * r(); return [t * 14, 2 + Math.sin(th) * R, Math.cos(th) * R * 0.7]; } if (u < 0.75) { const t = r(), s = r() * 2 - 1; return [15 + t * 6, 2 + s * t * 6, 0]; } return terrain(r, 76, 50, -8, 1.2); }
+    if (l === 1) { if (r() < 0.5) { const th = TAU * r(); return [-9 + Math.cos(th) * 0.8, 3.5 + Math.sin(th) * 0.8, 3.2]; } const t = r(); return [-14 + t * 28, 2 + Math.sin(t * 20) * 0.15, 0]; }
+    return [(r() - 0.5) * 60, -7 + r() * 3, (r() - 0.5) * 40];
+  }, [15, 2.4]],
+  star: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.6) { const pts = 8, i = k % (pts * 2), a0 = i / (pts * 2) * TAU, a1 = (i + 1) / (pts * 2) * TAU, r0 = i % 2 ? 2.4 : 8, r1 = i % 2 ? 8 : 2.4, t = r(); return [Math.cos(a0) * r0 * (1 - t) + Math.cos(a1) * r1 * t, 7 + Math.sin(a0) * r0 * (1 - t) + Math.sin(a1) * r1 * t, (r() - 0.5) * 0.3]; } if (u < 0.7) return sphR(r, 1.4 * Math.cbrt(r())).map((v, i) => v + [0, 7, 0][i]); const x = (r() * 2 - 1) * 7, y = -9 + r() * 4; return Math.abs(x) > 5 ? [x, y, (r() - 0.5) * 4] : [x, -5 + (1 - Math.abs(x) / 7) * 2.5, (r() - 0.5) * 4]; }
+    if (l === 1) { const a = (k % 64) / 64 * TAU, t = 8 + r() * 26; return [Math.cos(a) * t, 7 + Math.sin(a) * t, -1]; }
+    return dust(r, 14, 30);
+  }, [-13, 2.2]],
+  cross: [(l, k, r) => {
+    if (l === 0) { if (r() < 0.45) { const bar = r() < 0.32; return box(r, 0, bar ? 7.5 : 3, 0, bar ? 7 : 1.1, bar ? 1.1 : 12, 1.1); } const t = terrain(r, 84, 64, -9, 1.1); t[1] += Math.pow(Math.abs(t[0]) / 40, 2) * 20; return t; }
+    if (l === 1) { const u = r(); if (u < 0.4) return ring(r, 6.2, 11.2, -1.6, 0.08); const a = (k % 36) / 36 * TAU, t = 6.4 + r() * 14; return [Math.cos(a) * t, 11.2 + Math.sin(a) * t, -2]; }
+    const x = (r() - 0.5) * 80; return [x, -8.5 + Math.pow(Math.abs(x) / 40, 2) * 20 + r() * 3.5, (r() - 0.5) * 60];
+  }, [-14, 2.2]],
+  dove: [(l, k, r) => {
+    const s = k % 2 ? 1 : -1;
+    if (l === 0) { const u = r(); if (u < 0.75) { const f = (k % 24) / 23, t = r(), ang = 0.15 + f * 1.1; return [s * (1.5 + Math.cos(ang) * t * 15), 2 + Math.sin(ang) * t * 15 * 0.6 - t * t * 2, -t * 2 + (r() - 0.5) * 0.2]; } const t = r() * 2 - 1, R = 1.6 * Math.sqrt(1 - t * t), th = TAU * r(); return [Math.cos(th) * R * 0.8, 2 + t * 4, Math.sin(th) * R]; }
+    if (l === 1) { const a = (k % 40) / 40 * Math.PI, t = 6 + r() * 20; return [Math.cos(a) * t, 4 + Math.sin(a) * t, -3]; }
+    return dust(r, 10, 28);
+  }, [-10, 2.2]],
+  heart: [(l, k, r) => {
+    const hp = (t, sc) => [16 * Math.pow(Math.sin(t), 3) * sc, (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * sc];
+    if (l === 0) { const t = TAU * r(), sc = 0.62 * Math.sqrt(r()), p = hp(t, sc), d = (0.62 - sc) * 4; return [p[0], p[1] + 1, (r() * 2 - 1) * d]; }
+    if (l === 1) { const t = TAU * r(), sc = 0.7 + (k % 4) * 0.12, p = hp(t, sc); return [p[0], p[1] + 1, -1 - (k % 4) * 0.6]; }
+    return dust(r, 10, 28);
+  }, [15, 2.4]],
+  lamp: [(l, k, r) => {
+    const arm = k % 7, off = arm - 3, R = Math.abs(off) * 3.2, s = Math.sign(off);
+    if (l === 0) { const u = r(); if (u < 0.7) { if (!off) return [(r() - 0.5) * 0.5, -10 + r() * 18, (r() - 0.5) * 0.5]; const t = r() * Math.PI / 2; return [s * R * Math.sin(t), 8.6 - R * Math.cos(t), (r() - 0.5) * 0.5]; } if (u < 0.85) { const p = sphR(r, 0.6); return [off * 3.2 + p[0], 8.6 + p[1] * 1.6 + 0.6, p[2]]; } return [(r() - 0.5) * 7, -10 - r() * 1.2, (r() - 0.5) * 4]; }
+    if (l === 1) { const h = r(); return [off * 3.2 + Math.sin(h * 12 + arm) * 0.25, 9 + h * 4, 0]; }
+    return dust(r, 10, 26);
+  }, [15, 2.4]],
+  seals: [(l, k, r) => {
+    const s = k % 7, c = SEALP(s);
+    if (l === 0) { const u = r(); if (u < 0.5) { const th = TAU * r(), R = (r() < 0.5 ? 3.4 : 2.7) + (r() - 0.5) * 0.12; return [c[0] + Math.cos(th) * R, c[1] + Math.sin(th) * R, (r() - 0.5) * 0.15]; } if (u < 0.8) { const G = GLY.num[s], g = G[(r() * G.length) | 0]; return [c[0] + g[0] * 3.2, c[1] + g[1] * 3.2, 0.1]; } const x = (r() * 2 - 1) * 5.5, y = (r() * 2 - 1) * 3.8; return [x, y, -0.8 * Math.cos(x / 5.5 * 1.4)]; }
+    if (l === 1) { const a = SEALP(s), b = SEALP((s + 3) % 7); return ln(r, [a[0], a[1], -0.3], [b[0], b[1], -0.3], 0.04); }
+    const R = 4 + Math.pow(r(), 0.6) * 20, th = TAU * r(); return [Math.cos(th) * R, Math.sin(th) * R, (r() - 0.5) * 3];
+  }, [19, 2]],
+  singularity: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.7) { const R = 3.4 + Math.pow(r(), 1.5) * 20, th = (k % 4) / 4 * TAU + Math.log(R) * 2.4 + (r() - 0.5) * 0.35 * (1 + R * 0.03); return [Math.cos(th) * R, (r() - 0.5) * 0.25 * (1 + R * 0.05), Math.sin(th) * R]; } if (u < 0.82) return ringXZ(r, 3, 0, 0.08); if (u < 0.9) return ring(r, 3.3, 0, 0, 0.1); return sphR(r, 1.1 * Math.cbrt(r())); }
+    if (l === 1) { if (r() < 0.6) { const s = r() < 0.5 ? -1 : 1, h = 1.5 + Math.pow(r(), 0.7) * 42, w = (0.12 + h * 0.012) * r(), th = TAU * r(); return [Math.cos(th) * w, s * h, Math.sin(th) * w]; } const ph = (k % 12) / 12 * TAU, t = TAU * r(), rr = 8.4 * (1 + Math.cos(t)) + 1; return [Math.cos(ph) * rr, 8.4 * Math.sin(t), Math.sin(ph) * rr]; }
+    const R = 25 + r() * 25, th = TAU * r(); return [Math.cos(th) * R, (r() - 0.5) * 6, Math.sin(th) * R];
+  }, [-15, 2.4]],
+  city: [(l, k, r) => {
+    if (l === 0) { const u = r(); if (u < 0.6) { const p = box(r, 0, 0, 0, 9, 9, 9); const gate = Math.abs(p[1] + 5) < 4 && [-5, 0, 5].some(g => Math.abs((Math.abs(p[0]) > 8.9 ? p[2] : p[0]) - g) < 1); return gate ? [p[0] * 1.02, p[1], p[2] * 1.02] : p; } const x = (r() * 2 - 1) * 9, z = (r() * 2 - 1) * 9; return [Math.round(x / 1.5) * 1.5, 9, z]; }
+    if (l === 1) { if (r() < 0.5) { const z = -9 + r() * 30; return [(r() - 0.5) * 1.6, -9, z]; } const a = (k % 12) / 12 * TAU; return ln(r, [Math.cos(a) * 9, 9, Math.sin(a) * 9], [Math.cos(a) * 30, 22, Math.sin(a) * 30], 0.1); }
+    return dust(r, 16, 32);
+  }, [14, 2.4]],
+  tree: [(l, k, r) => {
+    const br = k % 24, lvl = br % 3, a = (br / 24) * TAU * 3;
+    const tip = [Math.cos(a) * (4 + lvl * 3), 4 + lvl * 3 + (br % 5) * 0.6, Math.sin(a) * (4 + lvl * 3)];
+    if (l === 0) { const u = r(); if (u < 0.3) return cyl(r, 0, 0, 1.2 * (1 - r() * 0.3), -10, 4); if (u < 0.6) return ln(r, [0, 2 + lvl, 0], tip, 0.2); const p = sphR(r, 2.4 * Math.cbrt(r())); return [tip[0] + p[0], tip[1] + p[1], tip[2] + p[2]]; }
+    if (l === 1) { const ra = (k % 16) / 16 * TAU; return ln(r, [0, -10, 0], [Math.cos(ra) * 10, -11.5, Math.sin(ra) * 10], 0.15); }
+    return dust(r, 10, 28);
+  }, [-14, 2.2]],
+  horses: [(l, k, r) => {
+    const h = k % 4, ph = h / 4 * TAU, t = r();
+    const P = th => [Math.cos(th) * 14, Math.sin(th * 2) * 4 + (h - 1.5) * 3, Math.sin(th) * 8];
+    if (l === 0) { const th = ph + t * 1.6, p = P(th), sp = (1 - t) * 1.5 + 0.2; return [p[0] + (r() - 0.5) * sp, p[1] + (r() - 0.5) * sp, p[2] + (r() - 0.5) * sp]; }
+    if (l === 1) { const p = P(ph + 1.6); const q = sphR(r, 1.6 * Math.cbrt(r())); return [p[0] + q[0], p[1] + q[1], p[2] + q[2]]; }
+    return dust(r, 8, 28);
+  }, [16, 2.4]],
+  trumpets: [(l, k, r) => {
+    const tr = k % 7, a = Math.PI / 2 + (tr - 3) * 0.32, dir = [Math.cos(a), Math.sin(a)], nrm = [-dir[1], dir[0]];
+    if (l === 0) { const t = r(), R = 0.3 + Math.pow(t, 4) * 3, th = TAU * r(), along = 4 + t * 12, c = Math.cos(th) * R; return [dir[0] * along + nrm[0] * c, -6 + dir[1] * along + nrm[1] * c, Math.sin(th) * R]; }
+    if (l === 1) { const R = 17 + (k % 5) * 2.5 + r() * 0.2, th = Math.PI * 0.15 + r() * Math.PI * 0.7; return [Math.cos(th) * R, -6 + Math.sin(th) * R, 0]; }
+    return dust(r, 10, 28);
+  }, [-12, 2.2]]
+};
+// Script glyphs orbit every scene in three tilted rings and a slow helix
+function scriptPos(k) {
+  const h = (k * 2654435761 >>> 0) / 4294967296, h2 = ((k + 7) * 2246822519 >>> 0) / 4294967296;
+  const ringI = k % 4, th = h * TAU;
+  if (ringI === 3) { const y = (h2 - 0.5) * 44; return [Math.cos(th + y * 0.3) * 24, y, Math.sin(th + y * 0.3) * 24]; }
+  const R = 19 + ringI * 3 + (h2 - 0.5) * 1.5, tilt = [0.35, -0.5, 1.1][ringI];
+  const x = Math.cos(th) * R, z = Math.sin(th) * R;
+  return [x, z * Math.sin(tilt) + (h2 - 0.5) * 0.8, z * Math.cos(tilt)];
+}
+function glyphPts(str) {
+  const h = 160, c = document.createElement('canvas'), x = c.getContext('2d');
+  const font = `700 130px Cinzel, ${FONTSTACK}`;
+  x.font = font; const w = Math.ceil(x.measureText(str).width) + 20;
+  c.width = w; c.height = h; x.font = font; x.fillStyle = '#fff'; x.textBaseline = 'middle'; x.fillText(str, 10, h / 2);
+  const d = x.getImageData(0, 0, w, h).data, pts = [];
+  for (let y = 0; y < h; y += 2) for (let i = 0; i < w; i += 2) if (d[(y * w + i) * 4 + 3] > 128) pts.push([(i - w / 2) / h, -(y - h / 2) / h]);
+  return pts.length ? pts : [[0, 0]];
+}
+let GLY = null; const WORDS = new Map();
+const wordPts = w => { if (!WORDS.has(w)) WORDS.set(w, glyphPts(w)); return WORDS.get(w); };
+
+let N = 0, LAYER = null, geo = null, points = null, posA = null, posB = null, gidx = null;
+const FORMS = new Map();
+function formFor(i) {
+  if (FORMS.has(i)) { const f = FORMS.get(i); FORMS.delete(i); FORMS.set(i, f); return f; }
+  const s = SEG[i], [fn, anchor] = TPL[s.tpl] || TPL.burst, r = rng(1000 + i), P = new Float32Array(N * 3);
+  const par = { broken: s.kind === 'book' && ['Lamentations', 'Galatians', 'Joshua', 'Nahum'].includes(BOOKS[s.bi][1]) };
+  const W = wordPts(s.word), wsc = anchor[1] * (s.word.length > 10 ? 0.75 : 1);
+  for (let k = 0; k < N; k++) {
+    const l = LAYER[k]; let p;
+    if (l === 3) p = scriptPos(k);
+    else if (l === 0 && r() < 0.16) { const g = W[(r() * W.length) | 0]; p = [g[0] * wsc * 1.6, anchor[0] + g[1] * wsc * 1.6, 2 + (r() - 0.5) * 0.2]; }
+    else p = fn(l, k, r, par);
+    P[k * 3] = p[0]; P[k * 3 + 1] = p[1]; P[k * 3 + 2] = p[2];
   }
+  FORMS.set(i, P);
+  while (FORMS.size > 8) FORMS.delete(FORMS.keys().next().value);
   return P;
 }
-const FORMS = ACTS.map((_, i) => form(i));
-const geo = new THREE.BufferGeometry();
-const cur = new Float32Array(FORMS[0]);
-geo.setAttribute('position', new THREE.BufferAttribute(cur, 3));
-const seed = new Float32Array(N); for (let k = 0; k < N; k++) seed[k] = g();
-geo.setAttribute('seed', new THREE.BufferAttribute(seed, 1));
-const U = { time: { value: 0 }, col: { value: new THREE.Color(1, 0.8, 0.5) }, wave: { value: 0 }, swirl: { value: 0 }, burst: { value: 0 }, size: { value: MOBILE ? 2.2 : 2.6 } };
+// Prepare the neighbouring scenes in the background so cuts never wait
+let prefetchQ = [];
+function prefetch(i) { [i + 1, i - 1, i + 2].forEach(j => { if (j >= 0 && j < SEG.length && !FORMS.has(j) && !prefetchQ.includes(j)) prefetchQ.push(j); }); }
+setInterval(() => { if (prefetchQ.length && points) formFor(prefetchQ.shift()); }, 120);
+
+const U = {
+  time: { value: 0 }, morph: { value: 1 }, burst: { value: 0 }, size: { value: MOBILE ? 2.0 : 1.7 }, pxr: { value: PXR }, gain: { value: 0.55 },
+  c1: { value: new THREE.Color(1, 0.8, 0.5) }, c2: { value: new THREE.Color(1, 0.9, 0.7) }, c3: { value: new THREE.Color(1, 1, 1) },
+  atlas: { value: atlas }, scol: { value: SCOL }, spin: { value: 0 }
+};
 const pmat = new THREE.ShaderMaterial({
   uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `uniform float time, wave, swirl, burst, size; attribute float seed; varying float vS; varying float vD;
-    void main(){ vec3 p = position;
-      p.y += wave * (sin(p.x * 0.25 + time * 1.1) * 1.6 + cos(p.z * 0.3 + time * 0.8) * 1.2);
-      float a = swirl * (0.6 / (1.0 + length(p.xz) * 0.08)) * time; float c = cos(a), s = sin(a); p.xz = mat2(c, -s, s, c) * p.xz;
+  vertexShader: `uniform float time, morph, burst, size, pxr, spin; attribute vec3 posA; attribute float seed, layer, gi; varying float vS, vL, vG;
+    void main(){
+      vec3 p = mix(posA, position, morph);
+      float mt = sin(morph * 3.14159);
+      if (layer < 2.5) p += mt * vec3(sin(seed * 91.0 + time), cos(seed * 53.0 + time * 1.3), sin(seed * 27.0 - time)) * 3.0 * (0.4 + seed);
+      if (layer > 2.5) { float a = spin * (0.5 + seed); float c = cos(a), s = sin(a); p.xz = mat2(c, -s, s, c) * p.xz; }
       p += normalize(p + 0.001) * burst * (2.0 + seed * 6.0);
-      p += 0.15 * vec3(sin(time * 0.7 + seed * 40.0), cos(time * 0.9 + seed * 31.0), sin(time * 0.5 + seed * 17.0));
+      p += (layer > 1.5 && layer < 2.5 ? 0.6 : 0.05) * vec3(sin(time * 0.7 + seed * 40.0), cos(time * 0.9 + seed * 31.0), sin(time * 0.5 + seed * 17.0));
       vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
-      vS = seed; vD = -mv.z; gl_PointSize = size * (0.6 + seed * 1.4) * (60.0 / -mv.z); }`,
-  fragmentShader: `uniform vec3 col; uniform float time; varying float vS; varying float vD;
-    void main(){ vec2 q = gl_PointCoord - 0.5; float d = length(q); if (d > 0.5) discard;
-      float glow = smoothstep(0.5, 0.0, d); float tw = 0.7 + 0.3 * sin(time * 3.0 + vS * 60.0);
-      vec3 c = mix(col, vec3(1.0), smoothstep(0.85, 1.0, vS) * 0.8);
-      gl_FragColor = vec4(c * glow * tw, glow * 0.85); }`
+      vS = seed; vL = layer; vG = gi;
+      float base = layer < 0.5 ? 1.0 : layer < 1.5 ? 0.85 : layer < 2.5 ? 0.65 : 6.5;
+      gl_PointSize = clamp(size * pxr * base * (0.7 + seed * 0.6) * (34.0 / -mv.z), 1.0, 44.0 * pxr); }`,
+  fragmentShader: `uniform vec3 c1, c2, c3; uniform vec3 scol[16]; uniform float time, gain; uniform sampler2D atlas; varying float vS, vL, vG;
+    void main(){
+      vec2 pc = gl_PointCoord;
+      if (vL > 2.5) {
+        float cx = mod(vG, 16.0), cy = floor(vG / 16.0);
+        float a = texture2D(atlas, vec2((cx + pc.x) / 16.0, 1.0 - (cy + pc.y) / 16.0)).a;
+        if (a < 0.08) discard;
+        vec3 col = mix(scol[int(cy)], c3, 0.2);
+        gl_FragColor = vec4(col * 1.2, a * 0.75 * gain * 1.6 * (0.7 + 0.3 * sin(time * 2.0 + vS * 40.0)));
+        return;
+      }
+      vec2 q = pc - 0.5; float d = length(q); if (d > 0.5) discard;
+      float core = smoothstep(0.5, 0.16, d), hot = smoothstep(0.22, 0.0, d);
+      float tw = 0.82 + 0.18 * sin(time * 3.0 + vS * 60.0);
+      vec3 col = vL < 0.5 ? mix(c1, c2, smoothstep(0.2, 0.8, vS)) : vL < 1.5 ? c3 : mix(c1, c2, vS) * 0.7;
+      col = mix(col, vec3(1.0), hot * 0.5 + step(0.97, vS) * 0.4);
+      float alpha = (vL > 1.5 ? 0.35 : vL > 0.5 ? 0.95 : 0.8) * core * tw * gain;
+      gl_FragColor = vec4(col, alpha); }`
 });
-const points = new THREE.Points(geo, pmat);
-scene.add(points);
+function buildParticles(q) {
+  quality = q; N = QUALITY[q]; FORMS.clear(); prefetchQ = [];
+  LAYER = new Float32Array(N);
+  const seed = new Float32Array(N); gidx = new Float32Array(N);
+  for (let k = 0; k < N; k++) { const m = k % 20; LAYER[k] = m < 11 ? 0 : m < 15 ? 1 : m < 17 ? 2 : 3; seed[k] = ((k * 2246822519) >>> 0) / 4294967296; gidx[k] = (k * 7 + (k >> 5)) % 256; }
+  if (points) { scene.remove(points); geo.dispose(); }
+  geo = new THREE.BufferGeometry();
+  const f0 = formFor(0);
+  posB = new THREE.BufferAttribute(new Float32Array(f0), 3);
+  posA = new THREE.BufferAttribute(new Float32Array(f0), 3);
+  geo.setAttribute('position', posB); geo.setAttribute('posA', posA);
+  geo.setAttribute('seed', new THREE.BufferAttribute(seed, 1));
+  geo.setAttribute('layer', new THREE.BufferAttribute(LAYER, 1));
+  geo.setAttribute('gi', new THREE.BufferAttribute(gidx, 1));
+  points = new THREE.Points(geo, pmat); points.frustumCulled = false;
+  scene.add(points);
+  U.gain.value = 0.55 * Math.sqrt(160000 / N);
+  shown = -1;
+}
 
 // Starfield
 {
-  const sg = new THREE.BufferGeometry(), sp = new Float32Array(3000 * 3);
-  for (let i = 0; i < 3000; i++) { const r = 120 + g() * 150, th = TAU * g(), ph = Math.acos(2 * g() - 1); sp[i * 3] = r * Math.sin(ph) * Math.cos(th); sp[i * 3 + 1] = r * Math.cos(ph); sp[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th); }
+  const sg = new THREE.BufferGeometry(), sp = new Float32Array(5000 * 3), r = rng(7);
+  for (let i = 0; i < 5000; i++) sp.set(sphR(r, 120 + r() * 150), i * 3);
   sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
-  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xbfb2ff, size: 0.6, transparent: true, opacity: 0.7, depthWrite: false })));
+  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xbfb2ff, size: 0.45, transparent: true, opacity: 0.7, depthWrite: false })));
 }
-
-// 4D tesseract: rotated in the XW and YW planes, projected into 3D every frame
-const T4 = [];
-for (let i = 0; i < 16; i++) T4.push([i & 1 ? 1 : -1, i & 2 ? 1 : -1, i & 4 ? 1 : -1, i & 8 ? 1 : -1]);
-const TE = [];
-for (let i = 0; i < 16; i++) for (let b = 0; b < 4; b++) { const j = i ^ (1 << b); if (j > i) TE.push(i, j); }
-const tgeo = new THREE.BufferGeometry();
-const tpos = new Float32Array(TE.length * 3);
+// 4D tesseract, rotated in the XW and YW planes
+const T4 = []; for (let i = 0; i < 16; i++) T4.push([i & 1 ? 1 : -1, i & 2 ? 1 : -1, i & 4 ? 1 : -1, i & 8 ? 1 : -1]);
+const TE = []; for (let i = 0; i < 16; i++) for (let b = 0; b < 4; b++) { const j = i ^ (1 << b); if (j > i) TE.push(i, j); }
+const tgeo = new THREE.BufferGeometry(), tpos = new Float32Array(TE.length * 3);
 tgeo.setAttribute('position', new THREE.BufferAttribute(tpos, 3));
-const tmat = new THREE.LineBasicMaterial({ color: 0xffd27a, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
-const tess = new THREE.LineSegments(tgeo, tmat);
-scene.add(tess);
+const tmat = new THREE.LineBasicMaterial({ color: 0xffd27a, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
+const tess = new THREE.LineSegments(tgeo, tmat); scene.add(tess);
 function updateTesseract(t, scale) {
   const a = t * 0.31, b = t * 0.23, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
-  const P = T4.map(([x, y, z, w]) => {
-    let x1 = x * ca - w * sa, w1 = x * sa + w * ca;
-    let y1 = y * cb - w1 * sb, w2 = y * sb + w1 * cb;
-    const k = scale / (2.6 - w2);
-    return [x1 * k, y1 * k, z * k];
-  });
+  const P = T4.map(([x, y, z, w]) => { const x1 = x * ca - w * sa, w1 = x * sa + w * ca, y1 = y * cb - w1 * sb, w2 = y * sb + w1 * cb, k = scale / (2.6 - w2); return [x1 * k, y1 * k, z * k]; });
   for (let e = 0; e < TE.length; e++) { const p = P[TE[e]]; tpos[e * 3] = p[0]; tpos[e * 3 + 1] = p[1]; tpos[e * 3 + 2] = p[2]; }
-  tgeo.attributes.position.needsUpdate = true;
-  tess.rotation.y = t * 0.07;
+  tgeo.attributes.position.needsUpdate = true; tess.rotation.y = t * 0.07;
 }
 
-// Post-processing: bloom and a sacred film grade
+// Post-processing: sky, scene, bloom, then the film grade and the tape
 const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.1, 0.7, 0.12);
-composer.addPass(bloom);
+composer.addPass(new RenderPass(bgScene, camera));
+const formPass = new RenderPass(scene, camera); formPass.clear = false; composer.addPass(formPass);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.7, 0.35, 0.32); composer.addPass(bloom);
 const film = new ShaderPass({
-  uniforms: { tDiffuse: { value: null }, time: { value: 0 }, flash: { value: 0 }, ca: { value: 0.0015 }, grain: { value: 0.06 }, bars: { value: 0.1 }, gold: { value: 0.35 } },
+  uniforms: { tDiffuse: { value: null }, time: { value: 0 }, flash: { value: 0 }, ca: { value: 0.001 }, grain: { value: 0.04 }, bars: { value: 0.065 }, tape: { value: 0 }, rev: { value: 0 }, paused: { value: 0 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-  fragmentShader: `uniform sampler2D tDiffuse; uniform float time, flash, ca, grain, bars, gold; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float time, flash, ca, grain, bars, tape, rev, paused; varying vec2 vUv;
     float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-    void main(){ vec2 uv = vUv; vec2 d = uv - 0.5; float r2 = dot(d, d);
-      vec2 o = d * ca * (1.0 + 8.0 * r2);
+    void main(){ vec2 uv = vUv;
+      // VHS tape: a rolling tracking band, line jitter, scanlines, chroma bleed, noise lines
+      float dir = rev > 0.5 ? -1.0 : 1.0;
+      float band = fract(time * 0.45 * dir);
+      float inBand = smoothstep(0.06, 0.0, abs(uv.y - band));
+      float jit = (h(vec2(floor(uv.y * 240.0), floor(time * 40.0))) - 0.5);
+      uv.x += (jit * 0.006 + inBand * 0.05 * dir) * tape + paused * 0.002 * sin(time * 70.0 + uv.y * 30.0);
+      uv.y += paused * 0.0015 * sin(time * 50.0);
+      vec2 d = uv - 0.5; float r2 = dot(d, d);
+      float cab = ca + tape * 0.006;
+      vec2 o = d * cab * (1.0 + 8.0 * r2) + vec2(tape * 0.004, 0.0);
       vec3 c = vec3(texture2D(tDiffuse, uv + o).r, texture2D(tDiffuse, uv).g, texture2D(tDiffuse, uv - o).b);
-      float l = dot(c, vec3(0.3, 0.59, 0.11));
-      c = mix(c, vec3(l * 1.1, l * 0.92, l * 0.66), gold * 0.5);
       c += flash * vec3(1.0, 0.92, 0.75);
-      c += (h(uv * vec2(800.0, 450.0) + fract(time * 7.0)) - 0.5) * grain;
-      c *= 1.0 - smoothstep(0.25, 0.9, r2 * 2.2) * 0.75;
-      c *= 0.96 + 0.04 * h(vec2(floor(time * 24.0), 1.0));
-      if (uv.y < bars || uv.y > 1.0 - bars) c = vec3(0.0);
+      c += (h(uv * vec2(800.0, 450.0) + fract(time * 7.0)) - 0.5) * (grain + tape * 0.12);
+      c *= 1.0 - (tape * 0.22 + paused * 0.12) * (0.5 + 0.5 * sin(uv.y * 900.0));
+      float nl = step(0.992 - tape * 0.01 - paused * 0.004, h(vec2(floor(uv.y * 160.0), floor(time * 24.0))));
+      c = mix(c, vec3(h(uv * 900.0 + time)), nl * clamp(tape + paused, 0.0, 1.0) * 0.7);
+      c += inBand * tape * 0.25;
+      c = mix(c, vec3(dot(c, vec3(0.3, 0.59, 0.11))), tape * 0.35);
+      c *= 1.0 - smoothstep(0.3, 0.95, r2 * 2.2) * 0.55;
+      if (vUv.y < bars || vUv.y > 1.0 - bars) c = vec3(0.0);
       gl_FragColor = vec4(c, 1.0); }`
 });
 composer.addPass(film);
 composer.addPass(new OutputPass());
 
+// ===== THE CODEX: rain, data and cryptographs drawn over the film =====
+const rainCv = $('rain'), rx = rainCv.getContext('2d'), hudCv = $('hud'), hx = hudCv.getContext('2d');
+let W = innerWidth, H = innerHeight, HPX = Math.min(devicePixelRatio, 2), hudOn = !MOBILE;
+let rainCols = [];
+function sizeOverlays() {
+  W = innerWidth; H = innerHeight;
+  rainCv.width = W; rainCv.height = H;
+  hudCv.width = W * HPX; hudCv.height = H * HPX; hx.setTransform(HPX, 0, 0, HPX, 0, 0);
+  const n = Math.floor(W / 18); rainCols = Array.from({ length: n }, (_, i) => ({ x: i * 18 + 9, y: Math.random() * H, v: 60 + Math.random() * 160, s: (Math.random() * 16) | 0 }));
+}
+sizeOverlays();
 addEventListener('resize', () => {
   renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  BG.aspect.value = innerWidth / innerHeight; BG.res.value.set(innerWidth * PXR, innerHeight * PXR);
+  sizeOverlays(); wrapCache.clear();
 });
+const colW = () => hudOn ? Math.min(340, W * 0.21) : 0;
+// Prefix sums of verses, words and letters over the whole book
+let SUMS = null;
+function buildSums() {
+  const v = [0], w = [0], l = [0];
+  VUL.pages.forEach(p => { const t = p[4]; v.push(v[v.length - 1] + p[3]); w.push(w[w.length - 1] + (t.match(/[a-zA-Z]+/g) || []).length); l.push(l[l.length - 1] + (t.match(/[a-zA-Z]/g) || []).length); });
+  SUMS = { v, w, l };
+}
+const wrapCache = new Map();
+function pageLines(p, width) {
+  const key = p + ':' + width;
+  if (wrapCache.has(key)) return wrapCache.get(key);
+  const t = VUL ? VUL.pages[p][4] : '', words = t.split(' '), out = [];
+  hx.font = '11px "JetBrains Mono", monospace';
+  const cw = hx.measureText('m').width, max = Math.max(10, Math.floor(width / cw));
+  let line = '';
+  for (const wd of words) { if ((line + ' ' + wd).length > max) { out.push(line); line = wd; } else line = line ? line + ' ' + wd : wd; }
+  if (line) out.push(line);
+  if (wrapCache.size > 60) wrapCache.delete(wrapCache.keys().next().value);
+  wrapCache.set(key, out);
+  return out;
+}
+const ROMV = { i: 1, v: 5, u: 5, x: 10, l: 50, c: 100, d: 500, m: 1000 };
+const chrono = s => { let n = 0; for (const ch of s.toLowerCase()) n += ROMV[ch] || 0; return n; };
+const scr = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
+const panels = [];
+let panelClock = 0;
 
-// ===== PLAYBACK =====
-let start = 0, playing = false, evIdx = 0, heard = new Set(), lastAct = -1, morphFrom = null, morphT = 1, flashV = 0, shake = 0, capIdx = -1;
+function pageAt(t) {
+  const s = SEG[segAt(t)];
+  if (s.p0 == null) { const n = SEG[s.i + 1]; return n && n.p0 != null ? n.p0 : 0; }
+  const f = clamp((t - s.t0) / s.dur, 0, 0.9999);
+  return s.p0 + f * (s.p1 - s.p0 + 1);
+}
+
+function drawOverlay(t, dt) {
+  // Glyph rain: falls with the tape, rises when it runs backwards
+  rx.globalCompositeOperation = 'destination-out'; rx.fillStyle = `rgba(0,0,0,${clamp(0.08 + Math.abs(speed) * 0.01, 0.06, 0.2)})`; rx.fillRect(0, 0, W, H);
+  rx.globalCompositeOperation = 'source-over'; rx.font = `15px ${FONTSTACK}`; rx.textAlign = 'center';
+  const sv = speed === 0 ? 0 : Math.sign(speed) * Math.min(4, 0.6 + Math.abs(speed) * 0.4), cw = colW();
+  const pf = pageAt(t), pg = Math.floor(pf), words = VUL ? VUL.pages[pg][4] : '';
+  rainCols.forEach((c, i) => {
+    c.y += c.v * sv * dt;
+    if (c.y > H + 20) { c.y = -20; c.s = (Math.random() * 16) | 0; } else if (c.y < -20) { c.y = H + 20; c.s = (Math.random() * 16) | 0; }
+    const centre = Math.abs(c.x - W / 2) / (W / 2), a = (c.x < cw + 10 || c.x > W - cw - 10) ? 0.22 : 0.18 + centre * 0.55;
+    const ch = Math.random() < 0.35 && words ? words[(Math.random() * words.length) | 0].toUpperCase() : SCRIPTS[c.s][1][(Math.random() * 16) | 0];
+    rx.fillStyle = `rgba(255,255,255,${a})`; rx.fillText(ch, c.x, c.y);
+    rx.fillStyle = `hsla(${c.s / 16 * 360},90%,65%,${a * 0.8})`; rx.fillText(SCRIPTS[c.s][1][(Math.random() * 16) | 0], c.x, c.y - 18 * Math.sign(sv || 1));
+  });
+
+  hx.clearRect(0, 0, W, H);
+  const s = SEG[segAt(t)], bars = H * 0.065, a = s.act;
+  const S = SCHEMES[scheme], acc = '#' + S.v[a].getHexString();
+  hx.textBaseline = 'middle';
+  // Top bar: the running headline of the whole film
+  hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = 'rgba(255,226,160,.85)'; hx.textAlign = 'left';
+  const bk = s.bi != null ? BOOKS[s.bi] : null;
+  hx.fillText(`ATALINA BIBLIQUE · PROCUREUR FUSTREDIS  ·  ACTUS ${ROMAN[a]} ${ACTS[a].la}  ·  ${bk ? 'LIBER ' + (s.bi + 1) + '/77 ' + bk[2] : 'INTROITUS'}  ·  PAGINA ${String(pg + 1).padStart(4, '0')}/${PAGES_TOTAL}`, 16, bars / 2);
+  hx.textAlign = 'right'; hx.fillText(`${fmt1666(t)} / 16:66  ·  ${speed === 1 ? 'PLAY' : speed === 0 ? 'PAUSE' : (speed < 0 ? 'REV ×' : 'FF ×') + Math.abs(speed)}  ·  SPINALXENO™`, W - 16, bars / 2);
+  // Bottom bar: the page itself, scrolling with the tape
+  if (VUL) {
+    hx.save(); hx.beginPath(); hx.rect(0, H - bars, W, bars); hx.clip();
+    hx.font = 'italic 13px "Cormorant Garamond", serif'; hx.fillStyle = 'rgba(244,234,210,.8)'; hx.textAlign = 'left';
+    const txt = VUL.pages[pg][4].replace(/¶|〔\d+〕/g, ' · ') + '   ✦   ';
+    const tw = hx.measureText(txt).width || 1, off = ((pf % 1) * tw * 1.0) % tw;
+    hx.fillText(txt, -off, H - bars / 2); hx.fillText(txt, tw - off, H - bars / 2);
+    hx.restore();
+  }
+  if (cw) {
+    const top = bars + 14, bot = H - bars - 14, x0 = 16, x1 = W - 16 - cw;
+    // Left: the codex
+    hx.fillStyle = 'rgba(6,4,2,.5)'; hx.fillRect(x0 - 6, top - 8, cw + 12, bot - top + 16);
+    hx.strokeStyle = 'rgba(255,210,122,.25)'; hx.strokeRect(x0 - 6, top - 8, cw + 12, bot - top + 16);
+    hx.textAlign = 'left'; hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc;
+    hx.fillText('CODEX · BIBLIA SACRA VULGATA', x0, top + 4);
+    hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = 'rgba(255,226,160,.9)';
+    const chap = VUL ? VUL.pages[pg][2] : 0;
+    hx.fillText(`PAGINA ${String(pg + 1).padStart(4, '0')} / ${PAGES_TOTAL} · ${bk ? bk[3].toUpperCase() : ''} · CAP. ${chap}`, x0, top + 20);
+    if (VUL) {
+      const lineH = 14, y0 = top + 38, rows = Math.floor((bot - y0) / lineH), mid = Math.floor(rows * 0.45);
+      const L0 = pageLines(pg, cw), Lp = pg > 0 ? pageLines(pg - 1, cw) : [], Ln = pg < PAGES_TOTAL - 1 ? pageLines(pg + 1, cw) : [];
+      const all = Lp.concat(L0, Ln), cur = Lp.length + (pf % 1) * L0.length, first = Math.floor(cur) - mid, sub = cur % 1;
+      hx.save(); hx.beginPath(); hx.rect(x0 - 4, y0 - 8, cw + 8, rows * lineH + 4); hx.clip();
+      for (let j = 0; j <= rows; j++) {
+        const li = first + j; if (li < 0 || li >= all.length) continue;
+        const y = y0 + (j - sub) * lineH, dist = Math.abs(j - mid - sub);
+        let txt = all[li];
+        const fresh = speed >= 0 ? j > rows - 4 : j < 3;
+        if (fresh) txt = Array.from(txt).map(ch => ch !== ' ' && Math.random() < 0.6 ? scr() : ch).join('');
+        hx.font = dist < 0.8 ? '700 11px "JetBrains Mono", monospace' : '11px "JetBrains Mono", monospace';
+        hx.fillStyle = dist < 0.8 ? '#ffe7a8' : `rgba(232,220,192,${clamp(0.9 - dist * 0.035, 0.18, 0.75)})`;
+        if (fresh) hx.font = `11px ${FONTSTACK}`;
+        hx.fillText(txt, x0, y);
+        if (dist < 0.8) { hx.fillStyle = acc; hx.fillRect(x0 - 5, y - 6, 2, 12); }
+      }
+      hx.restore();
+    }
+    // Right: the data
+    hx.fillStyle = 'rgba(6,4,2,.5)'; hx.fillRect(x1 - 6, top - 8, cw + 12, bot - top + 16);
+    hx.strokeStyle = 'rgba(255,210,122,.25)'; hx.strokeRect(x1 - 6, top - 8, cw + 12, bot - top + 16);
+    let y = top + 4;
+    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText('LIBRI · 77', x1, y); y += 14;
+    const cols = 11, cs = cw / cols;
+    BOOKS.forEach((b, i) => {
+      const cx = x1 + (i % cols) * cs, cy = y + Math.floor(i / cols) * 15, on = s.bi === i, past = SEG.some(q => q.bi === i && q.t0 + q.dur <= t);
+      hx.fillStyle = on ? '#' + S.v[b[0]].getHexString() : past ? 'rgba(255,226,160,.22)' : 'rgba(255,255,255,.05)';
+      hx.fillRect(cx + 1, cy, cs - 2, 13);
+      hx.font = '7px "JetBrains Mono", monospace'; hx.fillStyle = on ? '#000' : 'rgba(232,220,192,.65)'; hx.textAlign = 'center';
+      hx.fillText(b[3].replace(/^(\d) /, '$1').slice(0, 4).toUpperCase(), cx + cs / 2, cy + 7);
+    });
+    hx.textAlign = 'left'; y += 7 * 15 + 10;
+    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText('DATA', x1, y); y += 15;
+    const rowsD = SUMS ? [
+      ['PAGINA', (pg + 1) + ' / ' + PAGES_TOTAL], ['CAPITULUM', (VUL ? VUL.pages[pg][2] : 0)],
+      ['VERSUS', Math.floor(SUMS.v[pg] + (SUMS.v[pg + 1] - SUMS.v[pg]) * (pf % 1)).toLocaleString('en') + ' / ' + SUMS.v[PAGES_TOTAL].toLocaleString('en')],
+      ['VERBA', Math.floor(SUMS.w[pg] + (SUMS.w[pg + 1] - SUMS.w[pg]) * (pf % 1)).toLocaleString('en')],
+      ['LITTERAE', Math.floor(SUMS.l[pg] + (SUMS.l[pg + 1] - SUMS.l[pg]) * (pf % 1)).toLocaleString('en')],
+      ['CHRONOGRAMMA', chrono(pageLines(pg, cw)[Math.floor((pf % 1) * pageLines(pg, cw).length)] || '')]
+    ] : [['PAGINA', '…']];
+    hx.font = '10px "JetBrains Mono", monospace';
+    rowsD.forEach(([k, v]) => { hx.fillStyle = 'rgba(169,156,128,.95)'; hx.textAlign = 'left'; hx.fillText(k, x1, y); hx.fillStyle = '#fff3d6'; hx.textAlign = 'right'; hx.fillText(String(v), x1 + cw, y); y += 14; });
+    hx.textAlign = 'left'; y += 6;
+    // Letter frequency of the page being read
+    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText('LITTERAE · A–Z', x1, y); y += 8;
+    if (VUL) {
+      const f = new Array(26).fill(0); for (const ch of VUL.pages[pg][4].toLowerCase()) { const c = ch.charCodeAt(0) - 97; if (c >= 0 && c < 26) f[c]++; }
+      const mx = Math.max(...f) || 1, bw = cw / 26;
+      f.forEach((v, i) => { const hh = v / mx * 34; hx.fillStyle = `hsl(${i / 26 * 300},85%,62%)`; hx.fillRect(x1 + i * bw + 1, y + 36 - hh, bw - 2, hh); });
+      hx.font = '7px "JetBrains Mono", monospace'; hx.fillStyle = 'rgba(232,220,192,.6)'; hx.textAlign = 'center';
+      for (let i = 0; i < 26; i += 1) hx.fillText(String.fromCharCode(65 + i), x1 + i * bw + bw / 2, y + 43);
+      hx.textAlign = 'left';
+    }
+    y += 56;
+    // The act's line in its original language, with its number
+    const o = ORIG[a];
+    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText(o[0] === 'he' ? 'LINGUA HEBRAICA · GEMATRIA' : 'LINGUA GRAECA · ISOPSEPHIA', x1, y); y += 18;
+    hx.font = `17px 'Noto Sans Hebrew','Noto Serif',serif`; hx.fillStyle = '#fff3d6';
+    if (o[0] === 'he') { hx.direction = 'rtl'; hx.textAlign = 'right'; hx.fillText(o[1], x1 + cw, y, cw); hx.direction = 'ltr'; hx.textAlign = 'left'; }
+    else hx.fillText(o[1], x1, y, cw);
+    y += 18; hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = 'rgba(169,156,128,.95)'; hx.fillText(o[2], x1, y);
+    hx.textAlign = 'right'; hx.fillStyle = '#ffe7a8'; hx.fillText('Σ ' + o[3].toLocaleString('en'), x1 + cw, y); hx.textAlign = 'left';
+    y += 20;
+    // Spectrum of the score
+    if (AN && y < bot - 50) {
+      hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText('FX166 · ' + heard.size + ' / ' + FXN, x1, y); y += 8;
+      const d = new Uint8Array(AN.frequencyBinCount); AN.getByteFrequencyData(d);
+      const nb = 48, bw = cw / nb, hh = Math.min(46, bot - y - 22);
+      for (let i = 0; i < nb; i++) { const v = d[Math.floor(Math.pow(i / nb, 2) * d.length * 0.6)] / 255; hx.fillStyle = `hsl(${40 + i * 6},90%,${40 + v * 30}%)`; hx.fillRect(x1 + i * bw, y + hh - v * hh, bw - 1, v * hh); }
+      y += hh + 12; hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = '#ffd27a'; hx.fillText('◆ ' + lastFx, x1, y, cw);
+      y += 14; hx.fillStyle = 'rgba(169,156,128,.95)'; hx.fillText(SCHEMES[scheme].name + ' · ' + TX[bg.type], x1, y, cw);
+    }
+  }
+  // Cryptographs: verses from the page decode out of the ancient scripts
+  panelClock += Math.abs(speed) * dt;
+  if (panelClock > (MOBILE ? 3.2 : 1.7) && VUL && panels.length < (MOBILE ? 2 : 4)) {
+    panelClock = 0;
+    const pw = MOBILE ? 200 : 270, ph = 84, lx = cw + 40, rxm = W - cw - 40 - pw;
+    if (rxm > lx) {
+      const words2 = VUL.pages[pg][4].replace(/¶|〔\d+〕/g, '').split(' ').filter(Boolean), st = (Math.random() * Math.max(1, words2.length - 18)) | 0;
+      const lines = [], seg2 = words2.slice(st, st + 18);
+      let ln2 = ''; seg2.forEach(wd => { if ((ln2 + ' ' + wd).length > (MOBILE ? 26 : 34)) { lines.push(ln2); ln2 = wd; } else ln2 = ln2 ? ln2 + ' ' + wd : wd; }); if (ln2) lines.push(ln2);
+      const sc = (Math.random() * 16) | 0;
+      panels.push({ x: lx + Math.random() * (rxm - lx), y: H * 0.1 + Math.random() * H * 0.42, w: pw, h: ph, born: performance.now(), lines: lines.slice(0, 3), sc, id: (Math.random() * 65535 | 0).toString(16).toUpperCase().padStart(4, '0') });
+    }
+  }
+  const nowMs = performance.now();
+  for (let i = panels.length - 1; i >= 0; i--) {
+    const P = panels[i], age = (nowMs - P.born) / 1000;
+    if (age > 4.6) { panels.splice(i, 1); continue; }
+    const al = Math.min(1, age * 4, (4.6 - age) * 2), prog = clamp((age - 0.3) / 1.6, 0, 1);
+    hx.globalAlpha = al;
+    hx.fillStyle = 'rgba(4,6,8,.62)'; hx.fillRect(P.x, P.y, P.w, P.h);
+    hx.strokeStyle = `hsla(${P.sc / 16 * 360},90%,65%,.8)`; hx.strokeRect(P.x + 0.5, P.y + 0.5, P.w - 1, P.h - 1);
+    hx.font = '9px "JetBrains Mono", monospace'; hx.fillStyle = `hsl(${P.sc / 16 * 360},90%,70%)`; hx.textAlign = 'left';
+    hx.fillText(`CRYPTOGRAPHUM 0x${P.id} · ${SCRIPTS[P.sc][0].toUpperCase()} → LATINA`, P.x + 8, P.y + 12);
+    P.lines.forEach((l, j) => {
+      const n = Math.floor(l.length * prog);
+      const shown = l.slice(0, n) + Array.from(l.slice(n)).map(ch => ch === ' ' ? ' ' : SCRIPTS[P.sc][1][(Math.random() * 16) | 0]).join('');
+      hx.font = j === 0 ? `12px ${FONTSTACK}` : `12px ${FONTSTACK}`; hx.fillStyle = '#f4ead2';
+      hx.fillText(shown, P.x + 8, P.y + 32 + j * 17, P.w - 16);
+    });
+    hx.globalAlpha = 1;
+  }
+}
+
+// ===== PLAYBACK: a tape that runs at any speed =====
+let start = 0, filmT = 0, speed = 1, playing = false, evIdx = 0, shown = -1, flashV = 0, shake = 0, capIdx = -1, curSeg = -1;
 let recorder = null, recChunks = [], recCanvas = null, recCtx = null;
 const ease = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-const fmt = s => { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
-
-function now() { return playing || AC ? AC.currentTime - start : 0; }
-
+const BLACK = [C3(), C3(), C3()];
+const bg = { from: BLACK, to: BLACK, t0: -99, dur: 0, type: 0, kick: 0 };
+function startBg(cols, type, dur, t0, kick, jump) {
+  bg.from = jump ? cols : bg.to; bg.to = cols; bg.t0 = t0; bg.dur = dur; bg.type = type; bg.kick = kick;
+  BG.seamCol.value.copy(SCHEMES[scheme].x).lerp(new THREE.Color('#fff4d6'), 0.6);
+}
+function syncAudio() {
+  if (!AC) return;
+  newSession(); start = AC.currentTime - filmT;
+  evIdx = EVENTS.findIndex(e => e.t >= filmT); if (evIdx < 0) evIdx = EVENTS.length;
+  seqResync(filmT); HITS.length = 0;
+}
+const SPEEDS = [-10, -8, -4, -2, -1, 0, 0.5, 1, 2, 4, 8, 10];
+let osdTimer = 0;
+function osd(main, sub) { $('osd').innerHTML = main + (sub ? `<small>${sub}</small>` : ''); $('osd').classList.add('on'); clearTimeout(osdTimer); if (speed === 1) osdTimer = setTimeout(() => $('osd').classList.remove('on'), 1800); }
+function speedLabel(sp) { return sp === 1 ? '▶ PLAY' : sp === 0 ? '❚❚ PAUSE' : sp === -1 ? '◀ REVERSE' : sp < 0 ? '◀◀ REW ×' + (-sp) : sp < 1 ? '▶ SLOW ×½' : '▶▶ FF ×' + sp; }
+function setSpeed(sp) {
+  if (!playing) return;
+  sp = clamp(sp, -10, 10);
+  if (sp === speed) return;
+  const was = speed; speed = sp;
+  if (sp === 1) { shuttleOff(); syncAudio(); if (was !== 1) tapeLock(); }
+  else { if (was === 1) newSession(); shuttleOn(); shuttleSet(sp); }
+  $('vShut').value = sp;
+  ['vRew', 'vRev', 'vPause', 'vPlay', 'vFf'].forEach(id => $(id).classList.remove('on'));
+  $(sp === 1 ? 'vPlay' : sp === 0 ? 'vPause' : sp === -1 ? 'vRev' : sp < 0 ? 'vRew' : 'vFf').classList.add('on');
+  osd(speedLabel(sp), sp === 1 ? 'TAPE LOCKED · ' + fmt1666(filmT) : 'SHUTTLE · ' + fmt1666(filmT));
+}
+function stepSpeed(dir) {
+  if (dir > 0) setSpeed(speed < 2 ? 2 : SPEEDS[Math.min(SPEEDS.length - 1, SPEEDS.indexOf(speed) + 1)] || 10);
+  else setSpeed(speed > -2 ? -2 : SPEEDS[Math.max(0, SPEEDS.indexOf(speed) - 1)] ?? -10);
+}
+function seek(s) {
+  if (!playing) return;
+  const fwd = s >= filmT;
+  filmT = clamp(s, 0, DUR - 0.05);
+  if (speed === 1) syncAudio(); else if (AC) chirp(AC.currentTime + 0.01, fwd);
+  capIdx = -1; curSeg = -1;
+}
 async function begin(record) {
   if (!AC) initAudio();
   await AC.resume();
-  start = AC.currentTime + 0.3;
-  evIdx = 0; heard = new Set(); lastAct = -1; HITS.length = 0; capIdx = -1;
-  playing = true;
+  playing = true; speed = 1; filmT = 0;
+  syncAudio(); start = AC.currentTime - filmT + 0.3;
+  heard = new Set(); shown = -1; capIdx = -1; curSeg = -1;
+  bg.to = BLACK;
   document.body.classList.add('playing');
   $('end').classList.remove('on');
-  $('ctl').hidden = false;
+  $('deck').hidden = false; setSpeed(1); $('vPlay').classList.add('on');
+  poke();
   if (record) startRecording();
 }
-
 function startRecording() {
-  recCanvas = document.createElement('canvas');
-  recCanvas.width = 1280; recCanvas.height = 720;
+  recCanvas = document.createElement('canvas'); recCanvas.width = 1920; recCanvas.height = 1080;
   recCtx = recCanvas.getContext('2d');
   const stream = recCanvas.captureStream(30);
   RECDEST.stream.getAudioTracks().forEach(t => stream.addTrack(t));
   const type = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'].find(t => MediaRecorder.isTypeSupported(t)) || '';
-  recorder = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 8e6 });
+  recorder = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 18e6 });
   recChunks = [];
   recorder.ondataavailable = e => e.data.size && recChunks.push(e.data);
-  recorder.onstop = () => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob(recChunks, { type: recorder.mimeType }));
-    a.download = 'Atalina-Biblique-Procureur-Fustredis.' + (recorder.mimeType.includes('mp4') ? 'mp4' : 'webm');
-    a.click();
-  };
+  recorder.onstop = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(recChunks, { type: recorder.mimeType })); a.download = 'Atalina-Biblique-The-Movie.' + (recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'); a.click(); };
   recorder.start(1000);
 }
-
 function drawRecFrame() {
-  const c = recCtx, W = recCanvas.width, H = recCanvas.height;
-  c.drawImage(renderer.domElement, 0, 0, W, H);
+  const c = recCtx, w = recCanvas.width, h = recCanvas.height;
+  c.drawImage(renderer.domElement, 0, 0, w, h); c.drawImage(rainCv, 0, 0, w, h); c.drawImage(hudCv, 0, 0, w, h);
   if ($('cap').classList.contains('on')) {
-    c.textAlign = 'center'; c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 10;
-    c.fillStyle = '#fff3d6'; c.font = `${$('cap').classList.contains('card') ? 64 : 38}px Cinzel, serif`;
-    c.fillText($('capLa').textContent, W / 2, H * 0.78, W * 0.92);
-    c.fillStyle = '#e8dcc0'; c.font = 'italic 24px "Cormorant Garamond", serif';
-    c.fillText($('capEn').textContent, W / 2, H * 0.78 + 40, W * 0.92);
-    c.fillStyle = '#ffd27a'; c.font = '13px "JetBrains Mono", monospace';
-    c.fillText($('capRef').textContent, W / 2, H * 0.78 + 66);
+    const card = $('cap').classList.contains('card'), sx = w / W;
+    c.textAlign = 'center'; c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 12;
+    c.fillStyle = card ? '#ffd27a' : '#fff3d6'; c.font = `${card ? 80 : 44}px Cinzel, serif`;
+    const yb = h - (H * 0.13 + 90) * sx;
+    c.fillText($('capLa').textContent, w / 2, yb, w * 0.56);
+    c.fillStyle = '#efe4c8'; c.font = card ? '20px Michroma, sans-serif' : 'italic 30px "Cormorant Garamond", serif';
+    c.fillText($('capEn').textContent, w / 2, yb + 48, w * 0.56);
+    c.fillStyle = '#ffd27a'; c.font = '16px "JetBrains Mono", monospace'; c.fillText($('capRef').textContent, w / 2, yb + 82);
     c.shadowBlur = 0;
   }
 }
-
 function schedule(t) {
   while (evIdx < EVENTS.length && EVENTS[evIdx].t < t + 0.25) {
     const ev = EVENTS[evIdx++];
-    const at = start + ev.t;
-    if (ev.t < t - 0.5) continue; // skip anything missed after a stall
-    ev.fn(Math.max(at, AC.currentTime + 0.01));
-    if (ev.name) { heard.add(ev.id); setTimeout(() => { $('dFx').textContent = '◆ ' + ev.name; $('dHeard').textContent = heard.size + ' / 54'; }, Math.max(0, (at - AC.currentTime) * 1000)); }
-    if (ev.chant) $('dChord').textContent = ev.chant + ' · D Dorian';
+    if (ev.t < t - 0.5) continue;
+    ev.fn(Math.max(start + ev.t, AC.currentTime + 0.01));
   }
+  seqSchedule(t);
 }
-
 function captions(t) {
   let i = -1;
   for (let k = 0; k < CAPS.length; k++) if (t >= CAPS[k][0]) i = k;
-  const on = i >= 0 && t < CAPS[i][0] + (CAPS[i + 1] ? Math.min(14, CAPS[i + 1][0] - CAPS[i][0] - 1) : 8);
+  const on = i >= 0 && t < CAPS[i][0] + (CAPS[i + 1] ? Math.min(14, CAPS[i + 1][0] - CAPS[i][0] - 0.15) : 6);
   if (i !== capIdx && i >= 0) {
     capIdx = i;
     $('capLa').textContent = CAPS[i][1]; $('capEn').textContent = CAPS[i][2]; $('capRef').textContent = CAPS[i][3];
@@ -514,118 +1409,204 @@ function captions(t) {
   }
   $('cap').classList.toggle('on', on);
 }
-
 function finish() {
-  playing = false;
+  playing = false; shuttleOff();
   if (recorder && recorder.state !== 'inactive') recorder.stop();
   recorder = null;
-  $('end').classList.add('on');
-  $('cap').classList.remove('on');
+  $('end').classList.add('on'); $('cap').classList.remove('on'); $('deck').hidden = true; $('osd').classList.remove('on');
+  document.body.classList.remove('idle');
+}
+function palette(s) {
+  const S = SCHEMES[scheme], p = (uniOn ? uniCol : S.v[s.act]).clone().offsetHSL(s.hue, 0, 0.08);
+  return [p, p.clone().offsetHSL(0.07, 0, 0.1).lerp(S.v[(s.act + 1) % 9], uniOn ? 0 : 0.35), (uniOn ? p.clone().lerp(new THREE.Color(1, 1, 1), 0.55) : S.x.clone().lerp(p, 0.35))];
+}
+function showSeg(i, prev) {
+  const to = formFor(i), from = prev >= 0 ? formFor(prev) : to;
+  posA.array.set(from); posA.needsUpdate = true;
+  posB.array.set(to); posB.needsUpdate = true;
+  shown = i; prefetch(i);
 }
 
 const clock = new THREE.Clock();
+let demo = -1;
 function frame() {
   requestAnimationFrame(frame);
-  const dt = Math.min(clock.getDelta(), 0.05);
-  const t = playing ? now() : performance.now() / 1000 * 0.3;
-  const vis = Math.max(0, t);
-
+  if (!points) return;
+  const dt = Math.min(clock.getDelta(), 0.05), idleT = performance.now() / 1000;
+  let t, s, local;
   if (playing) {
-    schedule(t);
+    if (speed === 1 && AC) filmT = AC.currentTime - start;
+    else filmT += speed * dt;
+    if (filmT >= DUR) { filmT = DUR; finish(); }
+    if (filmT <= 0 && speed < 0) { filmT = 0; setSpeed(0); osd('◀◀ BOT', 'beginning of tape'); }
+    filmT = clamp(filmT, 0, DUR);
+    t = filmT;
+    if (speed === 1) schedule(t);
     captions(t);
-    if (t >= DUR) finish();
-    const act = Math.min(6, Math.floor(vis / ACT));
-    if (act !== lastAct) {
-      morphFrom = new Float32Array(cur); morphT = 0; lastAct = act;
-      $('dAct').textContent = ACTS[act].name; $('dForm').textContent = ACTS[act].form;
-    }
-    while (HITS.length && HITS[0].at <= AC.currentTime) { const h = HITS.shift(); flashV = Math.min(1.2, flashV + 0.5 * h.k); shake += 0.6 * h.k; }
     HITS.sort((a, b) => a.at - b.at);
-    $('clock').textContent = fmt(t) + ' / 7:77 (8:17)';
-    $('prog').style.width = Math.min(100, t / DUR * 100) + '%';
+    while (HITS.length && HITS[0].at <= AC.currentTime) { const h = HITS.shift(); flashV = Math.min(1.2, flashV + 0.5 * h.k); shake += 0.5 * h.k; }
+    const i = segAt(t); s = SEG[i];
+    if (i !== shown) {
+      // At speed the cuts arrive fast: the shuttle chirps across them
+      if (speed !== 1 && AC && shown >= 0) { chirp(AC.currentTime + 0.005, speed > 0); flashV = Math.min(1, flashV + 0.3); }
+      showSeg(i, speed >= 0 ? i - 1 : i + 1);
+    }
+    if (i !== curSeg) {
+      const jump = curSeg < 0 ? !(i === 0 && t < 3) : Math.abs(i - curSeg) !== 1;
+      startBg(segSky(s), txOf(s), jump ? 0 : txDur(txOf(s)) / Math.max(1, Math.abs(speed) * 0.5), t, jump ? 0 : (s.kind === 'act' ? 0.8 : 0.35), jump);
+      curSeg = i;
+    }
+    local = t - s.t0;
+    $('lcd').firstChild.textContent = fmt(t) + ' / 16:66';
+    $('lcd').lastChild.textContent = speedLabel(speed) + ' · ACTUS ' + ROMAN[s.act] + (s.bi != null ? ' · ' + BOOKS[s.bi][3] : '');
+    if (!scrubbing) $('vScrub').value = t.toFixed(1);
+    $('prog').style.width = (t / DUR * 100) + '%';
+    if (speed !== 1) shuttleSet(speed);
+  } else {
+    // Before the film: the trailer scenes and seams cycle as a preview
+    t = idleT;
+    const d = Math.floor(idleT / 6) % SEG.length;
+    if (d !== demo) { const prev = demo; demo = d; showSeg(d, prev); startBg(segSky(SEG[d]), txOf(SEG[d]), 1.8, idleT, 0.2, prev < 0); }
+    s = SEG[d]; local = idleT % 6;
   }
+  const dir = playing ? Math.sign(speed) || 1 : 1;
+  U.morph.value = ease(clamp((dir > 0 ? local : s.dur - local) / 1.2, 0, 1));
+  U.time.value = t; U.spin.value = t * 0.08;
+  const pb = palette(s);
+  [U.c1, U.c2, U.c3].forEach((u, j) => u.value.lerp(pb[j], 0.1));
+  const burstTarget = s.kind === 'act' ? clamp(1 - local / 2.5, 0, 1) : (s.kind === 'rev' && s.rv === 7 && local > s.dur - 4) ? (local - (s.dur - 4)) / 4 : 0;
+  U.burst.value += (burstTarget * 2.5 - U.burst.value) * 0.1;
 
-  const act = Math.max(0, lastAct);
-  const local = vis - act * ACT;
+  // Scenes with writing face the camera; the others turn slowly
+  const flat = ['scroll', 'tablets', 'seals', 'eye', 'heart', 'harp', 'star', 'dove', 'lamp', 'trumpets', 'sword', 'wheels'].includes(s.tpl);
+  if (flat) points.rotation.y = Math.atan2(Math.sin(points.rotation.y), Math.cos(points.rotation.y)) * 0.94;
+  else points.rotation.y += dt * 0.08 * (playing ? Math.sign(speed) * Math.min(3, Math.abs(speed)) : 1);
+  points.rotation.x = Math.sin(t * 0.05) * 0.08;
 
-  // Morph to the act's form over 7 s
-  if (morphT < 1 && morphFrom) {
-    morphT = Math.min(1, morphT + dt / 7);
-    const e = ease(morphT), to = FORMS[act];
-    for (let i = 0; i < cur.length; i++) cur[i] = morphFrom[i] + (to[i] - morphFrom[i]) * e;
-    geo.attributes.position.needsUpdate = true;
-  }
+  updateTesseract(t, s.kind === 'act' ? 9 : 6);
+  tmat.color.copy(U.c3.value); tmat.opacity = s.kind === 'act' ? 0.7 : 0.3;
+  const orbit = t * 0.04, dist = ({ eye: 40, seals: 38, scroll: 34, sea: 38, camp: 44, walls: 40, city: 40, tent: 38 })[s.tpl] || 36;
+  const side = flat ? 0.1 : 0.35;
+  camera.position.set(Math.sin(orbit) * dist * side + (Math.random() - 0.5) * shake, 3 + (Math.random() - 0.5) * shake + (['sea', 'camp', 'walls', 'tent', 'city'].includes(s.tpl) ? 9 : 0), Math.cos(orbit) * dist);
+  camera.lookAt(0, 1, 0); shake *= 0.88;
 
-  // Per-act motion
-  const A = ACTS[act];
-  U.col.value.setRGB(...A.col);
-  U.time.value = vis;
-  U.wave.value += ((act === 1 ? 1 + (local > 43 ? 1.5 : 0) : act === 3 ? 0.25 : 0) - U.wave.value) * 0.02;
-  U.swirl.value += ((act === 6 ? 1.2 : act === 2 ? 0.35 : act === 5 ? 0.15 : 0.05) - U.swirl.value) * 0.02;
-  const burstTarget = (act === 0 && local > 56 && local < 62) ? 1 - (local - 56) / 6 : (act === 6 && local > 63) ? (local - 63) / 8 : 0;
-  U.burst.value += (burstTarget * 3 - U.burst.value) * 0.08;
-  points.rotation.y += dt * (act === 4 ? 0.0 : 0.05);
-  points.rotation.x = act === 1 ? 0 : Math.sin(vis * 0.05) * 0.15;
-  if (act === 4) points.rotation.y *= 0.97;
-  if (act === 0 && local < 56) { const s = 0.15 + Math.min(1, local / 56) * 0.85; points.scale.setScalar(s); } else points.scale.setScalar(1);
+  BG.p.value = bg.dur ? clamp((playing && speed < 0 ? bg.t0 - t : t - bg.t0) / bg.dur, 0, 1) : 1;
+  BG.typ.value = bg.type; BG.time.value = t;
+  ['a0', 'a1', 'a2'].forEach((k, j) => BG[k].value.copy(bg.from[j])); ['b0', 'b1', 'b2'].forEach((k, j) => BG[k].value.copy(bg.to[j]));
+  BG.kick.value = bg.kick * Math.exp(-Math.abs(t - bg.t0) / 1.4);
 
-  updateTesseract(vis, act === 6 ? 7 + local * 0.08 : 5.5);
-  tmat.opacity = act === 6 ? 0.8 : 0.4;
-  tmat.color.setRGB(A.col[0], A.col[1], A.col[2]);
-
-  // Camera: slow orbit, push-ins, shake
-  const orbit = vis * 0.04, dist = act === 1 ? 30 : act === 4 ? 26 : act === 6 ? 30 - Math.min(14, local * 0.2) : 34;
-  camera.position.set(Math.sin(orbit) * dist * 0.35 + (Math.random() - 0.5) * shake, (act === 1 ? 10 : act === 3 ? 3 : 2) + (Math.random() - 0.5) * shake, Math.cos(orbit) * dist);
-  camera.lookAt(0, act === 3 ? 2 : 0, 0);
-  shake *= 0.9;
-
-  flashV *= 0.9;
-  film.uniforms.flash.value = flashV * 0.6;
-  film.uniforms.time.value = vis;
-  film.uniforms.ca.value = 0.0015 + flashV * 0.006;
-  film.uniforms.gold.value = act === 4 ? 0.1 : act === 2 ? 0.8 : 0.35;
-  bloom.strength = 1.0 + flashV * 1.5 + (act === 6 ? 0.4 : 0);
+  flashV *= 0.88;
+  const tapeAmt = playing ? (speed === 1 ? 0 : speed === 0 ? 0 : clamp(0.25 + Math.abs(speed) / 12, 0, 1)) : 0;
+  film.uniforms.flash.value = flashV * 0.45; film.uniforms.time.value = idleT;
+  film.uniforms.tape.value += (tapeAmt - film.uniforms.tape.value) * 0.2;
+  film.uniforms.rev.value = playing && speed < 0 ? 1 : 0; film.uniforms.paused.value = playing && speed === 0 ? 1 : 0;
+  film.uniforms.ca.value = 0.001 + flashV * 0.004;
+  bloom.strength = 0.7 + flashV * 1.1;
 
   composer.render();
+  drawOverlay(t, dt);
   if (recorder) drawRecFrame();
-  drawScope();
-}
-
-function drawScope() {
-  if (!AN || !document.body.classList.contains('dash')) return;
-  const c = $('scope').getContext('2d'), W = 500, H = 112, d = new Uint8Array(AN.frequencyBinCount);
-  AN.getByteFrequencyData(d);
-  c.clearRect(0, 0, W, H);
-  const bins = 100;
-  for (let i = 0; i < bins; i++) {
-    const v = d[Math.floor(Math.pow(i / bins, 2) * d.length * 0.6)] / 255;
-    c.fillStyle = `hsl(${40 + i * 2.2},90%,${40 + v * 30}%)`;
-    c.fillRect(i * (W / bins), H - v * H, W / bins - 1, v * H);
-  }
 }
 
 // ===== CONTROLS =====
-function togglePause() {
-  if (!AC || !playing) return;
-  if (AC.state === 'running') { AC.suspend(); $('pause').textContent = 'Play'; } else { AC.resume(); $('pause').textContent = 'Pause'; }
+let scrubbing = false, idleTimer = 0;
+function poke() { document.body.classList.remove('idle'); clearTimeout(idleTimer); idleTimer = setTimeout(() => { if (playing && !scrubbing) document.body.classList.add('idle'); }, 3200); }
+['mousemove', 'pointerdown', 'keydown', 'touchstart'].forEach(e => addEventListener(e, poke, { passive: true }));
+function stop() { if (!playing) return; if (AC) newSession(); finish(); }
+function manualTx() {
+  const t = playing ? filmT : performance.now() / 1000, s = SEG[(Math.random() * SEG.length) | 0], type = (Math.random() * TX.length) | 0;
+  startBg(segSky({ ...s, act: playing ? SEG[segAt(t)].act : s.act }), type, txDur(type), t, 0.3, false);
+  if (AC && playing) whoosh(AC.currentTime + 0.01, txDur(type) + 0.5, 0.9);
 }
+function setScheme(i) {
+  scheme = (i + SCHEMES.length) % SCHEMES.length;
+  $('scheme').value = $('scheme0').value = scheme;
+  if (playing && curSeg >= 0) startBg(segSky(SEG[curSeg]), 0, 1.2, filmT, 0.2, false);
+}
+function jumpBook(dir) {
+  if (!playing) return;
+  const i = segAt(filmT), j = clamp(dir > 0 ? i + 1 : (filmT - SEG[i].t0 > 1.5 ? i : i - 1), 0, SEG.length - 1);
+  seek(SEG[j].t0 + 0.01); osd(dir > 0 ? '▶| NEXT' : '|◀ PREV', SEG[j].bi != null ? BOOKS[SEG[j].bi][2] : 'ACTUS ' + ROMAN[SEG[j].act]);
+}
+const SCH = SCHEMES.map((s, i) => `<option value="${i}">${s.name}</option>`).join('');
+$('scheme').innerHTML = $('scheme0').innerHTML = SCH;
+$('scheme').onchange = e => setScheme(+e.target.value);
+$('scheme0').onchange = e => setScheme(+e.target.value);
+$('uniOn').onchange = e => { uniOn = e.target.checked; };
+$('uniC').oninput = e => { uniCol.set(e.target.value); uniOn = true; $('uniOn').checked = true; };
+$('bgOn').onchange = e => { bgOn = e.target.checked; setScheme(scheme); };
+$('bgC').oninput = e => { bgCol.set(e.target.value); bgOn = true; $('bgOn').checked = true; setScheme(scheme); };
+$('actList').innerHTML = ACTS.map((a, i) => `<span>${ROMAN[i]} · ${a.la}</span>`).join('');
+$('chap').innerHTML = ACTS.map((a, i) => `<button type="button" data-a="${i}" title="Actus ${ROMAN[i]} · ${a.en} (${i + 1})">${ROMAN[i]} ${a.la.split(' ')[0]}</button>`).join('');
+$('chap').onclick = e => { const b = e.target.closest('button'); if (b) { seek(+b.dataset.a * ACT_LEN); osd('▶ ACTUS ' + ROMAN[+b.dataset.a], ACTS[+b.dataset.a].la); } };
+$('vHome').onclick = () => { seek(0); osd('⏮ HOME', 'beginning of tape'); };
+$('vPrev').onclick = () => jumpBook(-1);
+$('vNext').onclick = () => jumpBook(1);
+$('vRew').onclick = () => stepSpeed(-1);
+$('vFf').onclick = () => stepSpeed(1);
+$('vRev').onclick = () => setSpeed(-1);
+$('vPause').onclick = () => setSpeed(0);
+$('vPlay').onclick = () => setSpeed(1);
+$('vStop').onclick = stop;
+$('vShut').oninput = e => setSpeed(+e.target.value);
+$('vScrub').oninput = () => { scrubbing = true; };
+$('vScrub').onchange = e => { scrubbing = false; seek(+e.target.value); };
+$('txBtn').onclick = manualTx;
+$('hudBtn').onclick = () => { hudOn = !hudOn; wrapCache.clear(); };
 $('go').onclick = () => begin(false);
 $('goRec').onclick = () => begin(true);
 $('again').onclick = () => begin(false);
-$('pause').onclick = togglePause;
-$('dashBtn').onclick = () => document.body.classList.toggle('dash');
 $('fs').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+// The mouse wheel jogs the tape like a VCR jog dial
+let jogT = 0;
+addEventListener('wheel', e => {
+  if (!playing) return;
+  e.preventDefault();
+  filmT = clamp(filmT + e.deltaY * 0.02, 0, DUR - 0.05);
+  if (speed === 1) { setSpeed(0); }
+  if (AC && performance.now() - jogT > 60) { jogT = performance.now(); osc('square', e.deltaY > 0 ? 900 : 600, AC.currentTime + 0.005, 0.03, 0.03, { a: 0.001, rel: 0.02, wet: 0 }); }
+  osd('◉ JOG', fmt1666(filmT));
+}, { passive: false });
 addEventListener('keydown', e => {
-  if (e.key === ' ') { e.preventDefault(); togglePause(); }
-  else if (e.key.toLowerCase() === 'd') document.body.classList.toggle('dash');
-  else if (e.key.toLowerCase() === 'f') $('fs').onclick();
+  if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+  const k = e.key.toLowerCase();
+  if (e.key === ' ') { e.preventDefault(); setSpeed(speed === 1 ? 0 : 1); }
+  else if (k === 'j') stepSpeed(-1);
+  else if (k === 'k') setSpeed(0);
+  else if (k === 'l') stepSpeed(1);
+  else if (e.key === 'ArrowLeft') seek(filmT - 10);
+  else if (e.key === 'ArrowRight') seek(filmT + 10);
+  else if (e.key === 'Home') seek(0);
+  else if (e.key === '[') jumpBook(-1);
+  else if (e.key === ']') jumpBook(1);
+  else if (k >= '1' && k <= '9') seek((+k - 1) * ACT_LEN);
+  else if (k === 's') stop();
+  else if (k === 't') manualTx();
+  else if (k === 'c') setScheme(scheme + 1);
+  else if (k === 'd') $('hudBtn').onclick();
+  else if (k === 'f') $('fs').onclick();
 });
 if (!window.MediaRecorder) $('goRec').hidden = true;
+function markQuality() { $('qual').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.q === quality)); }
+$('qual').onclick = e => {
+  const b = e.target.closest('button'); if (!b || b.dataset.q === quality || playing) return;
+  $('loading').textContent = 'shaping ' + QUALITY[b.dataset.q].toLocaleString('en') + ' points of light…';
+  setTimeout(() => { buildParticles(b.dataset.q); markQuality(); $('loading').textContent = 'ready · ' + SEG.length + ' scenes · ' + PAGES_TOTAL + ' pages'; }, 30);
+};
 
-document.fonts.ready.then(() => { $('go').disabled = false; $('goRec').disabled = false; $('loading').textContent = 'ready'; });
-setTimeout(() => { $('go').disabled = false; $('goRec').disabled = false; $('loading').textContent = 'ready'; }, 3000);
-window.__film = { EVENTS, FX, seek: s => { start = AC.currentTime - s; evIdx = EVENTS.findIndex(e => e.t >= s); if (evIdx < 0) evIdx = EVENTS.length; } };
+window.__film = { SEG, CAPS, EVENTS, seek, setSpeed, renderer, get t() { return filmT; } };
+// Open the book, load the scripts, then build
+$('loading').textContent = 'opening the book…';
+const fontsReady = Promise.race([Promise.all(['700 130px Cinzel', '44px "Noto Sans Hebrew"', '44px "Noto Sans Coptic"', '44px "Noto Sans Syriac"', '44px "Noto Sans Imperial Aramaic"', '44px "Noto Sans Phoenician"', '44px "Noto Sans Samaritan"', '44px "Noto Sans Gothic"', '44px "Noto Sans Glagolitic"', '44px "Noto Sans Ethiopic"', '44px "Noto Sans Runic"', '44px "Noto Sans Old Italic"', '44px "Noto Serif"'].map(f => document.fonts.load(f, f.includes('Hebrew') ? 'א' : f.includes('Coptic') ? 'Ⲁ' : f.includes('Syriac') ? 'ܐ' : f.includes('Aramaic') ? '𐡀' : f.includes('Phoenician') ? '𐤀' : f.includes('Samaritan') ? 'ࠀ' : f.includes('Gothic') ? '𐌰' : f.includes('Glagolitic') ? 'Ⰰ' : f.includes('Ethiopic') ? 'ሀ' : f.includes('Runic') ? 'ᚠ' : f.includes('Italic') ? '𐌀' : 'AΩ'))), new Promise(r => setTimeout(r, 4000))]);
+const bookReady = fetch('vulgata.json?v=1').then(r => r.json()).then(d => { VUL = d; buildSums(); }).catch(() => { VUL = null; });
+await Promise.all([fontsReady, bookReady]);
+drawAtlas();
+GLY = { num: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'].map(glyphPts) };
+buildTimeline(); buildCaps(); buildEvents();
+buildParticles(quality); markQuality(); setScheme(0);
 frame();
+$('go').disabled = false; $('goRec').disabled = false;
+$('loading').textContent = VUL ? `ready · ${SEG.length} scenes · ${PAGES_TOTAL} pages · ${SUMS.v[PAGES_TOTAL].toLocaleString('en')} verses` : 'ready (the book could not be opened here; the film plays with its verses only)';
 </script>
 </body>
 </html>

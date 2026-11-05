@@ -78,7 +78,7 @@ body:not(.playing) .tab{display:none}body.idle .tab{opacity:0;pointer-events:non
 .bar{position:fixed;left:0;right:0;bottom:0;height:3px;z-index:6;background:rgba(255,255,255,.06)}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd27a,#a46bff,#4fd2ff)}
 .credit{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:21;font:10px var(--mono);color:var(--dim);opacity:.7;white-space:nowrap}.credit a{color:var(--gold)}
 body.playing .credit{display:none}
-#vol{width:90px;accent-color:var(--gold)}
+#vol,#voxVol{width:90px;accent-color:var(--gold)}
 .hint{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;font:10px var(--mono);letter-spacing:.14em;color:var(--dim);background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:999px;padding:5px 12px;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
 body.playing.retracted .hint{opacity:.8}
 @media (max-width:760px){.credit{white-space:normal;width:92vw;text-align:center}.cap{width:92vw;bottom:22vh}.lcd{min-width:140px}.osd{font-size:18px}#vShut{width:120px}}
@@ -123,6 +123,8 @@ body.playing.retracted .hint{opacity:.8}
       <button id="hudBtn" type="button" title="Codex and data columns: both, codex, data, off (D)">Codex</button>
       <button id="txBtn" type="button" title="Play a Xeno Seam transition now (T)">Transition</button>
       <button id="fs" type="button" title="Full screen (F)">Full screen</button></div>
+    <div class="r"><span class="lb">Voices</span><span class="chips" id="voxRow"><button type="button" data-v="off">Off</button><button type="button" data-v="electro">Electro</button><button type="button" data-v="clear">Electro + Clear</button></span>
+      <label title="Loudness of the voices">level <input type="range" id="voxVol" min="0" max="1.5" step="0.01" value="0.8" aria-label="Voice level"></label></div>
     <div class="r">
       <label>Scheme <select id="scheme"></select></label>
       <label><input type="checkbox" id="uniOn"> Unicolor <input type="color" id="uniC" value="#ffd27a"></label>
@@ -139,7 +141,7 @@ body.playing.retracted .hint{opacity:.8}
   <p class="eb">✦ SPINALXENO™ PRESENTS ✦</p>
   <h1>Atalina Biblique</h1>
   <h2>PROCUREUR FUSTREDIS · THE MOVIE</h2>
-  <p>A 16:66 film in 4D made from the whole book. All 77 books of the Latin Vulgate play as trailers in nine acts, each with its own scene, colour and key verse. The book's 1,797 pages stream past in a codex column, beside live counts of pages, chapters, verses, words and letters. Cryptographs decode from 16 ancient scripts, and Hebrew and Greek lines appear with their numbers. An electro score runs underneath, with trailer impacts at every cut.</p>
+  <p>A 16:66 film in 4D made from the whole book. All 77 books of the Latin Vulgate play as trailers in nine acts, each with its own scene, colour and key verse. The book's 1,797 pages stream past in a codex column, beside live counts of pages, chapters, verses, words and letters. Cryptographs decode from 16 ancient scripts and are read aloud in Latin by electro voices, each in its own octave and timbre, and Hebrew and Greek lines appear with their numbers. An electro score runs underneath, with trailer impacts at every cut.</p>
   <div class="acts" id="actList"></div>
   <p class="warn">The VCR is part of the film. Shuttle it from ten times backwards to ten times forwards and the tape, the light, the text and the sound all respond.</p>
   <div class="opts">
@@ -148,7 +150,7 @@ body.playing.retracted .hint{opacity:.8}
   </div>
   <button class="go" id="go" type="button" disabled>Enter</button><button class="go" id="goRec" type="button" disabled title="Plays the whole film and saves picture, data, captions and sound as a video">Enter + record</button>
   <p class="warn" id="loading">opening the book…</p>
-  <p class="warn">Loud sound and bright flashes. Headphones recommended.<br>Space play/pause · J K L shuttle · ← → 10 s · [ ] book · 1–9 acts · S stop · V camera · + − zoom · 0 reset view · G glyphs · T transition · C scheme · D codex · Q E side bars · H hide deck · M mute · F full screen · mouse wheel jogs the tape · drag the film to look around, right-drag or two fingers to pan, pinch or ctrl+wheel to zoom</p>
+  <p class="warn">Loud sound and bright flashes. Headphones recommended.<br>Space play/pause · J K L shuttle · ← → 10 s · [ ] book · 1–9 acts · S stop · V camera · + − zoom · 0 reset view · G glyphs · T transition · C scheme · D codex · X voices · Q E side bars · H hide deck · M mute · F full screen · mouse wheel jogs the tape · drag the film to look around, right-drag or two fingers to pan, pinch or ctrl+wheel to zoom</p>
 </div></div>
 <div class="end" id="end"><div><h2>Ego Alpha et Omega.</h2><p class="k">Atalina Biblique · Procureur Fustredis · SpinalXeno™</p><p class="k">Veni Domine Iesu</p><button class="go" id="again" type="button">Play again</button></div></div>
 <div class="credit">Atalina Biblique · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. · signed 2566 6EB2 CF27 3686 · Scripture: Biblia Sacra Vulgata (public domain) · FX166, Xeno Seam™ and the VCR shuttle designed by Claude (Anthropic AI) · <a href="../signature/VERIFY.txt">verify</a> · <a href="../LICENSE.txt">license</a></div>
@@ -765,6 +767,114 @@ function shuttleOff() {
   const t = AC.currentTime, s = SH; SH = null;
   s.ng.gain.setTargetAtTime(0, t, 0.04);
   setTimeout(() => { try { s.n.stop(); } catch (e) { } }, 400);
+}
+// ===== VOX LATINA: the cryptographs read aloud by electro voices =====
+// A formant speech synthesiser for Church Latin, built from oscillators, noise and three moving formant filters.
+// Every box that decodes gets its own voice, octave and timbre, and they all sound at once, in the act's key.
+const PH = {
+  a: { v: 1, f: [800, 1200, 2500] }, e: { v: 1, f: [450, 1900, 2550] }, i: { v: 1, f: [300, 2300, 3000] }, o: { v: 1, f: [450, 800, 2400] }, u: { v: 1, f: [325, 700, 2400] },
+  w: { v: 0.6, f: [300, 650, 2300] }, y: { v: 0.6, f: [280, 2250, 2950] },
+  m: { v: 0.45, f: [280, 1000, 2300] }, n: { v: 0.45, f: [280, 1700, 2500] }, l: { v: 0.6, f: [380, 1000, 2500] }, r: { v: 0.6, f: [450, 1250, 1650], trill: 1 },
+  v: { v: 0.5, n: 0.12, nf: 2500, f: [300, 1200, 2300] }, j: { v: 0.4, n: 0.35, nf: 2800, f: [300, 1900, 2600] },
+  b: { v: 0.4, burst: 0.25, nf: 900, clo: 1, f: [300, 900, 2300] }, d: { v: 0.4, burst: 0.3, nf: 3200, clo: 1, f: [300, 1700, 2600] }, g: { v: 0.4, burst: 0.3, nf: 1900, clo: 1, f: [300, 1900, 2400] },
+  p: { v: 0, burst: 0.4, nf: 900, clo: 1, f: [400, 900, 2300] }, t: { v: 0, burst: 0.45, nf: 3800, clo: 1, f: [400, 1700, 2600] }, k: { v: 0, burst: 0.45, nf: 1900, clo: 1, f: [400, 1900, 2400] },
+  s: { v: 0, n: 0.55, nf: 5500 }, f: { v: 0, n: 0.3, nf: 1800 }, h: { v: 0, n: 0.2, nf: 1500 }, ch: { v: 0, n: 0.5, nf: 2700, burst: 0.3, clo: 1 }
+};
+// Letters to sounds, read the Church way: c and g soften before e and i, qu is kw, ae and oe are e
+function latinPhones(s) {
+  s = s.toLowerCase(); const out = [], V = 'aeiouy';
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i], n = s[i + 1] || '', n2 = s[i + 2] || '', soft = 'eiy'.includes(n) || ((n === 'a' || n === 'o') && n2 === 'e');
+    if (c === ' ') { out.push({ p: '_', d: 0.06, i, w: 1 }); continue; }
+    if (/[.,;:!?·]/.test(c)) { out.push({ p: '_', d: 0.2, i, w: 1 }); continue; }
+    if (c < 'a' || c > 'z') continue;
+    if ((c === 'a' || c === 'o') && n === 'e') { out.push({ p: 'e', d: 0.13, i }); i++; continue; }
+    if (c === 'a' && n === 'u') { out.push({ p: 'a', d: 0.08, i }, { p: 'u', d: 0.07, i: i + 1 }); i++; continue; }
+    if (c === 'q' && n === 'u') { out.push({ p: 'k', d: 0.06, i }, { p: 'w', d: 0.05, i: i + 1 }); i++; continue; }
+    if (c === 'c') { if (n === 'h') { out.push({ p: 'k', d: 0.06, i }); i++; } else out.push({ p: soft ? 'ch' : 'k', d: soft ? 0.09 : 0.06, i }); continue; }
+    if (c === 'g') { out.push({ p: soft ? 'j' : 'g', d: 0.07, i }); continue; }
+    if (c === 'p' && n === 'h') { out.push({ p: 'f', d: 0.08, i }); i++; continue; }
+    if (c === 't' && n === 'h') { out.push({ p: 't', d: 0.06, i }); i++; continue; }
+    if (c === 'x') { out.push({ p: 'k', d: 0.05, i }, { p: 's', d: 0.07, i }); continue; }
+    if (c === 'z') { out.push({ p: 'd', d: 0.04, i }, { p: 's', d: 0.06, i }); continue; }
+    if (c === 'j' || (c === 'i' && V.includes(n) && (i === 0 || s[i - 1] === ' '))) { out.push({ p: 'y', d: 0.06, i }); continue; }
+    if (c === 'y') { out.push({ p: 'i', d: 0.1, i }); continue; }
+    if (V.includes(c)) { out.push({ p: c, d: (n === ' ' || !n) ? 0.15 : 0.11, i }); continue; }
+    if (PH[c]) out.push({ p: c, d: 'mnlr'.includes(c) ? 0.07 : 'sf'.includes(c) ? 0.08 : 0.06, i });
+  }
+  return out;
+}
+// Seven voices, each with its own source, octave, formant size, speed and effect
+const VOX = [
+  { t: 'robot', name: 'ROBOT', wave: 'sawtooth', oct: 0, fs: 1, rate: 1.35 },
+  { t: 'chord', name: 'VOCODER', wave: 'sawtooth', oct: 0, fs: 1, rate: 1.3 },
+  { t: 'whisper', name: 'WHISPER', oct: 0, fs: 1.1, rate: 1.4 },
+  { t: 'ring', name: 'RING', wave: 'square', oct: 0, fs: 0.95, rate: 1.3 },
+  { t: 'chip', name: 'CHIP', wave: 'square', oct: 2, fs: 1.25, rate: 1.5 },
+  { t: 'sub', name: 'SUB', wave: 'sawtooth', oct: -1, fs: 0.8, rate: 1.15 },
+  { t: 'seraph', name: 'SERAPH', wave: 'triangle', oct: 1, fs: 1.15, rate: 1.25 }
+];
+const OCTN = { '-1': '8VB', 0: 'LOCO', 1: '8VA', 2: '15MA', 3: '22MA' };
+let voxMode = 'electro', voxLevel = 0.8, voxCount = 0;
+function vox(text, at, a, pan) {
+  const ph = latinPhones(text); if (!ph.length || !AC) return null;
+  const V = VOX[voxCount++ % VOX.length], oct = clamp(V.oct + ((Math.random() * 3) | 0) - 1, -1, 3), m = MUSIC[a];
+  const out = bus(0.5 * voxLevel, V.t === 'seraph' ? 0.7 : 0.35, pan);
+  let dest = out;
+  const fx = AC.createGain(); fx.connect(out);
+  if (V.t === 'robot') { const cr = AC.createWaveShaper(); cr.curve = stairs(10); cr.connect(out); dest = cr; }
+  else if (V.t === 'ring') { const rm = AC.createGain(); rm.gain.value = 0; const lf = AC.createOscillator(); lf.frequency.value = 40 + Math.random() * 50; lf.connect(rm.gain); rm.connect(out); lf.start(at); dest = rm; dest._lf = lf; }
+  else if (V.t === 'sub') { const ws = AC.createWaveShaper(); ws.curve = curve(4); const g = AC.createGain(); g.gain.value = 0.6; ws.connect(g); g.connect(out); dest = ws; }
+  else if (V.t === 'chip') { const s2 = AC.createGain(); s2.gain.value = 0.35; s2.connect(DLY); fx.connect(s2); dest = fx; }
+  else dest = fx;
+  // Three formant filters, shaped like a mouth
+  const F = [0, 1, 2].map(k => { const b = AC.createBiquadFilter(); b.type = 'bandpass'; b.Q.value = [8, 12, 14][k]; b.frequency.value = [500, 1500, 2500][k]; const g = AC.createGain(); g.gain.value = [2.2, 1.6, 1.0][k]; b.connect(g); g.connect(dest); return b; });
+  const vg = AC.createGain(); vg.gain.value = 0; F.forEach(b => vg.connect(b));
+  const srcs = [];
+  if (V.t === 'whisper') { const ns = AC.createBufferSource(); ns.buffer = NB; ns.loop = true; ns.connect(vg); srcs.push(ns); }
+  else (V.t === 'chord' ? [1, 1.5, 2] : [1]).forEach(r => { const o = AC.createOscillator(); o.type = V.wave; o.r = r; o.connect(vg); srcs.push(o); });
+  if (V.t === 'seraph' || V.t === 'chip') srcs.slice().forEach(o => { if (!o.r) return; const l = AC.createOscillator(), lg = AC.createGain(); l.frequency.value = 5.2; lg.gain.value = V.t === 'chip' ? 40 : 18; l.connect(lg); lg.connect(o.detune); srcs.push(l); });
+  const ns = AC.createBufferSource(); ns.buffer = NB; ns.loop = true;
+  const nf = AC.createBiquadFilter(); nf.type = 'bandpass'; nf.Q.value = 1.4; const ng = AC.createGain(); ng.gain.value = 0;
+  ns.connect(nf); nf.connect(ng); ng.connect(dest); srcs.push(ns);
+  // The melody: every word steps along the act's scale
+  let t = at, walk = (Math.random() * 5) | 0, word = true;
+  const marks = [];
+  const pitch = when => { walk = clamp(walk + [-2, -1, 1, 2, 0][(Math.random() * 5) | 0], -2, 9); const f = fq(m, deg(m, walk) + 12 * (oct + 1)); srcs.forEach(o => { if (o.r) o.frequency.setTargetAtTime(f * o.r, when, 0.025); }); };
+  for (const q of ph) {
+    const d = q.d / V.rate, P = PH[q.p];
+    marks.push([t - at, q.i]);
+    if (q.p === '_') { vg.gain.setTargetAtTime(0, t, 0.012); ng.gain.setTargetAtTime(0, t, 0.01); t += d; word = true; continue; }
+    if (word) { pitch(t); word = false; }
+    if (P.f) F.forEach((b, k) => b.frequency.setTargetAtTime(P.f[k] * V.fs, t, 0.014));
+    if (P.clo) {
+      vg.gain.setTargetAtTime(P.v * 0.15, t, 0.006); ng.gain.setTargetAtTime(0, t, 0.005);
+      const tb = t + d * 0.55; nf.frequency.setValueAtTime(P.nf * V.fs, tb);
+      ng.gain.setTargetAtTime(P.burst + (P.n || 0), tb, 0.004); ng.gain.setTargetAtTime(P.n ? P.n * 0.6 : 0, tb + 0.025, 0.01);
+      vg.gain.setTargetAtTime(P.v, tb, 0.01);
+    } else {
+      vg.gain.setTargetAtTime(P.v, t, 0.014);
+      if (P.n) { nf.frequency.setValueAtTime(P.nf * V.fs, t); ng.gain.setTargetAtTime(P.n, t, 0.01); } else ng.gain.setTargetAtTime(0, t, 0.012);
+      if (P.trill) { vg.gain.setTargetAtTime(P.v * 0.2, t + d * 0.45, 0.005); vg.gain.setTargetAtTime(P.v, t + d * 0.6, 0.005); }
+    }
+    t += d;
+  }
+  vg.gain.setTargetAtTime(0, t, 0.03); ng.gain.setTargetAtTime(0, t, 0.02);
+  srcs.forEach(o => { o.start(at); o.stop(t + 0.4); });
+  if (dest._lf) dest._lf.stop(t + 0.4);
+  mark('Vox Latina · ' + V.name);
+  return { dur: t - at, marks, name: V.name, oct };
+}
+// The clear reading: one browser voice for the newest box (it cannot be recorded or layered)
+function clearVoice(text) {
+  if (!window.speechSynthesis) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.toLowerCase());
+    const vs = speechSynthesis.getVoices(), v = vs.find(x => /^la/i.test(x.lang)) || vs.find(x => /^it/i.test(x.lang));
+    if (v) u.voice = v; u.lang = v ? v.lang : 'it-IT'; u.rate = 0.95; u.volume = Math.min(1, voxLevel * (muted ? 0 : volume) * 1.2);
+    speechSynthesis.speak(u);
+  } catch (e) { }
 }
 function tapeLock() {
   const at = AC.currentTime + 0.01;
@@ -1468,21 +1578,31 @@ function drawOverlay(t, dt) {
       const lines = [], seg2 = words2.slice(st, st + 18);
       let ln2 = ''; seg2.forEach(wd => { if ((ln2 + ' ' + wd).length > (MOBILE ? 26 : 34)) { lines.push(ln2); ln2 = wd; } else ln2 = ln2 ? ln2 + ' ' + wd : wd; }); if (ln2) lines.push(ln2);
       const sc = (Math.random() * 16) | 0;
-      panels.push({ x: lx + Math.random() * (rxm - lx), y: H * 0.1 + Math.random() * H * 0.42, w: pw, h: ph, born: performance.now(), lines: lines.slice(0, 3), sc, id: (Math.random() * 65535 | 0).toString(16).toUpperCase().padStart(4, '0') });
+      const P = { x: lx + Math.random() * (rxm - lx), y: H * 0.1 + Math.random() * H * 0.42, w: pw, h: ph, born: performance.now(), life: 4.6, lines: lines.slice(0, 3), sc, id: (Math.random() * 65535 | 0).toString(16).toUpperCase().padStart(4, '0') };
+      // Read the box aloud: the letters decode as the voice reaches them
+      if (voxMode !== 'off' && playing && speed === 1 && !scrubbing && AC && AC.state === 'running') {
+        const txt = P.lines.join(' '), v = vox(txt, AC.currentTime + 0.3, a, clamp(((P.x + pw / 2) / W) * 2 - 1, -0.8, 0.8));
+        if (v) { P.vox = v; P.life = Math.max(4.6, 0.3 + v.dur + 0.9); }
+        if (voxMode === 'clear') clearVoice(txt);
+      }
+      panels.push(P);
     }
   }
   const nowMs = performance.now();
   for (let i = panels.length - 1; i >= 0; i--) {
     const P = panels[i], age = (nowMs - P.born) / 1000;
-    if (age > 4.6) { panels.splice(i, 1); continue; }
-    const al = Math.min(1, age * 4, (4.6 - age) * 2), prog = clamp((age - 0.3) / 1.6, 0, 1);
+    if (age > P.life) { panels.splice(i, 1); continue; }
+    const al = Math.min(1, age * 4, (P.life - age) * 2), prog = clamp((age - 0.3) / 1.6, 0, 1);
+    let spoken = -1;
+    if (P.vox) { const el = age - 0.3; spoken = el < 0 ? 0 : el > P.vox.dur ? 1e9 : 0; if (el >= 0) for (const mk of P.vox.marks) { if (mk[0] <= el) spoken = mk[1]; else break; } if (el > P.vox.dur) spoken = 1e9; }
+    let lineStart = 0;
     hx.globalAlpha = al;
     hx.fillStyle = 'rgba(4,6,8,.62)'; hx.fillRect(P.x, P.y, P.w, P.h);
     hx.strokeStyle = `hsla(${P.sc / 16 * 360},90%,65%,.8)`; hx.strokeRect(P.x + 0.5, P.y + 0.5, P.w - 1, P.h - 1);
     hx.font = '9px "JetBrains Mono", monospace'; hx.fillStyle = `hsl(${P.sc / 16 * 360},90%,70%)`; hx.textAlign = 'left';
-    hx.fillText(`CRYPTOGRAPHUM 0x${P.id} · ${SCRIPTS[P.sc][0].toUpperCase()} → LATINA`, P.x + 8, P.y + 12);
+    hx.fillText(`CRYPTOGRAPHUM 0x${P.id} · ${SCRIPTS[P.sc][0].toUpperCase()} → LATINA` + (P.vox ? ` · ♪ ${P.vox.name} ${OCTN[P.vox.oct]}` : ''), P.x + 8, P.y + 12, P.w - 16);
     P.lines.forEach((l, j) => {
-      const n = Math.floor(l.length * prog);
+      const n = P.vox ? clamp(spoken - lineStart + 1, 0, l.length) : Math.floor(l.length * prog); lineStart += l.length + 1;
       const shown = l.slice(0, n) + Array.from(l.slice(n)).map(ch => ch === ' ' ? ' ' : SCRIPTS[P.sc][1][(Math.random() * 16) | 0]).join('');
       hx.font = j === 0 ? `12px ${FONTSTACK}` : `12px ${FONTSTACK}`; hx.fillStyle = '#f4ead2';
       hx.fillText(shown, P.x + 8, P.y + 32 + j * 17, P.w - 16);
@@ -1541,6 +1661,7 @@ async function begin(record) {
   try { await Promise.race([AC.resume(), new Promise(r => setTimeout(r, 700))]); } catch (e) { }
   playing = true; speed = 1; filmT = 0; scrubbing = false;
   $('gate').classList.add('off');
+  if (voxMode === 'clear' && window.speechSynthesis) try { speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (e) { }
   syncAudio(); start = AC.currentTime - filmT + 0.3;
   heard = new Set(); shown = -1; capIdx = -1; curSeg = -1; camCut = true;
   bg.to = BLACK; applyVol();
@@ -1597,7 +1718,7 @@ function captions(t) {
   $('cap').classList.toggle('on', on);
 }
 function finish() {
-  playing = false; shuttleOff();
+  playing = false; shuttleOff(); if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch (e) { }
   if (recorder && recorder.state !== 'inactive') recorder.stop();
   recorder = null;
   $('end').classList.add('on'); $('cap').classList.remove('on'); $('deck').hidden = true; $('osd').classList.remove('on');
@@ -1902,6 +2023,17 @@ function setGlyphs(l, quiet) {
   $('glyRow').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.g === l));
   if (!quiet) osd('✦ GLYPHS', l.toUpperCase());
 }
+// Voices
+function setVox(m, quiet) {
+  voxMode = m; store.set('vox', m);
+  $('voxRow').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === m));
+  if (m !== 'clear' && window.speechSynthesis) try { speechSynthesis.cancel(); } catch (e) { }
+  if (!quiet) osd('♪ VOX LATINA', m === 'off' ? 'OFF' : m === 'clear' ? 'ELECTRO + CLEAR' : 'ELECTRO · every box speaks');
+}
+$('voxRow').onclick = e => { const b = e.target.closest('button'); if (!b) return; setVox(b.dataset.v); if (b.dataset.v === 'clear' && window.speechSynthesis) try { speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (err) { } };
+$('voxVol').oninput = e => { voxLevel = +e.target.value; store.set('voxLevel', voxLevel); };
+voxLevel = clamp(+store.get('voxLevel', 0.8) || 0.8, 0, 1.5); $('voxVol').value = voxLevel;
+setVox(['off', 'electro', 'clear'].includes(store.get('vox', 'electro')) ? store.get('vox', 'electro') : 'electro', true);
 $('glyRow').onclick = e => { const b = e.target.closest('button'); if (b) setGlyphs(b.dataset.g); };
 setGlyphs(glyLevel, true);
 // Full screen where the browser allows it; on iPhone, a cinema mode that retracts everything
@@ -1947,6 +2079,7 @@ addEventListener('keydown', e => {
   else if (k === 'c') setScheme(scheme + 1);
   else if (k === 'd') $('hudBtn').onclick();
   else if (k === 'q') $('tabL').onclick();
+  else if (k === 'x') { const L = ['off', 'electro', 'clear']; setVox(L[(L.indexOf(voxMode) + 1) % 3]); }
   else if (k === 'e') $('tabR').onclick();
   else if (k === 'f') toggleFS();
   else if (k === 'v') setCam(CAMS[(CAMS.findIndex(c => c[0] === camMode) + 1) % CAMS.length][0]);
@@ -1965,6 +2098,15 @@ $('qual').onclick = e => {
   setTimeout(() => { buildParticles(b.dataset.q); markQuality(); $('loading').textContent = 'ready · ' + SEG.length + ' scenes · ' + PAGES_TOTAL + ' pages'; }, 30);
 };
 
+// Debug only: render one voice offline and return its samples, to check the speech engine
+if (location.search.includes('debug')) window.__voxTest = async (text, n) => {
+  const ctx = new OAC(1, 22050 * 8, 22050), keep = [AC, OUT, REV_, NB, SES, SESW, PUMP, DLY, CRUSH];
+  let v; OFFLINE = true;
+  try { AC = ctx; offlineGraph(ctx); voxCount = n || 0; v = vox(text, 0.05, 0, 0); } finally { [AC, OUT, REV_, NB, SES, SESW, PUMP, DLY, CRUSH] = keep; OFFLINE = false; }
+  const buf = await ctx.startRendering(), d = buf.getChannelData(0);
+  let e = 0, pk = 0; for (let i = 0; i < d.length; i++) { e += d[i] * d[i]; pk = Math.max(pk, Math.abs(d[i])); }
+  return { dur: v.dur, name: v.name, oct: v.oct, rms: Math.sqrt(e / d.length), peak: pk, wav: Array.from(d.subarray(0, Math.ceil((v.dur + 0.5) * 22050)), x => Math.round(x * 32767)) };
+};
 window.__film = { SEG, CAPS, EVENTS, seek, setSpeed, renderer, begin, get t() { return filmT; }, get playing() { return playing; }, get ac() { return AC ? AC.state : "none"; }, get speed() { return speed; }, get reels() { return REELS.size; }, get tape() { return TV.length; } };
 // Open the book, load the scripts, then build
 $('loading').textContent = 'opening the book…';

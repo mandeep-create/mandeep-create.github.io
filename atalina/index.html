@@ -42,16 +42,24 @@ input[type=color]{width:30px;height:24px;padding:1px;vertical-align:middle}
 .go{font:700 14px 'Cinzel',serif;letter-spacing:.2em;margin:10px 6px;padding:14px 26px;border-radius:999px;border:1px solid var(--gold);background:rgba(255,210,122,.08);color:var(--gold);cursor:pointer}
 .go:hover{background:rgba(255,210,122,.22)}.go:disabled{opacity:.4;cursor:wait}
 .warn{font:12px var(--mono)!important;color:var(--dim)!important}
+.gate.off{display:none}
 .end{display:none}.end.on{display:grid}.end h2{font:700 clamp(24px,5vw,44px) 'Cinzel',serif;color:var(--gold)}
-.cap{position:fixed;left:50%;bottom:13vh;transform:translateX(-50%);width:min(56vw,1000px);text-align:center;z-index:5;pointer-events:none;opacity:0;transition:opacity .45s}
+.cap{position:fixed;left:50%;bottom:13vh;transform:translateX(-50%);width:min(64vw,1000px);text-align:center;z-index:5;pointer-events:none;opacity:0;transition:opacity .45s,bottom .4s;padding:12px 22px;border-radius:22px;background:radial-gradient(ellipse at center,rgba(0,0,0,.62),rgba(0,0,0,.38) 55%,rgba(0,0,0,0) 78%)}
+body.playing:not(.idle) .cap{bottom:max(13vh,calc(var(--deckH,0px) + 14px))}
 .cap.on{opacity:1}.cap .la{font:400 clamp(19px,2.7vw,40px)/1.16 'Cinzel',serif;color:#fff3d6;text-shadow:0 0 18px rgba(255,200,110,.65),0 2px 8px #000;text-wrap:balance}
 .cap .en{margin-top:8px;font:italic 400 clamp(14px,1.7vw,22px) 'Cormorant Garamond',serif;color:#efe4c8;text-shadow:0 2px 6px #000;text-wrap:balance}
 .cap .ref{margin-top:6px;font:11px var(--mono);letter-spacing:.18em;color:var(--gold);opacity:.9;text-transform:uppercase}
 .cap.card .la{font-size:clamp(28px,5.6vw,80px);color:var(--gold);letter-spacing:.06em}
 .cap.card .en{font:400 clamp(11px,1.3vw,15px) var(--disp);letter-spacing:.22em;font-style:normal;color:#e9c9ff;text-transform:uppercase}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.deck{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:7;padding:8px 10px;display:grid;gap:7px;width:min(96vw,980px);font:11px var(--mono);color:var(--dim);transition:opacity .5s}
-body.idle .deck{opacity:0;pointer-events:none}body.idle{cursor:none}
+.deck{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:7;padding:8px 10px;display:grid;gap:7px;width:min(calc(100vw - 16px - env(safe-area-inset-left) - env(safe-area-inset-right)),980px);max-height:62vh;overflow-y:auto;overscroll-behavior:contain;font:11px var(--mono);color:var(--dim);transition:opacity .4s,transform .4s;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.deck[hidden]{display:none}
+body.idle .deck{opacity:0;pointer-events:none;transform:translate(-50%,24px)}body.idle{cursor:none}
+.deck .more{display:grid;gap:7px}.deck.min .more{display:none}
+.deck .lb{font:10px var(--disp);letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.deck .chips button{min-width:0;border:0;border-radius:0}
+#stage{touch-action:none}
+#camRow{flex-wrap:wrap;justify-content:center;border-radius:12px}
 .deck .r{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;justify-content:center}
 .deck button{font:12px var(--mono);min-width:34px;padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:rgba(10,6,2,.5);color:var(--ink);cursor:pointer}
 .deck button:hover{border-color:var(--gold);color:var(--gold)}
@@ -60,12 +68,19 @@ body.idle .deck{opacity:0;pointer-events:none}body.idle{cursor:none}
 .lcd small{display:block;font-size:9px;letter-spacing:.14em;color:var(--dim);text-shadow:none}
 #vScrub{flex:1 1 260px;accent-color:var(--gold)}#vShut{width:170px;accent-color:#7affd4}
 .deck label{display:inline-flex;gap:6px;align-items:center}
-.osd{position:fixed;left:20px;top:9vh;z-index:8;font:700 26px var(--mono);color:#e8ffe8;text-shadow:0 0 10px rgba(120,255,160,.6),2px 2px 0 #000;letter-spacing:.06em;pointer-events:none;opacity:0;transition:opacity .3s}
+.osd{position:fixed;left:max(20px,env(safe-area-inset-left));top:9vh;z-index:8;font:700 26px var(--mono);color:#e8ffe8;text-shadow:0 0 10px rgba(120,255,160,.6),2px 2px 0 #000;letter-spacing:.06em;pointer-events:none;opacity:0;transition:opacity .3s}
 .osd.on{opacity:1}.osd small{display:block;font:400 12px var(--mono);letter-spacing:.2em;color:#b8ffcf}
 .bar{position:fixed;left:0;right:0;bottom:0;height:3px;z-index:6;background:rgba(255,255,255,.06)}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd27a,#a46bff,#4fd2ff)}
 .credit{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:21;font:10px var(--mono);color:var(--dim);opacity:.7;white-space:nowrap}.credit a{color:var(--gold)}
 body.playing .credit{display:none}
+#vol{width:90px;accent-color:var(--gold)}
+.hint{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;font:10px var(--mono);letter-spacing:.14em;color:var(--dim);background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:999px;padding:5px 12px;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
+body.playing.retracted .hint{opacity:.8}
 @media (max-width:760px){.credit{white-space:normal;width:92vw;text-align:center}.cap{width:92vw;bottom:22vh}.lcd{min-width:140px}.osd{font-size:18px}#vShut{width:120px}}
+@media (pointer:coarse){.deck button{min-width:42px;min-height:38px;font-size:15px;padding:6px 8px}.deck .chips button{min-height:34px;font-size:12px}.deck select{min-height:34px;font-size:13px}.lcd{min-width:120px}}
+/* Phones turned on their side: everything shrinks so the film stays visible */
+@media (max-height:500px){.deck{gap:4px;padding:4px 6px;max-height:70vh;bottom:calc(4px + env(safe-area-inset-bottom))}.deck .r{gap:4px}.lcd{font-size:11px;padding:2px 6px;min-width:110px}.lcd small{font-size:8px}.cap{width:min(78vw,900px);bottom:8vh;padding:6px 14px}.cap .la{font-size:clamp(15px,4.2vh,26px)}.cap .en{font-size:clamp(12px,3.2vh,17px);margin-top:4px}.cap.card .la{font-size:clamp(22px,8vh,44px)}.osd{top:12vh;font-size:15px}.gate p{font-size:15px}.gate h1{font-size:clamp(26px,9vh,48px)}}
+@media (max-height:500px) and (pointer:coarse){.deck button{min-height:32px;min-width:36px;font-size:13px;padding:3px 6px}}
 </style>
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }</script>
 </head>
@@ -87,19 +102,30 @@ body.playing .credit{display:none}
     <button id="vNext" type="button" title="Next book (])">▶|</button>
     <button id="vStop" type="button" title="Stop (S)">⏹</button>
     <div class="lcd" id="lcd"><span>0:00.0 / 16:66</span><small>▶ PLAY ×1</small></div>
-    <label title="Shuttle: drag from −10× to +10×">⟲ <input type="range" id="vShut" min="-10" max="10" step="0.5" value="1" aria-label="Shuttle speed"> ⟳</label>
+    <button id="vMore" type="button" title="Show or hide the extra controls" aria-expanded="true">☰</button>
+    <button id="vHide" type="button" title="Retract the deck: tap or move over the film to bring it back (H)">▾</button>
   </div>
   <div class="r"><input type="range" id="vScrub" min="0" max="1026" step="0.1" value="0" aria-label="Film position"></div>
-  <div class="r" id="chap"></div>
-  <div class="r">
-    <label>Scheme <select id="scheme"></select></label>
-    <label><input type="checkbox" id="uniOn"> Unicolor <input type="color" id="uniC" value="#ffd27a"></label>
-    <label><input type="checkbox" id="bgOn"> Background <input type="color" id="bgC" value="#0b1030"></label>
-    <button id="txBtn" type="button" title="Play a Xeno Seam transition now (T)">Transition</button>
-    <button id="hudBtn" type="button" title="Codex and data columns (D)">Codex</button>
-    <button id="fs" type="button" title="Full screen (F)">Full screen</button>
+  <div class="more">
+    <div class="r">
+      <label title="Shuttle: drag from −10× to +10×">⟲ <input type="range" id="vShut" min="-10" max="10" step="0.5" value="1" aria-label="Shuttle speed"> ⟳</label>
+      <label title="Volume (M mutes)">🔊 <input type="range" id="vol" min="0" max="1" step="0.01" value="0.85" aria-label="Volume"></label>
+    </div>
+    <div class="r" id="chap"></div>
+    <div class="r"><span class="lb">Camera</span><span class="chips" id="camRow"></span>
+      <button id="zOut" type="button" title="Zoom out (−)">−</button><button id="zIn" type="button" title="Zoom in (+)">+</button><button id="camReset" type="button" title="Reset camera, zoom and pan (0)">⟲</button></div>
+    <div class="r"><span class="lb">Glyphs</span><span class="chips" id="glyRow"><button type="button" data-g="off">Off</button><button type="button" data-g="low">Low</button><button type="button" data-g="med">Medium</button><button type="button" data-g="high">High</button></span>
+      <button id="hudBtn" type="button" title="Codex and data columns: both, codex, data, off (D)">Codex</button>
+      <button id="txBtn" type="button" title="Play a Xeno Seam transition now (T)">Transition</button>
+      <button id="fs" type="button" title="Full screen (F)">Full screen</button></div>
+    <div class="r">
+      <label>Scheme <select id="scheme"></select></label>
+      <label><input type="checkbox" id="uniOn"> Unicolor <input type="color" id="uniC" value="#ffd27a"></label>
+      <label><input type="checkbox" id="bgOn"> Background <input type="color" id="bgC" value="#0b1030"></label>
+    </div>
   </div>
 </div>
+<div class="hint" id="hint">tap the film for controls · pinch to zoom · drag to look</div>
 <div class="bar"><i id="prog"></i></div>
 <div class="gate" id="gate"><div>
   <p class="k"><a href="../">← XenoChickenBalls.Pi</a> · SpinalXeno™ · 4D sacred cinema</p>
@@ -115,7 +141,7 @@ body.playing .credit{display:none}
   </div>
   <button class="go" id="go" type="button" disabled>Enter</button><button class="go" id="goRec" type="button" disabled title="Plays the whole film and saves picture, data, captions and sound as a video">Enter + record</button>
   <p class="warn" id="loading">opening the book…</p>
-  <p class="warn">Loud sound and bright flashes. Headphones recommended.<br>Space play/pause · J K L shuttle · ← → 10 s · [ ] book · 1–9 acts · S stop · T transition · C scheme · D codex · F full screen · mouse wheel jogs the tape</p>
+  <p class="warn">Loud sound and bright flashes. Headphones recommended.<br>Space play/pause · J K L shuttle · ← → 10 s · [ ] book · 1–9 acts · S stop · V camera · + − zoom · 0 reset view · G glyphs · T transition · C scheme · D codex · H hide deck · M mute · F full screen · mouse wheel jogs the tape · drag the film to look around, right-drag or two fingers to pan, pinch or ctrl+wheel to zoom</p>
 </div></div>
 <div class="end" id="end"><div><h2>Ego Alpha et Omega.</h2><p class="k">Atalina Biblique · Procureur Fustredis · SpinalXeno™</p><p class="k">Veni Domine Iesu</p><button class="go" id="again" type="button">Play again</button></div></div>
 <div class="credit">Atalina Biblique · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. · signed 2566 6EB2 CF27 3686 · Scripture: Biblia Sacra Vulgata (public domain) · FX166, Xeno Seam™ and the VCR shuttle designed by Claude (Anthropic AI) · <a href="../signature/VERIFY.txt">verify</a> · <a href="../LICENSE.txt">license</a></div>
@@ -361,10 +387,11 @@ function segSky(s) {
 const SLOTS = ['Kick', 'Clap', 'Hats', 'Open Hat', 'Bass', 'Arp', 'Supersaw Pad', 'Chant', 'Riser', 'Impact', 'Whoosh', 'Glitch Stutter', 'Growl', 'Braam', 'Bell', 'Taiko', 'Brass', 'Bitcrush Chirp'];
 const SPECIAL = ['Tape Shuttle', 'Tape Lock', 'Silence in Heaven', 'Seven Trumpets'];
 const FXN = SLOTS.length * NACT + SPECIAL.length;
-let heard = new Set(), lastFx = '–';
-const mark = (slot, a) => { const k = typeof slot === 'number' ? slot + '·' + a : slot; if (!heard.has(k)) heard.add(k); lastFx = (typeof slot === 'number' ? SLOTS[slot] + ' · ' + ACTS[a].la : slot); };
+let heard = new Set(), lastFx = '–', OFFLINE = false;
+const mark = (slot, a) => { if (OFFLINE) return; const k = typeof slot === 'number' ? slot + '·' + a : slot; if (!heard.has(k)) heard.add(k); lastFx = (typeof slot === 'number' ? SLOTS[slot] + ' · ' + ACTS[a].la : slot); };
 
-let AC, OUT, REV_, AN, RECDEST, NB, SES, SESW, PUMP, DLY, CRUSH;
+let AC, OUT, REV_, AN, RECDEST, NB, SES, SESW, PUMP, DLY, CRUSH, MASTER, SHBUS;
+let volume = 0.85, muted = false;
 const DIST = {};
 function curve(k) {
   if (DIST[k]) return DIST[k];
@@ -379,7 +406,12 @@ function initAudio() {
   const comp = AC.createDynamicsCompressor();
   comp.threshold.value = -14; comp.ratio.value = 6; comp.attack.value = 0.003; comp.release.value = 0.2;
   OUT = AC.createGain(); OUT.gain.value = 0.8;
-  OUT.connect(clip); clip.connect(comp); comp.connect(AC.destination);
+  MASTER = AC.createGain(); MASTER.gain.value = muted ? 0 : volume;
+  OUT.connect(clip); clip.connect(comp); comp.connect(MASTER); MASTER.connect(AC.destination);
+  // The tape shuttle plays the film's own sound through its own bus, so session changes never cut it
+  SHBUS = AC.createGain(); SHBUS.gain.value = 1;
+  const shHp = AC.createBiquadFilter(); shHp.type = 'highpass'; shHp.frequency.value = 90;
+  SHBUS.connect(shHp); shHp.connect(comp);
   AN = AC.createAnalyser(); AN.fftSize = 2048; comp.connect(AN);
   RECDEST = AC.createMediaStreamDestination(); comp.connect(RECDEST);
   REV_ = AC.createConvolver();
@@ -596,41 +628,136 @@ function buildEvents() {
   EVENTS.sort((x, y) => x.t - y.t);
 }
 const HITS = [];
-const hit = (at, k) => HITS.push({ at, k });
+const hit = (at, k) => { if (!OFFLINE) HITS.push({ at, k }); };
 
-// ===== THE TAPE SHUTTLE: what you hear at any speed but 1× =====
+// ===== THE TAPE SHUTTLE =====
+// Like a tape deck cueing or reviewing with the play head engaged: you hear the film's own score
+// running at the tape speed, pitched up or down with it, and backwards when rewinding.
+// The score is rendered ahead in short reels with an OfflineAudioContext, then played at the shuttle rate.
+const REEL = 3, PRE = 3, REEL_SR = 22050, REELS = new Map(), reelQ = [];
+const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+let reelBusy = false, TV = [], warmT = 0;
+function offlineGraph(ctx) {
+  const clip = ctx.createWaveShaper(); clip.curve = curve(1.5);
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -14; comp.ratio.value = 6; comp.attack.value = 0.003; comp.release.value = 0.2;
+  OUT = ctx.createGain(); OUT.gain.value = 0.8; OUT.connect(clip); clip.connect(comp); comp.connect(ctx.destination);
+  REV_ = ctx.createConvolver();
+  const n = Math.floor(ctx.sampleRate * 2.5), b = ctx.createBuffer(2, n, ctx.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = b.getChannelData(c); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.8); }
+  REV_.buffer = b;
+  const rg = ctx.createGain(); rg.gain.value = 0.42; REV_.connect(rg); rg.connect(OUT);
+  NB = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+  const nd = NB.getChannelData(0); for (let i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+  SES = ctx.createGain(); SES.connect(OUT); SESW = ctx.createGain(); SESW.connect(REV_);
+  PUMP = ctx.createGain(); PUMP.connect(SES);
+  DLY = ctx.createDelay(2); const fb = ctx.createGain(); fb.gain.value = 0.34; const dl = ctx.createGain(); dl.gain.value = 0.5;
+  DLY.connect(fb); fb.connect(DLY); DLY.connect(dl); dl.connect(SES);
+  CRUSH = ctx.createWaveShaper(); CRUSH.curve = stairs(6); CRUSH.connect(SES);
+}
+// Render film seconds [k·REEL, (k+1)·REEL) with a pre-roll, so pads and tails already ringing are heard
+function renderReel(k) {
+  const t0 = k * REEL, a0 = Math.max(0, t0 - PRE), len = t0 + REEL - a0;
+  const ctx = new OAC(2, Math.ceil(len * REEL_SR), REEL_SR);
+  const keep = [AC, OUT, REV_, NB, SES, SESW, PUMP, DLY, CRUSH, start, seqNext];
+  OFFLINE = true;
+  try {
+    AC = ctx; offlineGraph(ctx); start = -a0;
+    for (const ev of EVENTS) if (ev.t >= a0 - 0.4 && ev.t < t0 + REEL) ev.fn(Math.max(0, start + ev.t));
+    seqResync(a0); seqSchedule(t0 + REEL - 0.2);
+  } finally {
+    [AC, OUT, REV_, NB, SES, SESW, PUMP, DLY, CRUSH, start, seqNext] = keep;
+    OFFLINE = false;
+  }
+  return new Promise((res, rej) => {
+    ctx.oncomplete = e => res(e.renderedBuffer);
+    const p = ctx.startRendering(); if (p && p.then) p.then(res, rej);
+  }).then(buf => {
+    const off = Math.round((t0 - a0) * REEL_SR), n = Math.max(1, Math.min(buf.length - off, Math.round(REEL * REEL_SR)));
+    const f = AC.createBuffer(2, n, REEL_SR), r = AC.createBuffer(2, n, REEL_SR);
+    for (let c = 0; c < 2; c++) {
+      const src = buf.getChannelData(c).subarray(off, off + n), df = f.getChannelData(c), dr = r.getChannelData(c);
+      df.set(src); for (let i = 0; i < n; i++) dr[i] = src[n - 1 - i];
+    }
+    REELS.set(k, { f, r });
+    while (REELS.size > 24) REELS.delete(REELS.keys().next().value);
+  });
+}
+function wantReel(k, urgent) {
+  if (!OAC || !AC || k < 0 || k * REEL >= DUR || REELS.has(k)) return;
+  const i = reelQ.indexOf(k); if (i >= 0) reelQ.splice(i, 1);
+  if (urgent) reelQ.unshift(k); else reelQ.push(k);
+  if (reelQ.length > 6) reelQ.length = 6;
+  pumpReels();
+}
+function pumpReels() {
+  if (reelBusy || !reelQ.length) return;
+  const k = reelQ.shift(); if (REELS.has(k)) return pumpReels();
+  reelBusy = true;
+  let p; try { p = renderReel(k); } catch (e) { p = Promise.reject(e); }
+  p.catch(() => REELS.set(k, null)).finally(() => { reelBusy = false; pumpReels(); });
+}
+// Pieces of tape that are playing: one reel each, joined end to end without a gap
+function tapeStopAll(fade = 0.03) {
+  if (!AC) return; const t = AC.currentTime;
+  TV.forEach(v => { try { v.g.gain.cancelScheduledValues(t); v.g.gain.setValueAtTime(v.g.gain.value, t); v.g.gain.linearRampToValueAtTime(0, t + fade); v.src.stop(t + fade + 0.02); } catch (e) { } });
+  TV = [];
+}
+function tapePiece(k, dir, rate, at, off) {
+  const R = REELS.get(k); if (!R) return null;
+  const buf = dir > 0 ? R.f : R.r, dur = buf.duration;
+  if (off >= dur - 0.01) return null;
+  const src = AC.createBufferSource(); src.buffer = buf; src.playbackRate.value = rate;
+  const g = AC.createGain(), len = (dur - off) / rate, fd = Math.min(0.006, len / 4);
+  g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(1, at + fd);
+  g.gain.setValueAtTime(1, at + len - fd); g.gain.linearRampToValueAtTime(0, at + len);
+  src.connect(g); g.connect(SHBUS); src.start(at, off); src.stop(at + len + 0.02);
+  const v = { k, dir, rate, at, end: at + len, off, src, g }; TV.push(v); return v;
+}
+const piecePos = (v, T) => v.dir > 0 ? v.k * REEL + v.off + (T - v.at) * v.rate : (v.k + 1) * REEL - v.off - (T - v.at) * v.rate;
+function tapeTick() {
+  if (!AC || !playing || speed === 1 || speed === 0 || scrubbing) { if (TV.length) tapeStopAll(); return; }
+  const now = AC.currentTime, dir = Math.sign(speed), rate = Math.abs(speed);
+  TV = TV.filter(v => v.end > now - 0.05);
+  if (TV.length && (TV[0].dir !== dir || TV[0].rate !== rate)) tapeStopAll(0.02);
+  const k = dir > 0 ? Math.floor(filmT / REEL) : Math.ceil(filmT / REEL) - 1;
+  wantReel(k, true); wantReel(k + dir, false); if (rate > 3) wantReel(k + 2 * dir, false);
+  const cur = TV.find(v => v.at <= now + 0.02 && v.end > now);
+  if (cur && Math.abs(piecePos(cur, now) - filmT) > 0.15 + rate * 0.06) tapeStopAll(0.02);
+  if (!TV.length) {
+    if (!REELS.get(k)) return;
+    const off = dir > 0 ? filmT - k * REEL : (k + 1) * REEL - filmT;
+    tapePiece(k, dir, rate, now + 0.01, clamp(off, 0, REEL - 0.02));
+    return;
+  }
+  const last = TV[TV.length - 1], nk = last.k + dir;
+  if (last.end - now < 0.35 && nk >= 0 && nk * REEL < DUR) { if (REELS.get(nk)) tapePiece(nk, dir, rate, last.end, 0); else wantReel(nk, true); }
+}
+// Tape hiss and transport noise under the programme
 let SH = null;
 function shuttleOn() {
   if (SH || !AC) return;
   const t = AC.currentTime;
   const n = AC.createBufferSource(); n.buffer = NB; n.loop = true;
-  const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.2;
+  const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.7; bp.frequency.value = 2400;
   const ng = AC.createGain(); ng.gain.value = 0;
-  n.connect(bp); bp.connect(ng); ng.connect(OUT);
-  const o = AC.createOscillator(); o.type = 'sawtooth';
-  const lfo = AC.createOscillator(), lg = AC.createGain(); lfo.frequency.value = 7; lg.gain.value = 40; lfo.connect(lg); lg.connect(o.detune);
-  const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 5;
-  const og = AC.createGain(); og.gain.value = 0;
-  o.connect(lp); lp.connect(og); og.connect(OUT);
-  n.start(t); o.start(t); lfo.start(t);
-  SH = { n, bp, ng, o, lp, og, lfo };
+  n.connect(bp); bp.connect(ng); ng.connect(SHBUS);
+  n.start(t);
+  SH = { n, bp, ng };
   mark('Tape Shuttle');
 }
 function shuttleSet(sp) {
   if (!SH) return;
   const t = AC.currentTime, a = Math.abs(sp);
-  SH.bp.frequency.setTargetAtTime(500 + a * 450, t, 0.05);
-  SH.ng.gain.setTargetAtTime(sp === 0 ? 0.015 : 0.05 + a * 0.012, t, 0.05);
-  SH.o.frequency.setTargetAtTime(sp === 0 ? 30 : 38 * a * (sp < 0 ? 0.7 : 1), t, 0.06);
-  SH.lp.frequency.setTargetAtTime(300 + a * 260, t, 0.05);
-  SH.og.gain.setTargetAtTime(sp === 0 ? 0.01 : 0.035, t, 0.05);
-  SH.lfo.frequency.setTargetAtTime(sp < 0 ? 11 : 7, t, 0.1);
+  SH.bp.frequency.setTargetAtTime(1800 + a * 320, t, 0.08);
+  SH.ng.gain.setTargetAtTime(sp === 0 ? 0.003 : 0.01 + a * 0.003, t, 0.06);
 }
 function shuttleOff() {
+  tapeStopAll();
   if (!SH) return;
   const t = AC.currentTime, s = SH; SH = null;
-  [s.ng, s.og].forEach(g => g.gain.setTargetAtTime(0, t, 0.04));
-  setTimeout(() => { [s.n, s.o, s.lfo].forEach(x => { try { x.stop(); } catch (e) { } }); }, 400);
+  s.ng.gain.setTargetAtTime(0, t, 0.04);
+  setTimeout(() => { try { s.n.stop(); } catch (e) { } }, 400);
 }
 function tapeLock() {
   const at = AC.currentTime + 0.01;
@@ -993,12 +1120,15 @@ setInterval(() => { if (prefetchQ.length && points) formFor(prefetchQ.shift()); 
 const U = {
   time: { value: 0 }, morph: { value: 1 }, burst: { value: 0 }, size: { value: MOBILE ? 2.0 : 1.7 }, pxr: { value: PXR }, gain: { value: 0.55 },
   c1: { value: new THREE.Color(1, 0.8, 0.5) }, c2: { value: new THREE.Color(1, 0.9, 0.7) }, c3: { value: new THREE.Color(1, 1, 1) },
-  atlas: { value: atlas }, scol: { value: SCOL }, spin: { value: 0 }
+  atlas: { value: atlas }, scol: { value: SCOL }, spin: { value: 0 }, gly: { value: 0.18 }
 };
 const pmat = new THREE.ShaderMaterial({
   uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `uniform float time, morph, burst, size, pxr, spin; attribute vec3 posA; attribute float seed, layer, gi; varying float vS, vL, vG;
+  vertexShader: `uniform float time, morph, burst, size, pxr, spin, gly; attribute vec3 posA; attribute float seed, layer, gi; varying float vS, vL, vG;
     void main(){
+      vS = seed; vL = layer; vG = gi;
+      // Glyph density: only a share of the script letters is drawn, so the screen stays readable
+      if (layer > 2.5 && fract(seed * 7.13) >= gly) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
       vec3 p = mix(posA, position, morph);
       float mt = sin(morph * 3.14159);
       if (layer < 2.5) p += mt * vec3(sin(seed * 91.0 + time), cos(seed * 53.0 + time * 1.3), sin(seed * 27.0 - time)) * 3.0 * (0.4 + seed);
@@ -1007,7 +1137,7 @@ const pmat = new THREE.ShaderMaterial({
       p += (layer > 1.5 && layer < 2.5 ? 0.6 : 0.05) * vec3(sin(time * 0.7 + seed * 40.0), cos(time * 0.9 + seed * 31.0), sin(time * 0.5 + seed * 17.0));
       vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
       vS = seed; vL = layer; vG = gi;
-      float base = layer < 0.5 ? 1.0 : layer < 1.5 ? 0.85 : layer < 2.5 ? 0.65 : 6.5;
+      float base = layer < 0.5 ? 1.0 : layer < 1.5 ? 0.85 : layer < 2.5 ? 0.65 : 4.0 + 2.5 * gly;
       gl_PointSize = clamp(size * pxr * base * (0.7 + seed * 0.6) * (34.0 / -mv.z), 1.0, 44.0 * pxr); }`,
   fragmentShader: `uniform vec3 c1, c2, c3; uniform vec3 scol[16]; uniform float time, gain; uniform sampler2D atlas; varying float vS, vL, vG;
     void main(){
@@ -1107,22 +1237,44 @@ composer.addPass(new OutputPass());
 
 // ===== THE CODEX: rain, data and cryptographs drawn over the film =====
 const rainCv = $('rain'), rx = rainCv.getContext('2d'), hudCv = $('hud'), hx = hudCv.getContext('2d');
-let W = innerWidth, H = innerHeight, HPX = Math.min(devicePixelRatio, 2), hudOn = !MOBILE;
+let W = innerWidth, H = innerHeight, HPX = Math.min(devicePixelRatio, 2);
+// Codex columns: both, codex only, data only, or off (phones start with them off)
+const HUDM = ['both', 'codex', 'data', 'off'];
+let hudMode = MOBILE ? 'off' : 'both';
+const showL = () => hudMode === 'both' || hudMode === 'codex', showR = () => hudMode === 'both' || hudMode === 'data';
+// Glyph levels: [script letters in the scene, glyph rain, cryptograph panels, scrambled codex lines]
+const GLV = { off: [0, 0, 0, 0], low: [0.18, 0.3, 1, 0.2], med: [0.5, 0.6, 2, 0.4], high: [1, 1, 4, 0.6] };
+let glyLevel = 'low';
+const store = { get(k, d) { try { const v = localStorage.getItem('atalina3.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('atalina3.' + k, v); } catch (e) { } } };
+glyLevel = GLV[store.get('glyphs', 'low')] ? store.get('glyphs', 'low') : 'low';
 let rainCols = [];
+// Safe-area insets (the notch and the home bar on phones turned sideways)
+const SAFE = { l: 0, r: 0 };
+const safeProbe = document.createElement('div');
+safeProbe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)';
+document.body.appendChild(safeProbe);
 function sizeOverlays() {
   W = innerWidth; H = innerHeight;
+  const cs = getComputedStyle(safeProbe); SAFE.l = parseFloat(cs.paddingLeft) || 0; SAFE.r = parseFloat(cs.paddingRight) || 0;
   rainCv.width = W; rainCv.height = H;
   hudCv.width = W * HPX; hudCv.height = H * HPX; hx.setTransform(HPX, 0, 0, HPX, 0, 0);
   const n = Math.floor(W / 18); rainCols = Array.from({ length: n }, (_, i) => ({ x: i * 18 + 9, y: Math.random() * H, v: 60 + Math.random() * 160, s: (Math.random() * 16) | 0 }));
 }
 sizeOverlays();
-addEventListener('resize', () => {
+let lastW = 0, lastH = 0;
+function onResize() {
+  if (innerWidth === lastW && innerHeight === lastH) return;
+  lastW = innerWidth; lastH = innerHeight;
   renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
   BG.aspect.value = innerWidth / innerHeight; BG.res.value.set(innerWidth * PXR, innerHeight * PXR);
-  sizeOverlays(); wrapCache.clear();
-});
-const colW = () => hudOn ? Math.min(340, W * 0.21) : 0;
+  sizeOverlays(); wrapCache.clear(); if (typeof deckH === 'function') deckH();
+}
+addEventListener('resize', onResize);
+// Phones report the new size a moment after they turn, so look again
+addEventListener('orientationchange', () => { setTimeout(onResize, 120); setTimeout(onResize, 500); setTimeout(onResize, 1000); });
+if (window.visualViewport) visualViewport.addEventListener('resize', onResize);
+const colW = () => hudMode === 'off' ? 0 : Math.min(340, W * (hudMode === 'both' ? 0.21 : 0.28));
 // Prefix sums of verses, words and letters over the whole book
 let SUMS = null;
 function buildSums() {
@@ -1159,14 +1311,19 @@ function pageAt(t) {
 
 function drawOverlay(t, dt) {
   // Glyph rain: falls with the tape, rises when it runs backwards
-  rx.globalCompositeOperation = 'destination-out'; rx.fillStyle = `rgba(0,0,0,${clamp(0.08 + Math.abs(speed) * 0.01, 0.06, 0.2)})`; rx.fillRect(0, 0, W, H);
+  const G = GLV[glyLevel], capOn = $('cap').classList.contains('on');
+  rx.globalCompositeOperation = 'destination-out'; rx.fillStyle = `rgba(0,0,0,${G[1] ? clamp(0.08 + Math.abs(speed) * 0.01, 0.06, 0.2) : 1})`; rx.fillRect(0, 0, W, H);
   rx.globalCompositeOperation = 'source-over'; rx.font = `15px ${FONTSTACK}`; rx.textAlign = 'center';
   const sv = speed === 0 ? 0 : Math.sign(speed) * Math.min(4, 0.6 + Math.abs(speed) * 0.4), cw = colW();
   const pf = pageAt(t), pg = Math.floor(pf), words = VUL ? VUL.pages[pg][4] : '';
-  rainCols.forEach((c, i) => {
+  const capHalf = Math.min(W * 0.36, 520), lx0 = showL() ? cw + 10 : -1, rx0 = showR() ? W - cw - 10 : W + 1;
+  if (G[1]) rainCols.forEach((c, i) => {
+    if (G[1] < 0.5 && i % 2) return;   // fewer columns at low density
     c.y += c.v * sv * dt;
     if (c.y > H + 20) { c.y = -20; c.s = (Math.random() * 16) | 0; } else if (c.y < -20) { c.y = H + 20; c.s = (Math.random() * 16) | 0; }
-    const centre = Math.abs(c.x - W / 2) / (W / 2), a = (c.x < cw + 10 || c.x > W - cw - 10) ? 0.22 : 0.18 + centre * 0.55;
+    const centre = Math.abs(c.x - W / 2) / (W / 2);
+    let a = ((c.x < lx0 || c.x > rx0) ? 0.22 : 0.12 + centre * 0.5) * G[1];
+    if (capOn && Math.abs(c.x - W / 2) < capHalf && c.y > H * 0.45) a *= 0.2;   // keep the captions clear
     const ch = Math.random() < 0.35 && words ? words[(Math.random() * words.length) | 0].toUpperCase() : SCRIPTS[c.s][1][(Math.random() * 16) | 0];
     rx.fillStyle = `rgba(255,255,255,${a})`; rx.fillText(ch, c.x, c.y);
     rx.fillStyle = `hsla(${c.s / 16 * 360},90%,65%,${a * 0.8})`; rx.fillText(SCRIPTS[c.s][1][(Math.random() * 16) | 0], c.x, c.y - 18 * Math.sign(sv || 1));
@@ -1179,8 +1336,11 @@ function drawOverlay(t, dt) {
   // Top bar: the running headline of the whole film
   hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = 'rgba(255,226,160,.85)'; hx.textAlign = 'left';
   const bk = s.bi != null ? BOOKS[s.bi] : null;
-  hx.fillText(`ATALINA BIBLIQUE · PROCUREUR FUSTREDIS  ·  ACTUS ${ROMAN[a]} ${ACTS[a].la}  ·  ${bk ? 'LIBER ' + (s.bi + 1) + '/77 ' + bk[2] : 'INTROITUS'}  ·  PAGINA ${String(pg + 1).padStart(4, '0')}/${PAGES_TOTAL}`, 16, bars / 2);
-  hx.textAlign = 'right'; hx.fillText(`${fmt1666(t)} / 16:66  ·  ${speed === 1 ? 'PLAY' : speed === 0 ? 'PAUSE' : (speed < 0 ? 'REV ×' : 'FF ×') + Math.abs(speed)}  ·  SPINALXENO™`, W - 16, bars / 2);
+  const narrow = W < 900, sl = speed === 1 ? 'PLAY' : speed === 0 ? 'PAUSE' : (speed < 0 ? 'REV ×' : 'FF ×') + Math.abs(speed);
+  const pad = 16;
+  if (narrow) hx.fillText(`ACTUS ${ROMAN[a]} · ${bk ? (s.bi + 1) + '/77 ' + bk[3].toUpperCase() : 'INTROITUS'} · P.${pg + 1}`, pad + SAFE.l, bars / 2, W * 0.6);
+  else hx.fillText(`ATALINA BIBLIQUE · PROCUREUR FUSTREDIS  ·  ACTUS ${ROMAN[a]} ${ACTS[a].la}  ·  ${bk ? 'LIBER ' + (s.bi + 1) + '/77 ' + bk[2] : 'INTROITUS'}  ·  PAGINA ${String(pg + 1).padStart(4, '0')}/${PAGES_TOTAL}`, 16 + SAFE.l, bars / 2);
+  hx.textAlign = 'right'; hx.fillText(narrow ? `${fmt1666(t)} · ${sl}` : `${fmt1666(t)} / 16:66  ·  ${sl}  ·  SPINALXENO™`, W - 16 - SAFE.r, bars / 2);
   // Bottom bar: the page itself, scrolling with the tape
   if (VUL) {
     hx.save(); hx.beginPath(); hx.rect(0, H - bars, W, bars); hx.clip();
@@ -1191,7 +1351,8 @@ function drawOverlay(t, dt) {
     hx.restore();
   }
   if (cw) {
-    const top = bars + 14, bot = H - bars - 14, x0 = 16, x1 = W - 16 - cw;
+    const top = bars + 14, bot = H - bars - 14, x0 = 16 + SAFE.l, x1 = W - 16 - SAFE.r - cw;
+    if (showL()) {
     // Left: the codex
     hx.fillStyle = 'rgba(6,4,2,.5)'; hx.fillRect(x0 - 6, top - 8, cw + 12, bot - top + 16);
     hx.strokeStyle = 'rgba(255,210,122,.25)'; hx.strokeRect(x0 - 6, top - 8, cw + 12, bot - top + 16);
@@ -1209,8 +1370,8 @@ function drawOverlay(t, dt) {
         const li = first + j; if (li < 0 || li >= all.length) continue;
         const y = y0 + (j - sub) * lineH, dist = Math.abs(j - mid - sub);
         let txt = all[li];
-        const fresh = speed >= 0 ? j > rows - 4 : j < 3;
-        if (fresh) txt = Array.from(txt).map(ch => ch !== ' ' && Math.random() < 0.6 ? scr() : ch).join('');
+        const fresh = G[3] > 0 && (speed >= 0 ? j > rows - 3 : j < 2);
+        if (fresh) txt = Array.from(txt).map(ch => ch !== ' ' && Math.random() < G[3] ? scr() : ch).join('');
         hx.font = dist < 0.8 ? '700 11px "JetBrains Mono", monospace' : '11px "JetBrains Mono", monospace';
         hx.fillStyle = dist < 0.8 ? '#ffe7a8' : `rgba(232,220,192,${clamp(0.9 - dist * 0.035, 0.18, 0.75)})`;
         if (fresh) hx.font = `11px ${FONTSTACK}`;
@@ -1219,6 +1380,8 @@ function drawOverlay(t, dt) {
       }
       hx.restore();
     }
+    }
+    if (showR()) {
     // Right: the data
     hx.fillStyle = 'rgba(6,4,2,.5)'; hx.fillRect(x1 - 6, top - 8, cw + 12, bot - top + 16);
     hx.strokeStyle = 'rgba(255,210,122,.25)'; hx.strokeRect(x1 - 6, top - 8, cw + 12, bot - top + 16);
@@ -1229,7 +1392,7 @@ function drawOverlay(t, dt) {
       const cx = x1 + (i % cols) * cs, cy = y + Math.floor(i / cols) * 15, on = s.bi === i, past = SEG.some(q => q.bi === i && q.t0 + q.dur <= t);
       hx.fillStyle = on ? '#' + S.v[b[0]].getHexString() : past ? 'rgba(255,226,160,.22)' : 'rgba(255,255,255,.05)';
       hx.fillRect(cx + 1, cy, cs - 2, 13);
-      hx.font = '7px "JetBrains Mono", monospace'; hx.fillStyle = on ? '#000' : 'rgba(232,220,192,.65)'; hx.textAlign = 'center';
+      hx.font = '8px "JetBrains Mono", monospace'; hx.fillStyle = on ? '#000' : 'rgba(232,220,192,.8)'; hx.textAlign = 'center';
       hx.fillText(b[3].replace(/^(\d) /, '$1').slice(0, 4).toUpperCase(), cx + cs / 2, cy + 7);
     });
     hx.textAlign = 'left'; y += 7 * 15 + 10;
@@ -1271,14 +1434,15 @@ function drawOverlay(t, dt) {
       const nb = 48, bw = cw / nb, hh = Math.min(46, bot - y - 22);
       for (let i = 0; i < nb; i++) { const v = d[Math.floor(Math.pow(i / nb, 2) * d.length * 0.6)] / 255; hx.fillStyle = `hsl(${40 + i * 6},90%,${40 + v * 30}%)`; hx.fillRect(x1 + i * bw, y + hh - v * hh, bw - 1, v * hh); }
       y += hh + 12; hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = '#ffd27a'; hx.fillText('◆ ' + lastFx, x1, y, cw);
-      y += 14; hx.fillStyle = 'rgba(169,156,128,.95)'; hx.fillText(SCHEMES[scheme].name + ' · ' + TX[bg.type], x1, y, cw);
+      y += 14; hx.fillStyle = 'rgba(169,156,128,.95)'; hx.fillText(SCHEMES[scheme].name + ' · ' + TX[bg.type] + ' · ' + camLabel(), x1, y, cw);
+    }
     }
   }
   // Cryptographs: verses from the page decode out of the ancient scripts
   panelClock += Math.abs(speed) * dt;
-  if (panelClock > (MOBILE ? 3.2 : 1.7) && VUL && panels.length < (MOBILE ? 2 : 4)) {
+  if (G[2] && panelClock > (MOBILE ? 3.2 : 1.7) * (glyLevel === 'high' ? 1 : 2) && VUL && panels.length < Math.min(G[2], MOBILE ? 2 : 4)) {
     panelClock = 0;
-    const pw = MOBILE ? 200 : 270, ph = 84, lx = cw + 40, rxm = W - cw - 40 - pw;
+    const pw = MOBILE ? 200 : 270, ph = 84, lx = (showL() ? cw : 0) + 40, rxm = W - (showR() ? cw : 0) - 40 - pw;
     if (rxm > lx) {
       const words2 = VUL.pages[pg][4].replace(/¶|〔\d+〕/g, '').split(' ').filter(Boolean), st = (Math.random() * Math.max(1, words2.length - 18)) | 0;
       const lines = [], seg2 = words2.slice(st, st + 18);
@@ -1325,7 +1489,7 @@ function syncAudio() {
 }
 const SPEEDS = [-10, -8, -4, -2, -1, 0, 0.5, 1, 2, 4, 8, 10];
 let osdTimer = 0;
-function osd(main, sub) { $('osd').innerHTML = main + (sub ? `<small>${sub}</small>` : ''); $('osd').classList.add('on'); clearTimeout(osdTimer); if (speed === 1) osdTimer = setTimeout(() => $('osd').classList.remove('on'), 1800); }
+function osd(main, sub, sticky) { $('osd').style.left = (showL() && colW() ? colW() + 34 + SAFE.l : Math.max(20, SAFE.l)) + 'px'; $('osd').innerHTML = main + (sub ? `<small>${sub}</small>` : ''); $('osd').classList.add('on'); clearTimeout(osdTimer); if (!sticky) osdTimer = setTimeout(() => $('osd').classList.remove('on'), 1800); }
 function speedLabel(sp) { return sp === 1 ? '▶ PLAY' : sp === 0 ? '❚❚ PAUSE' : sp === -1 ? '◀ REVERSE' : sp < 0 ? '◀◀ REW ×' + (-sp) : sp < 1 ? '▶ SLOW ×½' : '▶▶ FF ×' + sp; }
 function setSpeed(sp) {
   if (!playing) return;
@@ -1337,11 +1501,12 @@ function setSpeed(sp) {
   $('vShut').value = sp;
   ['vRew', 'vRev', 'vPause', 'vPlay', 'vFf'].forEach(id => $(id).classList.remove('on'));
   $(sp === 1 ? 'vPlay' : sp === 0 ? 'vPause' : sp === -1 ? 'vRev' : sp < 0 ? 'vRew' : 'vFf').classList.add('on');
-  osd(speedLabel(sp), sp === 1 ? 'TAPE LOCKED · ' + fmt1666(filmT) : 'SHUTTLE · ' + fmt1666(filmT));
+  osd(speedLabel(sp), sp === 1 ? 'TAPE LOCKED · ' + fmt1666(filmT) : 'SHUTTLE · ' + fmt1666(filmT), sp !== 1);
 }
+// Each press of ▶▶ or ◀◀ goes one step faster, from any speed (also one set with the shuttle slider)
 function stepSpeed(dir) {
-  if (dir > 0) setSpeed(speed < 2 ? 2 : SPEEDS[Math.min(SPEEDS.length - 1, SPEEDS.indexOf(speed) + 1)] || 10);
-  else setSpeed(speed > -2 ? -2 : SPEEDS[Math.max(0, SPEEDS.indexOf(speed) - 1)] ?? -10);
+  if (dir > 0) setSpeed(speed < 2 ? 2 : (SPEEDS.find(v => v > speed) ?? 10));
+  else setSpeed(speed > -2 ? -2 : ([...SPEEDS].reverse().find(v => v < speed) ?? -10));
 }
 function seek(s) {
   if (!playing) return;
@@ -1352,11 +1517,13 @@ function seek(s) {
 }
 async function begin(record) {
   if (!AC) initAudio();
-  await AC.resume();
-  playing = true; speed = 1; filmT = 0;
+  // Never wait on the sound card for long: the picture starts even if the browser holds the audio back
+  try { await Promise.race([AC.resume(), new Promise(r => setTimeout(r, 700))]); } catch (e) { }
+  playing = true; speed = 1; filmT = 0; scrubbing = false;
+  $('gate').classList.add('off');
   syncAudio(); start = AC.currentTime - filmT + 0.3;
-  heard = new Set(); shown = -1; capIdx = -1; curSeg = -1;
-  bg.to = BLACK;
+  heard = new Set(); shown = -1; capIdx = -1; curSeg = -1; camCut = true;
+  bg.to = BLACK; applyVol();
   document.body.classList.add('playing');
   $('end').classList.remove('on');
   $('deck').hidden = false; setSpeed(1); $('vPlay').classList.add('on');
@@ -1414,7 +1581,7 @@ function finish() {
   if (recorder && recorder.state !== 'inactive') recorder.stop();
   recorder = null;
   $('end').classList.add('on'); $('cap').classList.remove('on'); $('deck').hidden = true; $('osd').classList.remove('on');
-  document.body.classList.remove('idle');
+  document.body.classList.remove('idle', 'retracted'); deckH();
 }
 function palette(s) {
   const S = SCHEMES[scheme], p = (uniOn ? uniCol : S.v[s.act]).clone().offsetHSL(s.hue, 0, 0.08);
@@ -1427,21 +1594,73 @@ function showSeg(i, prev) {
   shown = i; prefetch(i);
 }
 
+// ===== CAMERA ANGLES =====
+const CAMS = [['auto', 'Auto'], ['orbit', 'Orbit'], ['front', 'Front'], ['side', 'Side'], ['low', 'Low'], ['high', 'High'], ['top', 'Top'], ['close', 'Close-up'], ['wide', 'Wide'], ['dolly', 'Dolly'], ['fly', 'Fly-by'], ['hand', 'Handheld'], ['free', 'Free']];
+const AUTO_CUTS = ['orbit', 'front', 'low', 'close', 'high', 'dolly', 'side', 'wide', 'fly', 'hand'];
+const FLAT = new Set(['scroll', 'tablets', 'seals', 'eye', 'heart', 'harp', 'star', 'dove', 'lamp', 'trumpets', 'sword', 'wheels']);
+let camMode = 'auto', camAuto = 'orbit', zoom = 1, yaw = 0, pitch = 0.08, camCut = true;
+const pan = new THREE.Vector3(), camPos = new THREE.Vector3(0, 3, 36), camLook = new THREE.Vector3(0, 1, 0), tgtPos = new THREE.Vector3(), tgtLook = new THREE.Vector3();
+const camName = m => (CAMS.find(c => c[0] === m) || CAMS[0])[1];
+const camLabel = () => 'CAM ' + (camMode === 'auto' ? 'AUTO · ' + camName(camAuto) : camName(camMode)).toUpperCase();
+// The director's cut: every scene gets its own angle; scenes with writing are kept readable
+function autoCam(s) {
+  if (s.kind === 'act') return s.act % 2 ? 'wide' : 'front';
+  let m = AUTO_CUTS[(s.i * 7 + 3) % AUTO_CUTS.length];
+  if (FLAT.has(s.tpl) && (m === 'side' || m === 'fly' || m === 'top')) m = 'front';
+  return m;
+}
+function aimCamera(s, t, local, flat, dt) {
+  const mode = camMode === 'auto' ? camAuto : camMode;
+  const base = ({ eye: 40, seals: 38, scroll: 34, sea: 38, camp: 44, walls: 40, city: 40, tent: 38 })[s.tpl] || 36;
+  const d = base / zoom, o = t * 0.04, lift = ['sea', 'camp', 'walls', 'tent', 'city'].includes(s.tpl) ? 9 : 0;
+  const u = s.dur ? clamp(local / s.dur, 0, 1) : 0;
+  tgtLook.set(0, 1, 0);
+  switch (mode) {
+    case 'front': tgtPos.set(0, 2 + lift * 0.6, d); break;
+    case 'side': tgtPos.set(d * 0.92, 2 + lift * 0.4, d * 0.38); break;
+    case 'low': tgtPos.set(Math.sin(o) * d * 0.15, -10, d * 0.82); tgtLook.set(0, 5, 0); break;
+    case 'high': tgtPos.set(Math.sin(o) * d * 0.3, d * 0.62 + lift * 0.5, d * 0.78); tgtLook.set(0, -1, 0); break;
+    case 'top': tgtPos.set(Math.sin(o * 2) * 2, d * 1.1, 3); tgtLook.set(0, 0, 0); break;
+    case 'close': tgtPos.set(Math.sin(o * 3) * 3, 2 + lift * 0.3, d * 0.5); tgtLook.set(0, 2, 0); break;
+    case 'wide': tgtPos.set(Math.sin(o) * d * 0.25, 7 + lift, d * 1.7); break;
+    case 'dolly': tgtPos.set(Math.sin(local * 0.3) * 2, 2 + lift * 0.5, d * (1.25 - 0.7 * u)); break;
+    case 'fly': { const a = -1.1 + 2.2 * u; tgtPos.set(Math.sin(a) * d * 0.9, 2 + lift * 0.4 + Math.sin(u * Math.PI) * 3, Math.cos(a) * d * 0.9); break; }
+    case 'hand': tgtPos.set(Math.sin(t * 0.7) * 0.9 + Math.sin(t * 1.9) * 0.35, 2 + lift * 0.5 + Math.sin(t * 1.3) * 0.5 + Math.sin(t * 3.1) * 0.15, d * 0.8); tgtLook.set(Math.sin(t * 0.9) * 0.6, 1 + Math.sin(t * 1.1) * 0.4, 0); break;
+    case 'free': { const cp = Math.cos(pitch); tgtPos.set(Math.sin(yaw) * cp * d, 1 + Math.sin(pitch) * d, Math.cos(yaw) * cp * d); break; }
+    default: { const sd = flat ? 0.1 : 0.35; tgtPos.set(Math.sin(o) * d * sd, 3 + lift, Math.cos(o) * d); }
+  }
+  tgtPos.add(pan); tgtLook.add(pan);
+  if (camCut) { camPos.copy(tgtPos); camLook.copy(tgtLook); camCut = false; }
+  else { const k = 1 - Math.exp(-dt * (mode === 'free' ? 14 : 3.5)); camPos.lerp(tgtPos, k); camLook.lerp(tgtLook, k); }
+  camera.position.copy(camPos);
+  camera.position.x += (Math.random() - 0.5) * shake; camera.position.y += (Math.random() - 0.5) * shake;
+  camera.lookAt(camLook); shake *= 0.88;
+}
+
 const clock = new THREE.Clock();
-let demo = -1;
+let demo = -1, acWasRunning = false;
+// Browsers (iPhone above all) may hold the sound back until a real touch: wake it on the next one
+['pointerup', 'touchend', 'keydown'].forEach(ev => addEventListener(ev, () => { if (AC && AC.state !== 'running') AC.resume().catch(() => { }); }, { passive: true }));
 function frame() {
   requestAnimationFrame(frame);
   if (!points) return;
   const dt = Math.min(clock.getDelta(), 0.05), idleT = performance.now() / 1000;
   let t, s, local;
   if (playing) {
-    if (speed === 1 && AC) filmT = AC.currentTime - start;
-    else filmT += speed * dt;
+    const acRun = AC && AC.state === 'running';
+    if (acRun && !acWasRunning && speed === 1) syncAudio();   // the sound card has just woken up
+    acWasRunning = acRun;
+    if (scrubbing) { /* the scrub bar holds the tape */ }
+    else if (speed === 1 && acRun) filmT = AC.currentTime - start;
+    else { filmT += speed * dt; if (AC && speed === 1) start = AC.currentTime - filmT; }
     if (filmT >= DUR) { filmT = DUR; finish(); }
     if (filmT <= 0 && speed < 0) { filmT = 0; setSpeed(0); osd('◀◀ BOT', 'beginning of tape'); }
     filmT = clamp(filmT, 0, DUR);
     t = filmT;
-    if (speed === 1) schedule(t);
+    if (speed === 1 && !scrubbing && acRun) schedule(t);
+    tapeTick();
+    // Keep the reels around the play head ready, so rewind and fast forward sound at once
+    if (speed === 1 && AC && performance.now() - warmT > 1500) { warmT = performance.now(); const k = Math.floor(t / REEL); wantReel(k - 1); wantReel(k); }
     captions(t);
     HITS.sort((a, b) => a.at - b.at);
     while (HITS.length && HITS[0].at <= AC.currentTime) { const h = HITS.shift(); flashV = Math.min(1.2, flashV + 0.5 * h.k); shake += 0.5 * h.k; }
@@ -1454,7 +1673,7 @@ function frame() {
     if (i !== curSeg) {
       const jump = curSeg < 0 ? !(i === 0 && t < 3) : Math.abs(i - curSeg) !== 1;
       startBg(segSky(s), txOf(s), jump ? 0 : txDur(txOf(s)) / Math.max(1, Math.abs(speed) * 0.5), t, jump ? 0 : (s.kind === 'act' ? 0.8 : 0.35), jump);
-      curSeg = i;
+      curSeg = i; camAuto = autoCam(s); if (camMode === 'auto') camCut = true;
     }
     local = t - s.t0;
     $('lcd').firstChild.textContent = fmt(t) + ' / 16:66';
@@ -1466,7 +1685,7 @@ function frame() {
     // Before the film: the trailer scenes and seams cycle as a preview
     t = idleT;
     const d = Math.floor(idleT / 6) % SEG.length;
-    if (d !== demo) { const prev = demo; demo = d; showSeg(d, prev); startBg(segSky(SEG[d]), txOf(SEG[d]), 1.8, idleT, 0.2, prev < 0); }
+    if (d !== demo) { const prev = demo; demo = d; showSeg(d, prev); startBg(segSky(SEG[d]), txOf(SEG[d]), 1.8, idleT, 0.2, prev < 0); camAuto = autoCam(SEG[d]); if (camMode === 'auto') camCut = true; }
     s = SEG[d]; local = idleT % 6;
   }
   const dir = playing ? Math.sign(speed) || 1 : 1;
@@ -1478,17 +1697,14 @@ function frame() {
   U.burst.value += (burstTarget * 2.5 - U.burst.value) * 0.1;
 
   // Scenes with writing face the camera; the others turn slowly
-  const flat = ['scroll', 'tablets', 'seals', 'eye', 'heart', 'harp', 'star', 'dove', 'lamp', 'trumpets', 'sword', 'wheels'].includes(s.tpl);
+  const flat = FLAT.has(s.tpl);
   if (flat) points.rotation.y = Math.atan2(Math.sin(points.rotation.y), Math.cos(points.rotation.y)) * 0.94;
   else points.rotation.y += dt * 0.08 * (playing ? Math.sign(speed) * Math.min(3, Math.abs(speed)) : 1);
   points.rotation.x = Math.sin(t * 0.05) * 0.08;
 
   updateTesseract(t, s.kind === 'act' ? 9 : 6);
   tmat.color.copy(U.c3.value); tmat.opacity = s.kind === 'act' ? 0.7 : 0.3;
-  const orbit = t * 0.04, dist = ({ eye: 40, seals: 38, scroll: 34, sea: 38, camp: 44, walls: 40, city: 40, tent: 38 })[s.tpl] || 36;
-  const side = flat ? 0.1 : 0.35;
-  camera.position.set(Math.sin(orbit) * dist * side + (Math.random() - 0.5) * shake, 3 + (Math.random() - 0.5) * shake + (['sea', 'camp', 'walls', 'tent', 'city'].includes(s.tpl) ? 9 : 0), Math.cos(orbit) * dist);
-  camera.lookAt(0, 1, 0); shake *= 0.88;
+  aimCamera(s, t, local, flat, dt);
 
   BG.p.value = bg.dur ? clamp((playing && speed < 0 ? bg.t0 - t : t - bg.t0) / bg.dur, 0, 1) : 1;
   BG.typ.value = bg.type; BG.time.value = t;
@@ -1509,9 +1725,36 @@ function frame() {
 }
 
 // ===== CONTROLS =====
-let scrubbing = false, idleTimer = 0;
-function poke() { document.body.classList.remove('idle'); clearTimeout(idleTimer); idleTimer = setTimeout(() => { if (playing && !scrubbing) document.body.classList.add('idle'); }, 3200); }
-['mousemove', 'pointerdown', 'keydown', 'touchstart'].forEach(e => addEventListener(e, poke, { passive: true }));
+let scrubbing = false, idleTimer = 0, lastPtr = MOBILE ? 'touch' : 'mouse';
+const deck = $('deck');
+// The deck hides itself while the film plays and comes back on any touch, key or mouse move
+function poke() {
+  document.body.classList.remove('idle', 'retracted'); clearTimeout(idleTimer);
+  idleTimer = setTimeout(function tryIdle() {
+    if (!playing || scrubbing) return;
+    if (lastPtr === 'mouse' && deck.matches(':hover')) { idleTimer = setTimeout(tryIdle, 1500); return; }
+    document.body.classList.add('idle');
+  }, lastPtr === 'mouse' ? 3200 : 4500);
+}
+function retract() {
+  if (!playing) return;
+  clearTimeout(idleTimer); document.body.classList.add('idle', 'retracted');
+  setTimeout(() => document.body.classList.remove('retracted'), 2600);
+}
+addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { lastPtr = 'mouse'; poke(); } }, { passive: true });
+addEventListener('pointerdown', e => { lastPtr = e.pointerType || 'mouse'; if (!e.target.closest('#stage')) poke(); }, { passive: true });
+addEventListener('keydown', poke, { passive: true });
+// Captions sit just above the deck, whatever its height
+function deckH() { document.documentElement.style.setProperty('--deckH', (deck.hidden ? 0 : deck.offsetHeight + 12) + 'px'); }
+if (window.ResizeObserver) new ResizeObserver(deckH).observe(deck);
+function setMore(open) {
+  deck.classList.toggle('min', !open); $('vMore').setAttribute('aria-expanded', open); $('vMore').classList.toggle('on', open);
+  store.set('more', open ? '1' : '0'); deckH();
+}
+setMore(store.get('more', MOBILE ? '0' : '1') === '1');
+$('vMore').onclick = () => setMore(deck.classList.contains('min'));
+$('vHide').onclick = retract;
+
 function stop() { if (!playing) return; if (AC) newSession(); finish(); }
 function manualTx() {
   const t = playing ? filmT : performance.now() / 1000, s = SEG[(Math.random() * SEG.length) | 0], type = (Math.random() * TX.length) | 0;
@@ -1528,6 +1771,65 @@ function jumpBook(dir) {
   const i = segAt(filmT), j = clamp(dir > 0 ? i + 1 : (filmT - SEG[i].t0 > 1.5 ? i : i - 1), 0, SEG.length - 1);
   seek(SEG[j].t0 + 0.01); osd(dir > 0 ? '▶| NEXT' : '|◀ PREV', SEG[j].bi != null ? BOOKS[SEG[j].bi][2] : 'ACTUS ' + ROMAN[SEG[j].act]);
 }
+// Volume
+function applyVol() { if (MASTER) MASTER.gain.setTargetAtTime(muted ? 0 : volume, AC.currentTime, 0.02); $('vol').value = muted ? 0 : volume; }
+$('vol').oninput = e => { volume = +e.target.value; muted = volume === 0; applyVol(); };
+// Camera angles, zoom and pan
+$('camRow').innerHTML = CAMS.map(([k, n]) => `<button type="button" data-c="${k}">${n}</button>`).join('');
+function markCam() { $('camRow').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.c === camMode)); }
+function setCam(m, quiet) {
+  if (m === 'free' && camMode !== 'free') {
+    const v = camPos.clone().sub(camLook), L = v.length() || 1;
+    yaw = Math.atan2(v.x, v.z); pitch = Math.asin(clamp(v.y / L, -1, 1)); zoom = clamp(36 / L, 0.35, 3);
+  }
+  camMode = m; markCam(); store.set('cam', m);
+  if (!quiet) osd('◉ CAMERA', camName(m).toUpperCase() + (m === 'auto' ? ' · the director picks the angle' : ''));
+}
+$('camRow').onclick = e => { const b = e.target.closest('button'); if (b) setCam(b.dataset.c); };
+function setZoom(z) { zoom = clamp(z, 0.35, 3); osd('◎ ZOOM', zoom.toFixed(2) + '×'); }
+function resetView() { pan.set(0, 0, 0); zoom = 1; setCam('auto', true); osd('⟲ VIEW RESET', 'camera auto · zoom 1×'); }
+$('zIn').onclick = () => setZoom(zoom * 1.2);
+$('zOut').onclick = () => setZoom(zoom / 1.2);
+$('camReset').onclick = resetView;
+function lookBy(dx, dy) { if (camMode !== 'free') setCam('free', true); yaw -= dx * 0.006; pitch = clamp(pitch + dy * 0.005, -1.2, 1.4); }
+function panBy(dx, dy) {
+  const k = camPos.distanceTo(camLook) * 0.0016, r = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0), u = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+  pan.addScaledVector(r, -dx * k).addScaledVector(u, dy * k); if (pan.length() > 30) pan.setLength(30);
+}
+// Touch and mouse on the film: tap shows or hides the deck, drag looks around, two fingers pan and pinch zooms
+const stageEl = $('stage'), ptrs = new Map();
+let gest = null, tap = null, dragBtn = 0, hiddenAtDown = false;
+const gestOf = () => { const p = [...ptrs.values()]; if (!p.length) return null; if (p.length < 2) return { x: p[0].x, y: p[0].y, n: 1 }; return { x: (p[0].x + p[1].x) / 2, y: (p[0].y + p[1].y) / 2, d: Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y), n: 2 }; };
+stageEl.addEventListener('contextmenu', e => e.preventDefault());
+stageEl.addEventListener('pointerdown', e => {
+  try { stageEl.setPointerCapture(e.pointerId); } catch (err) { }
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 1) { hiddenAtDown = document.body.classList.contains('idle'); tap = { x: e.clientX, y: e.clientY, t: performance.now(), type: e.pointerType }; dragBtn = e.button === 2 || e.shiftKey ? 2 : 0; }
+  else tap = null;
+  gest = gestOf();
+});
+stageEl.addEventListener('pointermove', e => {
+  const p = ptrs.get(e.pointerId); if (!p) return;
+  p.x = e.clientX; p.y = e.clientY;
+  if (tap && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 8) return;   // still a tap
+  tap = null;
+  const g = gestOf(); if (!g || !gest || g.n !== gest.n) { gest = g; return; }
+  const dx = g.x - gest.x, dy = g.y - gest.y;
+  if (g.n === 2) { if (g.d && gest.d) zoom = clamp(zoom * g.d / gest.d, 0.35, 3); panBy(dx, dy); }
+  else if (dragBtn === 2) panBy(dx, dy); else lookBy(dx, dy);
+  gest = g;
+});
+function ptrEnd(e) {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if (tap && e.type === 'pointerup' && performance.now() - tap.t < 400 && playing) {
+    if (tap.type === 'mouse') poke();
+    else if (hiddenAtDown) poke(); else retract();
+  }
+  tap = null; gest = gestOf();
+}
+stageEl.addEventListener('pointerup', ptrEnd); stageEl.addEventListener('pointercancel', ptrEnd);
+
 const SCH = SCHEMES.map((s, i) => `<option value="${i}">${s.name}</option>`).join('');
 $('scheme').innerHTML = $('scheme0').innerHTML = SCH;
 $('scheme').onchange = e => setScheme(+e.target.value);
@@ -1545,30 +1847,60 @@ $('vNext').onclick = () => jumpBook(1);
 $('vRew').onclick = () => stepSpeed(-1);
 $('vFf').onclick = () => stepSpeed(1);
 $('vRev').onclick = () => setSpeed(-1);
-$('vPause').onclick = () => setSpeed(0);
+$('vPause').onclick = () => setSpeed(speed === 0 ? 1 : 0);
 $('vPlay').onclick = () => setSpeed(1);
 $('vStop').onclick = stop;
 $('vShut').oninput = e => setSpeed(+e.target.value);
-$('vScrub').oninput = () => { scrubbing = true; };
-$('vScrub').onchange = e => { scrubbing = false; seek(+e.target.value); };
+// The scrub bar moves the picture while you drag and locks the sound when you let go
+let scrubSnd = 0;
+$('vScrub').oninput = e => {
+  if (!playing) return;
+  if (!scrubbing) { scrubbing = true; if (AC && speed === 1) newSession(); }
+  const v = +e.target.value, fwd = v >= filmT; filmT = clamp(v, 0, DUR - 0.05); capIdx = -1;
+  if (AC && performance.now() - scrubSnd > 70) { scrubSnd = performance.now(); chirp(AC.currentTime + 0.005, fwd); }
+};
+const scrubEnd = () => { if (!scrubbing) return; scrubbing = false; seek(+$('vScrub').value); poke(); };
+$('vScrub').onchange = scrubEnd;
+['pointerup', 'touchend', 'pointercancel'].forEach(ev => $('vScrub').addEventListener(ev, () => setTimeout(scrubEnd, 0)));
 $('txBtn').onclick = manualTx;
-$('hudBtn').onclick = () => { hudOn = !hudOn; wrapCache.clear(); };
+function hudLabel() { $('hudBtn').textContent = 'Codex: ' + hudMode.charAt(0).toUpperCase() + hudMode.slice(1); }
+$('hudBtn').onclick = () => { hudMode = HUDM[(HUDM.indexOf(hudMode) + 1) % HUDM.length]; wrapCache.clear(); hudLabel(); osd('▤ CODEX', hudMode.toUpperCase()); };
+hudLabel();
+// Glyph levels
+function setGlyphs(l, quiet) {
+  glyLevel = l; U.gly.value = GLV[l][0]; store.set('glyphs', l);
+  $('glyRow').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.g === l));
+  if (!quiet) osd('✦ GLYPHS', l.toUpperCase());
+}
+$('glyRow').onclick = e => { const b = e.target.closest('button'); if (b) setGlyphs(b.dataset.g); };
+setGlyphs(glyLevel, true);
+// Full screen where the browser allows it; on iPhone, a cinema mode that retracts everything
+const fsRoot = document.documentElement, canFS = !!(fsRoot.requestFullscreen || fsRoot.webkitRequestFullscreen);
+if (!canFS) { $('fs').textContent = 'Cinema'; $('fs').title = 'Retract the deck and codex for a clear picture (F)'; }
+function toggleFS() {
+  if (canFS) {
+    const cur = document.fullscreenElement || document.webkitFullscreenElement;
+    const p = cur ? (document.exitFullscreen || document.webkitExitFullscreen).call(document) : (fsRoot.requestFullscreen || fsRoot.webkitRequestFullscreen).call(fsRoot);
+    if (p && p.catch) p.catch(() => { });
+  } else { hudMode = 'off'; hudLabel(); retract(); osd('▣ CINEMA', 'tap the film for controls'); }
+}
+$('fs').onclick = toggleFS;
 $('go').onclick = () => begin(false);
 $('goRec').onclick = () => begin(true);
 $('again').onclick = () => begin(false);
-$('fs').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
-// The mouse wheel jogs the tape like a VCR jog dial
+// The mouse wheel jogs the tape like a VCR jog dial; pinch or ctrl + wheel zooms
 let jogT = 0;
 addEventListener('wheel', e => {
-  if (!playing) return;
+  if (!playing || e.target.closest('.deck, .gate, .end')) return;
   e.preventDefault();
+  if (e.ctrlKey) { zoom = clamp(zoom * Math.exp(-e.deltaY * 0.01), 0.35, 3); return; }
   filmT = clamp(filmT + e.deltaY * 0.02, 0, DUR - 0.05);
   if (speed === 1) { setSpeed(0); }
   if (AC && performance.now() - jogT > 60) { jogT = performance.now(); osc('square', e.deltaY > 0 ? 900 : 600, AC.currentTime + 0.005, 0.03, 0.03, { a: 0.001, rel: 0.02, wet: 0 }); }
   osd('◉ JOG', fmt1666(filmT));
 }, { passive: false });
 addEventListener('keydown', e => {
-  if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+  if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' || e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key.toLowerCase();
   if (e.key === ' ') { e.preventDefault(); setSpeed(speed === 1 ? 0 : 1); }
   else if (k === 'j') stepSpeed(-1);
@@ -1579,12 +1911,19 @@ addEventListener('keydown', e => {
   else if (e.key === 'Home') seek(0);
   else if (e.key === '[') jumpBook(-1);
   else if (e.key === ']') jumpBook(1);
-  else if (k >= '1' && k <= '9') seek((+k - 1) * ACT_LEN);
+  else if (k.length === 1 && k >= '1' && k <= '9') seek((+k - 1) * ACT_LEN);
   else if (k === 's') stop();
   else if (k === 't') manualTx();
   else if (k === 'c') setScheme(scheme + 1);
   else if (k === 'd') $('hudBtn').onclick();
-  else if (k === 'f') $('fs').onclick();
+  else if (k === 'f') toggleFS();
+  else if (k === 'v') setCam(CAMS[(CAMS.findIndex(c => c[0] === camMode) + 1) % CAMS.length][0]);
+  else if (k === 'g') { const L = Object.keys(GLV); setGlyphs(L[(L.indexOf(glyLevel) + 1) % L.length]); }
+  else if (k === 'h') { if (document.body.classList.contains('idle')) poke(); else retract(); }
+  else if (k === 'm') { muted = !muted; if (AC) applyVol(); osd(muted ? '🔇 MUTE' : '🔊 SOUND', muted ? '' : Math.round(volume * 100) + '%'); }
+  else if (k === '+' || k === '=') setZoom(zoom * 1.2);
+  else if (k === '-' || k === '_') setZoom(zoom / 1.2);
+  else if (k === '0') resetView();
 });
 if (!window.MediaRecorder) $('goRec').hidden = true;
 function markQuality() { $('qual').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.q === quality)); }
@@ -1594,7 +1933,7 @@ $('qual').onclick = e => {
   setTimeout(() => { buildParticles(b.dataset.q); markQuality(); $('loading').textContent = 'ready · ' + SEG.length + ' scenes · ' + PAGES_TOTAL + ' pages'; }, 30);
 };
 
-window.__film = { SEG, CAPS, EVENTS, seek, setSpeed, renderer, get t() { return filmT; } };
+window.__film = { SEG, CAPS, EVENTS, seek, setSpeed, renderer, begin, get t() { return filmT; }, get playing() { return playing; }, get ac() { return AC ? AC.state : "none"; }, get speed() { return speed; }, get reels() { return REELS.size; }, get tape() { return TV.length; } };
 // Open the book, load the scripts, then build
 $('loading').textContent = 'opening the book…';
 const fontsReady = Promise.race([Promise.all(['700 130px Cinzel', '44px "Noto Sans Hebrew"', '44px "Noto Sans Coptic"', '44px "Noto Sans Syriac"', '44px "Noto Sans Imperial Aramaic"', '44px "Noto Sans Phoenician"', '44px "Noto Sans Samaritan"', '44px "Noto Sans Gothic"', '44px "Noto Sans Glagolitic"', '44px "Noto Sans Ethiopic"', '44px "Noto Sans Runic"', '44px "Noto Sans Old Italic"', '44px "Noto Serif"'].map(f => document.fonts.load(f, f.includes('Hebrew') ? 'א' : f.includes('Coptic') ? 'Ⲁ' : f.includes('Syriac') ? 'ܐ' : f.includes('Aramaic') ? '𐡀' : f.includes('Phoenician') ? '𐤀' : f.includes('Samaritan') ? 'ࠀ' : f.includes('Gothic') ? '𐌰' : f.includes('Glagolitic') ? 'Ⰰ' : f.includes('Ethiopic') ? 'ሀ' : f.includes('Runic') ? 'ᚠ' : f.includes('Italic') ? '𐌀' : 'AΩ'))), new Promise(r => setTimeout(r, 4000))]);
@@ -1604,6 +1943,8 @@ drawAtlas();
 GLY = { num: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'].map(glyphPts) };
 buildTimeline(); buildCaps(); buildEvents();
 buildParticles(quality); markQuality(); setScheme(0);
+setCam(CAMS.some(c => c[0] === store.get('cam', 'auto')) ? store.get('cam', 'auto') : 'auto', true);
+setGlyphs(glyLevel, true);
 frame();
 $('go').disabled = false; $('goRec').disabled = false;
 $('loading').textContent = VUL ? `ready · ${SEG.length} scenes · ${PAGES_TOTAL} pages · ${SUMS.v[PAGES_TOTAL].toLocaleString('en')} verses` : 'ready (the book could not be opened here; the film plays with its verses only)';

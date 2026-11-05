@@ -1,0 +1,29 @@
+The Father of All of All
+The sound build: FX128 · 5D spatial studio sound · the keyboard as an instrument · power modes
+© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+Concept, title and design © 2026 Mandeep S. Bhullar.
+
+The work may be viewed and run through its published link and the kit
+offered on that page. The source code (HTML, CSS, JavaScript, batch, shell,
+Perl and PowerShell) and all other technical files are proprietary and
+confidential. No part may be copied, modified, distributed, or used to
+create derivative works without written permission from Mandeep S. Bhullar.
+
+Engines
+The 4D glyph renderer, motion, gear and particle engines, the transmission
+code, the sentinel, the launchers, the FX128 sound engine, the 5D spatial mixer,
+the needle meters, the keyboard instrument and the power modes are custom engines designed by Claude,
+an AI model made by Anthropic, for SpinalXeno. They are part of the
+proprietary work described above and may not be copied, extracted, adapted
+or reused without written permission from Mandeep S. Bhullar.
+
+Third-party data and libraries
+Script data: Unicode® Character Database 18.0 and Unicode CLDR,
+© Unicode, Inc., used under the Unicode License (unicode.org/license).
+three.js © 2010-2022 three.js authors, MIT License. Fonts: Noto, SIL Open Font License,
+served by Google Fonts.
+
+Every file is digitally signed with the SpinalXeno signing key
+(ECDSA P-256, SHA-256). Key fingerprint:
+25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3

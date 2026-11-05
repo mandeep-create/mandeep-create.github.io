@@ -810,25 +810,25 @@ const VOX = [
   { t: 'chord', name: 'VOCODER', wave: 'sawtooth', oct: 0, fs: 1, rate: 1.3 },
   { t: 'whisper', name: 'WHISPER', oct: 0, fs: 1.1, rate: 1.4 },
   { t: 'ring', name: 'RING', wave: 'square', oct: 0, fs: 0.95, rate: 1.3 },
-  { t: 'chip', name: 'CHIP', wave: 'square', oct: 2, fs: 1.25, rate: 1.5 },
+  { t: 'chip', name: 'CHIP', wave: 'sawtooth', oct: 1, fs: 1.15, rate: 1.5 },
   { t: 'sub', name: 'SUB', wave: 'sawtooth', oct: -1, fs: 0.8, rate: 1.15 },
-  { t: 'seraph', name: 'SERAPH', wave: 'triangle', oct: 1, fs: 1.15, rate: 1.25 }
+  { t: 'seraph', name: 'SERAPH', wave: 'sawtooth', oct: 1, fs: 1.1, rate: 1.25 }
 ];
 const OCTN = { '-1': '8VB', 0: 'LOCO', 1: '8VA', 2: '15MA', 3: '22MA' };
 let voxMode = 'electro', voxLevel = 0.8, voxCount = 0;
 function vox(text, at, a, pan) {
   const ph = latinPhones(text); if (!ph.length || !AC) return null;
-  const V = VOX[voxCount++ % VOX.length], oct = clamp(V.oct + ((Math.random() * 3) | 0) - 1, -1, 3), m = MUSIC[a];
+  const V = VOX[voxCount++ % VOX.length], oct = clamp(V.oct + ((Math.random() * 3) | 0) - 1, -1, 1), m = MUSIC[a];
   const out = bus(0.5 * voxLevel, V.t === 'seraph' ? 0.7 : 0.35, pan);
   let dest = out;
   const fx = AC.createGain(); fx.connect(out);
-  if (V.t === 'robot') { const cr = AC.createWaveShaper(); cr.curve = stairs(10); cr.connect(out); dest = cr; }
+  if (V.t === 'robot') { const cr = AC.createWaveShaper(); cr.curve = stairs(18); cr.connect(out); dest = cr; }
   else if (V.t === 'ring') { const rm = AC.createGain(); rm.gain.value = 0; const lf = AC.createOscillator(); lf.frequency.value = 40 + Math.random() * 50; lf.connect(rm.gain); rm.connect(out); lf.start(at); dest = rm; dest._lf = lf; }
   else if (V.t === 'sub') { const ws = AC.createWaveShaper(); ws.curve = curve(4); const g = AC.createGain(); g.gain.value = 0.6; ws.connect(g); g.connect(out); dest = ws; }
   else if (V.t === 'chip') { const s2 = AC.createGain(); s2.gain.value = 0.35; s2.connect(DLY); fx.connect(s2); dest = fx; }
   else dest = fx;
   // Three formant filters, shaped like a mouth
-  const F = [0, 1, 2].map(k => { const b = AC.createBiquadFilter(); b.type = 'bandpass'; b.Q.value = [8, 12, 14][k]; b.frequency.value = [500, 1500, 2500][k]; const g = AC.createGain(); g.gain.value = [2.2, 1.6, 1.0][k]; b.connect(g); g.connect(dest); return b; });
+  const F = [0, 1, 2].map(k => { const b = AC.createBiquadFilter(); b.type = 'bandpass'; b.Q.value = [4.5, 6, 7][k]; b.frequency.value = [500, 1500, 2500][k]; const g = AC.createGain(); g.gain.value = [1.6, 2.5, 0.7][k]; b.connect(g); g.connect(dest); b.g = g; return b; });
   const vg = AC.createGain(); vg.gain.value = 0; F.forEach(b => vg.connect(b));
   const srcs = [];
   if (V.t === 'whisper') { const ns = AC.createBufferSource(); ns.buffer = NB; ns.loop = true; ns.connect(vg); srcs.push(ns); }
@@ -840,13 +840,14 @@ function vox(text, at, a, pan) {
   // The melody: every word steps along the act's scale
   let t = at, walk = (Math.random() * 5) | 0, word = true;
   const marks = [];
-  const pitch = when => { walk = clamp(walk + [-2, -1, 1, 2, 0][(Math.random() * 5) | 0], -2, 9); const f = fq(m, deg(m, walk) + 12 * (oct + 1)); srcs.forEach(o => { if (o.r) o.frequency.setTargetAtTime(f * o.r, when, 0.025); }); };
+  const pitch = when => { walk = clamp(walk + [-2, -1, 1, 2, 0][(Math.random() * 5) | 0], -2, 6); const f = fq(m, deg(m, walk) + 12 * (oct + 1)); srcs.forEach(o => { if (o.r) o.frequency.setTargetAtTime(f * o.r, when, 0.025); }); };
   for (const q of ph) {
     const d = q.d / V.rate, P = PH[q.p];
     marks.push([t - at, q.i]);
     if (q.p === '_') { vg.gain.setTargetAtTime(0, t, 0.012); ng.gain.setTargetAtTime(0, t, 0.01); t += d; word = true; continue; }
     if (word) { pitch(t); word = false; }
-    if (P.f) F.forEach((b, k) => b.frequency.setTargetAtTime(P.f[k] * V.fs, t, 0.014));
+    // Each formant moves to the vowel; higher formants are lifted to make up for the source's falling harmonics
+    if (P.f) F.forEach((b, k) => { b.frequency.setTargetAtTime(P.f[k] * V.fs, t, 0.014); });
     if (P.clo) {
       vg.gain.setTargetAtTime(P.v * 0.15, t, 0.006); ng.gain.setTargetAtTime(0, t, 0.005);
       const tb = t + d * 0.55; nf.frequency.setValueAtTime(P.nf * V.fs, tb);

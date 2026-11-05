@@ -59,6 +59,11 @@ body.idle .deck{opacity:0;pointer-events:none;transform:translate(-50%,24px)}bod
 .deck .lb{font:10px var(--disp);letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
 .deck .chips button{min-width:0;border:0;border-radius:0}
 #stage{touch-action:none}
+.tab{position:fixed;top:50%;transform:translateY(-50%);z-index:7;writing-mode:vertical-rl;font:10px var(--disp);letter-spacing:.22em;color:var(--gold);background:rgba(8,5,2,.72);border:1px solid var(--line);padding:14px 7px;cursor:pointer;transition:opacity .4s;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+#tabL{left:2px;border-radius:0 10px 10px 0}#tabR{right:2px;border-radius:10px 0 0 10px;transform:translateY(-50%) rotate(180deg)}
+.tab:hover{border-color:var(--gold);background:rgba(255,210,122,.16)}
+body:not(.playing) .tab{display:none}body.idle .tab{opacity:0;pointer-events:none}
+@media (pointer:coarse){.tab{padding:18px 11px;font-size:11px}}
 #camRow{flex-wrap:wrap;justify-content:center;border-radius:12px}
 .deck .r{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;justify-content:center}
 .deck button{font:12px var(--mono);min-width:34px;padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:rgba(10,6,2,.5);color:var(--ink);cursor:pointer}
@@ -125,6 +130,8 @@ body.playing.retracted .hint{opacity:.8}
     </div>
   </div>
 </div>
+<button class="tab" id="tabL" type="button" title="Show or hide the codex bar (Q)" aria-expanded="true">‹ CODEX</button>
+<button class="tab" id="tabR" type="button" title="Show or hide the data bar (E)" aria-expanded="true">› DATA</button>
 <div class="hint" id="hint">tap the film for controls · pinch to zoom · drag to look</div>
 <div class="bar"><i id="prog"></i></div>
 <div class="gate" id="gate"><div>
@@ -141,7 +148,7 @@ body.playing.retracted .hint{opacity:.8}
   </div>
   <button class="go" id="go" type="button" disabled>Enter</button><button class="go" id="goRec" type="button" disabled title="Plays the whole film and saves picture, data, captions and sound as a video">Enter + record</button>
   <p class="warn" id="loading">opening the book…</p>
-  <p class="warn">Loud sound and bright flashes. Headphones recommended.<br>Space play/pause · J K L shuttle · ← → 10 s · [ ] book · 1–9 acts · S stop · V camera · + − zoom · 0 reset view · G glyphs · T transition · C scheme · D codex · H hide deck · M mute · F full screen · mouse wheel jogs the tape · drag the film to look around, right-drag or two fingers to pan, pinch or ctrl+wheel to zoom</p>
+  <p class="warn">Loud sound and bright flashes. Headphones recommended.<br>Space play/pause · J K L shuttle · ← → 10 s · [ ] book · 1–9 acts · S stop · V camera · + − zoom · 0 reset view · G glyphs · T transition · C scheme · D codex · Q E side bars · H hide deck · M mute · F full screen · mouse wheel jogs the tape · drag the film to look around, right-drag or two fingers to pan, pinch or ctrl+wheel to zoom</p>
 </div></div>
 <div class="end" id="end"><div><h2>Ego Alpha et Omega.</h2><p class="k">Atalina Biblique · Procureur Fustredis · SpinalXeno™</p><p class="k">Veni Domine Iesu</p><button class="go" id="again" type="button">Play again</button></div></div>
 <div class="credit">Atalina Biblique · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. · signed 2566 6EB2 CF27 3686 · Scripture: Biblia Sacra Vulgata (public domain) · FX166, Xeno Seam™ and the VCR shuttle designed by Claude (Anthropic AI) · <a href="../signature/VERIFY.txt">verify</a> · <a href="../LICENSE.txt">license</a></div>
@@ -1240,12 +1247,16 @@ const rainCv = $('rain'), rx = rainCv.getContext('2d'), hudCv = $('hud'), hx = h
 let W = innerWidth, H = innerHeight, HPX = Math.min(devicePixelRatio, 2);
 // Codex columns: both, codex only, data only, or off (phones start with them off)
 const HUDM = ['both', 'codex', 'data', 'off'];
-let hudMode = MOBILE ? 'off' : 'both';
-const showL = () => hudMode === 'both' || hudMode === 'codex', showR = () => hudMode === 'both' || hudMode === 'data';
+const store = { get(k, d) { try { const v = localStorage.getItem('atalina3.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('atalina3.' + k, v); } catch (e) { } } };
+// Each side bar opens and closes on its own with its tab, and slides in and out
+let openL = store.get('openL', MOBILE ? '0' : '1') === '1', openR = store.get('openR', MOBILE ? '0' : '1') === '1';
+let slL = openL ? 1 : 0, slR = openR ? 1 : 0;
+const modeOf = () => openL && openR ? 'both' : openL ? 'codex' : openR ? 'data' : 'off';
+function setSides(l, r) { openL = l; openR = r; store.set('openL', l ? '1' : '0'); store.set('openR', r ? '1' : '0'); wrapCache.clear(); if (typeof hudLabel === 'function') hudLabel(); }
+const showL = () => slL > 0.01, showR = () => slR > 0.01;
 // Glyph levels: [script letters in the scene, glyph rain, cryptograph panels, scrambled codex lines]
 const GLV = { off: [0, 0, 0, 0], low: [0.18, 0.3, 1, 0.2], med: [0.5, 0.6, 2, 0.4], high: [1, 1, 4, 0.6] };
 let glyLevel = 'low';
-const store = { get(k, d) { try { const v = localStorage.getItem('atalina3.' + k); return v == null ? d : v; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('atalina3.' + k, v); } catch (e) { } } };
 glyLevel = GLV[store.get('glyphs', 'low')] ? store.get('glyphs', 'low') : 'low';
 let rainCols = [];
 // Safe-area insets (the notch and the home bar on phones turned sideways)
@@ -1274,7 +1285,7 @@ addEventListener('resize', onResize);
 // Phones report the new size a moment after they turn, so look again
 addEventListener('orientationchange', () => { setTimeout(onResize, 120); setTimeout(onResize, 500); setTimeout(onResize, 1000); });
 if (window.visualViewport) visualViewport.addEventListener('resize', onResize);
-const colW = () => hudMode === 'off' ? 0 : Math.min(340, W * (hudMode === 'both' ? 0.21 : 0.28));
+const colW = () => (openL || openR || showL() || showR()) ? Math.min(340, W * (openL && openR ? 0.21 : 0.28)) : 0;
 // Prefix sums of verses, words and letters over the whole book
 let SUMS = null;
 function buildSums() {
@@ -1316,7 +1327,7 @@ function drawOverlay(t, dt) {
   rx.globalCompositeOperation = 'source-over'; rx.font = `15px ${FONTSTACK}`; rx.textAlign = 'center';
   const sv = speed === 0 ? 0 : Math.sign(speed) * Math.min(4, 0.6 + Math.abs(speed) * 0.4), cw = colW();
   const pf = pageAt(t), pg = Math.floor(pf), words = VUL ? VUL.pages[pg][4] : '';
-  const capHalf = Math.min(W * 0.36, 520), lx0 = showL() ? cw + 10 : -1, rx0 = showR() ? W - cw - 10 : W + 1;
+  const capHalf = Math.min(W * 0.36, 520), lx0 = showL() ? (cw + 10) * slL : -1, rx0 = showR() ? W - (cw + 10) * slR : W + 1;
   if (G[1]) rainCols.forEach((c, i) => {
     if (G[1] < 0.5 && i % 2) return;   // fewer columns at low density
     c.y += c.v * sv * dt;
@@ -1352,15 +1363,18 @@ function drawOverlay(t, dt) {
   }
   if (cw) {
     const top = bars + 14, bot = H - bars - 14, x0 = 16 + SAFE.l, x1 = W - 16 - SAFE.r - cw;
+    // Slide the bars toward their targets
+    slL += ((openL ? 1 : 0) - slL) * Math.min(1, dt * 9); slR += ((openR ? 1 : 0) - slR) * Math.min(1, dt * 9);
     if (showL()) {
+    hx.save(); hx.translate(-(1 - ease(slL)) * (cw + 40), 0); hx.globalAlpha = Math.min(1, slL * 1.5);
     // Left: the codex
     hx.fillStyle = 'rgba(6,4,2,.5)'; hx.fillRect(x0 - 6, top - 8, cw + 12, bot - top + 16);
     hx.strokeStyle = 'rgba(255,210,122,.25)'; hx.strokeRect(x0 - 6, top - 8, cw + 12, bot - top + 16);
     hx.textAlign = 'left'; hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc;
-    hx.fillText('CODEX · BIBLIA SACRA VULGATA', x0, top + 4);
+    hx.fillText(cw < 260 ? 'CODEX · VULGATA' : 'CODEX · BIBLIA SACRA VULGATA', x0, top + 4, cw);
     hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = 'rgba(255,226,160,.9)';
     const chap = VUL ? VUL.pages[pg][2] : 0;
-    hx.fillText(`PAGINA ${String(pg + 1).padStart(4, '0')} / ${PAGES_TOTAL} · ${bk ? bk[3].toUpperCase() : ''} · CAP. ${chap}`, x0, top + 20);
+    hx.fillText(`PAGINA ${String(pg + 1).padStart(4, '0')} / ${PAGES_TOTAL} · ${bk ? bk[3].toUpperCase() : ''} · CAP. ${chap}`, x0, top + 20, cw);
     if (VUL) {
       const lineH = 14, y0 = top + 38, rows = Math.floor((bot - y0) / lineH), mid = Math.floor(rows * 0.45);
       const L0 = pageLines(pg, cw), Lp = pg > 0 ? pageLines(pg - 1, cw) : [], Ln = pg < PAGES_TOTAL - 1 ? pageLines(pg + 1, cw) : [];
@@ -1380,14 +1394,18 @@ function drawOverlay(t, dt) {
       }
       hx.restore();
     }
+    hx.restore();
     }
     if (showR()) {
-    // Right: the data
+    hx.save(); hx.translate((1 - ease(slR)) * (cw + 40), 0); hx.globalAlpha = Math.min(1, slR * 1.5);
+    // Right: the data (kept inside its box on short screens)
+    hx.textAlign = 'left';
+    hx.beginPath(); hx.rect(x1 - 7, top - 9, cw + 14, bot - top + 18); hx.clip();
     hx.fillStyle = 'rgba(6,4,2,.5)'; hx.fillRect(x1 - 6, top - 8, cw + 12, bot - top + 16);
     hx.strokeStyle = 'rgba(255,210,122,.25)'; hx.strokeRect(x1 - 6, top - 8, cw + 12, bot - top + 16);
     let y = top + 4;
     hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText('LIBRI · 77', x1, y); y += 14;
-    const cols = 11, cs = cw / cols;
+    const cols = cw < 260 ? 7 : 11, cs = cw / cols;
     BOOKS.forEach((b, i) => {
       const cx = x1 + (i % cols) * cs, cy = y + Math.floor(i / cols) * 15, on = s.bi === i, past = SEG.some(q => q.bi === i && q.t0 + q.dur <= t);
       hx.fillStyle = on ? '#' + S.v[b[0]].getHexString() : past ? 'rgba(255,226,160,.22)' : 'rgba(255,255,255,.05)';
@@ -1395,7 +1413,7 @@ function drawOverlay(t, dt) {
       hx.font = '8px "JetBrains Mono", monospace'; hx.fillStyle = on ? '#000' : 'rgba(232,220,192,.8)'; hx.textAlign = 'center';
       hx.fillText(b[3].replace(/^(\d) /, '$1').slice(0, 4).toUpperCase(), cx + cs / 2, cy + 7);
     });
-    hx.textAlign = 'left'; y += 7 * 15 + 10;
+    hx.textAlign = 'left'; y += Math.ceil(BOOKS.length / cols) * 15 + 10;
     hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText('DATA', x1, y); y += 15;
     const rowsD = SUMS ? [
       ['PAGINA', (pg + 1) + ' / ' + PAGES_TOTAL], ['CAPITULUM', (VUL ? VUL.pages[pg][2] : 0)],
@@ -1408,8 +1426,8 @@ function drawOverlay(t, dt) {
     rowsD.forEach(([k, v]) => { hx.fillStyle = 'rgba(169,156,128,.95)'; hx.textAlign = 'left'; hx.fillText(k, x1, y); hx.fillStyle = '#fff3d6'; hx.textAlign = 'right'; hx.fillText(String(v), x1 + cw, y); y += 14; });
     hx.textAlign = 'left'; y += 6;
     // Letter frequency of the page being read
-    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText('LITTERAE · A–Z', x1, y); y += 8;
-    if (VUL) {
+    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; if (H >= 520) hx.fillText('LITTERAE · A–Z', x1, y); y += 8;
+    if (VUL && H >= 520) {
       const f = new Array(26).fill(0); for (const ch of VUL.pages[pg][4].toLowerCase()) { const c = ch.charCodeAt(0) - 97; if (c >= 0 && c < 26) f[c]++; }
       const mx = Math.max(...f) || 1, bw = cw / 26;
       f.forEach((v, i) => { const hh = v / mx * 34; hx.fillStyle = `hsl(${i / 26 * 300},85%,62%)`; hx.fillRect(x1 + i * bw + 1, y + 36 - hh, bw - 2, hh); });
@@ -1417,10 +1435,10 @@ function drawOverlay(t, dt) {
       for (let i = 0; i < 26; i += 1) hx.fillText(String.fromCharCode(65 + i), x1 + i * bw + bw / 2, y + 43);
       hx.textAlign = 'left';
     }
-    y += 56;
+    y += H >= 520 ? 56 : -8;
     // The act's line in its original language, with its number
     const o = ORIG[a];
-    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText(o[0] === 'he' ? 'LINGUA HEBRAICA · GEMATRIA' : 'LINGUA GRAECA · ISOPSEPHIA', x1, y); y += 18;
+    hx.font = '10px Michroma, sans-serif'; hx.fillStyle = acc; hx.fillText(o[0] === 'he' ? 'LINGUA HEBRAICA · GEMATRIA' : 'LINGUA GRAECA · ISOPSEPHIA', x1, y, cw); y += 18;
     hx.font = `17px 'Noto Sans Hebrew','Noto Serif',serif`; hx.fillStyle = '#fff3d6';
     if (o[0] === 'he') { hx.direction = 'rtl'; hx.textAlign = 'right'; hx.fillText(o[1], x1 + cw, y, cw); hx.direction = 'ltr'; hx.textAlign = 'left'; }
     else hx.fillText(o[1], x1, y, cw);
@@ -1436,13 +1454,15 @@ function drawOverlay(t, dt) {
       y += hh + 12; hx.font = '10px "JetBrains Mono", monospace'; hx.fillStyle = '#ffd27a'; hx.fillText('◆ ' + lastFx, x1, y, cw);
       y += 14; hx.fillStyle = 'rgba(169,156,128,.95)'; hx.fillText(SCHEMES[scheme].name + ' · ' + TX[bg.type] + ' · ' + camLabel(), x1, y, cw);
     }
+    hx.restore();
     }
   }
+  placeTabs(colW());
   // Cryptographs: verses from the page decode out of the ancient scripts
   panelClock += Math.abs(speed) * dt;
   if (G[2] && panelClock > (MOBILE ? 3.2 : 1.7) * (glyLevel === 'high' ? 1 : 2) && VUL && panels.length < Math.min(G[2], MOBILE ? 2 : 4)) {
     panelClock = 0;
-    const pw = MOBILE ? 200 : 270, ph = 84, lx = (showL() ? cw : 0) + 40, rxm = W - (showR() ? cw : 0) - 40 - pw;
+    const pw = MOBILE ? 200 : 270, ph = 84, lx = cw * slL + 40, rxm = W - cw * slR - 40 - pw;
     if (rxm > lx) {
       const words2 = VUL.pages[pg][4].replace(/¶|〔\d+〕/g, '').split(' ').filter(Boolean), st = (Math.random() * Math.max(1, words2.length - 18)) | 0;
       const lines = [], seg2 = words2.slice(st, st + 18);
@@ -1489,7 +1509,7 @@ function syncAudio() {
 }
 const SPEEDS = [-10, -8, -4, -2, -1, 0, 0.5, 1, 2, 4, 8, 10];
 let osdTimer = 0;
-function osd(main, sub, sticky) { $('osd').style.left = (showL() && colW() ? colW() + 34 + SAFE.l : Math.max(20, SAFE.l)) + 'px'; $('osd').innerHTML = main + (sub ? `<small>${sub}</small>` : ''); $('osd').classList.add('on'); clearTimeout(osdTimer); if (!sticky) osdTimer = setTimeout(() => $('osd').classList.remove('on'), 1800); }
+function osd(main, sub, sticky) { $('osd').style.left = (openL ? colW() + 34 + SAFE.l : Math.max(20, SAFE.l)) + 'px'; $('osd').innerHTML = main + (sub ? `<small>${sub}</small>` : ''); $('osd').classList.add('on'); clearTimeout(osdTimer); if (!sticky) osdTimer = setTimeout(() => $('osd').classList.remove('on'), 1800); }
 function speedLabel(sp) { return sp === 1 ? '▶ PLAY' : sp === 0 ? '❚❚ PAUSE' : sp === -1 ? '◀ REVERSE' : sp < 0 ? '◀◀ REW ×' + (-sp) : sp < 1 ? '▶ SLOW ×½' : '▶▶ FF ×' + sp; }
 function setSpeed(sp) {
   if (!playing) return;
@@ -1863,8 +1883,18 @@ const scrubEnd = () => { if (!scrubbing) return; scrubbing = false; seek(+$('vSc
 $('vScrub').onchange = scrubEnd;
 ['pointerup', 'touchend', 'pointercancel'].forEach(ev => $('vScrub').addEventListener(ev, () => setTimeout(scrubEnd, 0)));
 $('txBtn').onclick = manualTx;
-function hudLabel() { $('hudBtn').textContent = 'Codex: ' + hudMode.charAt(0).toUpperCase() + hudMode.slice(1); }
-$('hudBtn').onclick = () => { hudMode = HUDM[(HUDM.indexOf(hudMode) + 1) % HUDM.length]; wrapCache.clear(); hudLabel(); osd('▤ CODEX', hudMode.toUpperCase()); };
+function hudLabel() { const m = modeOf(); $('hudBtn').textContent = 'Codex: ' + m.charAt(0).toUpperCase() + m.slice(1); }
+$('hudBtn').onclick = () => { const m = HUDM[(HUDM.indexOf(modeOf()) + 1) % HUDM.length]; setSides(m === 'both' || m === 'codex', m === 'both' || m === 'data'); osd('▤ SIDE BARS', m.toUpperCase()); };
+$('tabL').onclick = () => { setSides(!openL, openR); poke(); };
+$('tabR').onclick = () => { setSides(openL, !openR); poke(); };
+let tabKey = '';
+function placeTabs(cw) {
+  const l = SAFE.l + 2 + ease(slL) * (cw + 22), r = SAFE.r + 2 + ease(slR) * (cw + 22), k = l.toFixed(0) + ',' + r.toFixed(0) + openL + openR;
+  if (k === tabKey) return; tabKey = k;
+  $('tabL').style.left = l + 'px'; $('tabR').style.right = r + 'px';
+  $('tabL').textContent = (openL ? '‹ ' : '› ') + 'CODEX'; $('tabR').textContent = (openR ? '› ' : '‹ ') + 'DATA';
+  $('tabL').setAttribute('aria-expanded', openL); $('tabR').setAttribute('aria-expanded', openR);
+}
 hudLabel();
 // Glyph levels
 function setGlyphs(l, quiet) {
@@ -1882,7 +1912,7 @@ function toggleFS() {
     const cur = document.fullscreenElement || document.webkitFullscreenElement;
     const p = cur ? (document.exitFullscreen || document.webkitExitFullscreen).call(document) : (fsRoot.requestFullscreen || fsRoot.webkitRequestFullscreen).call(fsRoot);
     if (p && p.catch) p.catch(() => { });
-  } else { hudMode = 'off'; hudLabel(); retract(); osd('▣ CINEMA', 'tap the film for controls'); }
+  } else { setSides(false, false); retract(); osd('▣ CINEMA', 'tap the film for controls'); }
 }
 $('fs').onclick = toggleFS;
 $('go').onclick = () => begin(false);
@@ -1916,6 +1946,8 @@ addEventListener('keydown', e => {
   else if (k === 't') manualTx();
   else if (k === 'c') setScheme(scheme + 1);
   else if (k === 'd') $('hudBtn').onclick();
+  else if (k === 'q') $('tabL').onclick();
+  else if (k === 'e') $('tabR').onclick();
   else if (k === 'f') toggleFS();
   else if (k === 'v') setCam(CAMS[(CAMS.findIndex(c => c[0] === camMode) + 1) % CAMS.length][0]);
   else if (k === 'g') { const L = Object.keys(GLV); setGlyphs(L[(L.indexOf(glyLevel) + 1) % L.length]); }

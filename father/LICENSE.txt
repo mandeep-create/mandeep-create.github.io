@@ -13,7 +13,7 @@ create derivative works without written permission from Mandeep S. Bhullar.
 Engines
 The 4D glyph renderer, motion, gear and particle engines, the transmission
 code, the sentinel, the launchers, the FX128 sound engine, the 5D spatial mixer,
-the needle meters, the keyboard instrument and the power modes are custom engines designed by Claude,
+the needle meters and speedometer gauge cluster, the keyboard instrument and the power modes are custom engines designed by Claude,
 an AI model made by Anthropic, for SpinalXeno. They are part of the
 proprietary work described above and may not be copied, extracted, adapted
 or reused without written permission from Mandeep S. Bhullar.

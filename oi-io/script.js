@@ -438,6 +438,17 @@ function buildSprites() {
 
 // ===== POLARITY NODE CLASS =====
 
+const POLE_GLOW = {};
+function poleGlow(rgb) {
+    const k = rgb.join(',');
+    if (POLE_GLOW[k]) return POLE_GLOW[k];
+    const c = document.createElement('canvas'); c.width = c.height = 256;
+    const g = c.getContext('2d'), gr = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+    gr.addColorStop(0, rgba(rgb, 0.5)); gr.addColorStop(0.35, rgba(rgb, 0.16)); gr.addColorStop(1, rgba(rgb, 0));
+    g.fillStyle = gr; g.fillRect(0, 0, 256, 256);
+    return (POLE_GLOW[k] = c);
+}
+
 class PolarityNode {
     constructor(layer, strength, charge) {
         const scale = SCALES[layer];
@@ -475,14 +486,10 @@ class PolarityNode {
         const sx = P.x;
         const sy = P.y;
 
-        const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, radius);
-        g.addColorStop(0, rgba(rgb, 0.5 * alpha));
-        g.addColorStop(0.35, rgba(rgb, 0.16 * alpha));
-        g.addColorStop(1, rgba(rgb, 0));
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(sx, sy, radius, 0, TAU);
-        ctx.fill();
+        // soft field glow: a cached gradient sprite, blitted (same stops as the old per-frame gradient, far less fill work)
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(poleGlow(rgb), sx - radius, sy - radius, radius * 2, radius * 2);
+        ctx.globalAlpha = 1;
 
         // Spinning field ring in the orbital plane
         const ringR = this.radius * 0.55;
@@ -505,6 +512,12 @@ class PolarityNode {
         ctx.drawImage(SPRITES.white, sx - core / 2, sy - core / 2, core, core);
         ctx.globalAlpha = 1;
     }
+}
+
+const LINK_BATCH = new Map();
+function flushLinks(ctx) {
+    LINK_BATCH.forEach((b) => { ctx.strokeStyle = rgba(NEON.link, b.o); ctx.lineWidth = b.w; ctx.stroke(b.p); });
+    LINK_BATCH.clear();
 }
 
 // ===== MULTITARITY LINK CLASS =====
@@ -552,12 +565,12 @@ class MultitarityLink {
         const dm = Math.hypot(tx, ty) + 1;
         const bend = Math.min(0.7, (STATE.lensing / 100) * (hs * 3) / dm);
 
-        ctx.strokeStyle = rgba(NEON.link, opacity);
-        ctx.lineWidth = 0.5 + pulse * 0.4;
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.quadraticCurveTo(mx + tx * bend, my + ty * bend, P.x, P.y);
-        ctx.stroke();
+        // batched: links sharing a (1/32-step) opacity and width are stroked together in one path
+        const oq = Math.round(opacity * 32), wq = Math.round((0.5 + pulse * 0.4) * 8), key = oq * 64 + wq;
+        let b = LINK_BATCH.get(key);
+        if (!b) { b = { p: new Path2D(), o: oq / 32, w: wq / 8 }; LINK_BATCH.set(key, b); }
+        b.p.moveTo(ax, ay);
+        b.p.quadraticCurveTo(mx + tx * bend, my + ty * bend, P.x, P.y);
     }
 }
 
@@ -1389,45 +1402,59 @@ function buildFieldLines() {
     return lines;
 }
 
+const GLOW_DEC = 3;   // the soft glow only needs every third point
+const GLOW_BY_RGB = new Map();
 function strokeFieldLines(ctx, lines, front) {
-    const depth = SING.ok ? SING.z : Infinity;
+    // Lines that share colour, (1/32-step) brightness, width and dash rhythm are stroked as one path:
+    // the same three neon passes as before, a fraction of the draw calls.
+    const depth = SING.ok ? SING.z : Infinity, B = new Map();
     for (let li = 0; li < lines.length; li++) {
         const L = lines[li];
         if (L.alpha < 0.01) continue;
-        const p = L.pts;
-        let pen = false;
-        let any = false;
-        ctx.beginPath();
+        const aq = Math.round(L.alpha * 32), oq = Math.round(L.dashOffset * 2);
+        const key = L.rgb.join(',') + '|' + aq + '|' + L.width + '|' + L.dash.join(',') + '|' + oq;
+        let bk = B.get(key);
+        if (!bk) { const gk = L.rgb.join(','); let G = GLOW_BY_RGB.get(gk); if (!G) { G = { g: new Path2D(), rgb: L.rgb, a: 0, n: 0, w: 0 }; GLOW_BY_RGB.set(gk, G); } bk = { p: new Path2D(), g: G.g, G, rgb: L.rgb, alpha: aq / 32, width: L.width, dash: L.dash, off: oq / 2, any: false }; B.set(key, bk); }
+        const p = L.pts, path = bk.p, gp = bk.g;
+        let pen = false, k = 0;
         for (let i = 1; i < L.n; i++) {
             const a = (i - 1) * 4;
             const b = i * 4;
             if (!p[a + 3] || !p[b + 3] || ((p[a + 2] + p[b + 2]) * 0.5 < depth) !== front) {
+                if (pen && k % GLOW_DEC) gp.lineTo(p[a], p[a + 1]);   // close the glow run at the true end
                 pen = false;
                 continue;
             }
             if (!pen) {
-                ctx.moveTo(p[a], p[a + 1]);
-                pen = true;
+                path.moveTo(p[a], p[a + 1]);
+                gp.moveTo(p[a], p[a + 1]);
+                pen = true; k = 0;
             }
-            ctx.lineTo(p[b], p[b + 1]);
-            any = true;
+            path.lineTo(p[b], p[b + 1]);
+            if (++k % GLOW_DEC === 0 || i === L.n - 1) gp.lineTo(p[b], p[b + 1]);   // the soft glow needs only every few points
+            bk.any = true;
         }
-        if (!any) continue;
-
-        // Neon: soft glow, thin bright filament, then racing white-hot pulses
-        ctx.setLineDash([]);
-        ctx.lineWidth = L.width * 4;
-        ctx.strokeStyle = rgba(L.rgb, L.alpha * 0.1);
-        ctx.stroke();
-        ctx.lineWidth = L.width;
-        ctx.strokeStyle = rgba(L.rgb, L.alpha * 0.75);
-        ctx.stroke();
-        ctx.setLineDash(L.dash);
-        ctx.lineDashOffset = L.dashOffset;
-        ctx.lineWidth = L.width * 1.5;
-        ctx.strokeStyle = rgba(mixRgb(L.rgb, [255, 255, 255], 0.6), L.alpha);
-        ctx.stroke();
     }
+    // Neon: one soft glow stroke per colour, then per line a thin bright filament and racing white-hot pulses
+    GLOW_BY_RGB.forEach((G) => {
+        if (!G.n) return;
+        ctx.setLineDash([]); ctx.lineWidth = G.w * 4; ctx.strokeStyle = rgba(G.rgb, (G.a / G.n) * 0.1); ctx.stroke(G.g);
+    });
+    GLOW_BY_RGB.clear();
+    B.forEach((bk) => {
+        if (!bk.any) return;
+        ctx.setLineDash([]);
+        // the wide soft glow goes to the 1/3-scale bloom layer when bloom is on (it is blurred there anyway)
+        bk.G.a += bk.alpha; bk.G.n++; bk.G.w = Math.max(bk.G.w, bk.width);
+        ctx.lineWidth = bk.width;
+        ctx.strokeStyle = rgba(bk.rgb, bk.alpha * 0.75);
+        ctx.stroke(bk.p);
+        ctx.setLineDash(bk.dash);
+        ctx.lineDashOffset = bk.off;
+        ctx.lineWidth = bk.width * 1.5;
+        ctx.strokeStyle = rgba(mixRgb(bk.rgb, [255, 255, 255], 0.6), bk.alpha);
+        ctx.stroke(bk.p);
+    });
     ctx.setLineDash([]);
 }
 
@@ -1479,6 +1506,7 @@ function render(step) {
         STATE.multitarityLinks.forEach((link) => {
             if (isLayerVisible(link.a.layer) || isLayerVisible(link.b.layer)) link.draw(f, hs);
         });
+        flushLinks(f);
         f.setLineDash([]);
     }
 

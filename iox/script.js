@@ -347,12 +347,14 @@ function init() {
 }
 
 function resizeCanvases() {
-    DOM.universeCanvas.width = window.innerWidth;
-    DOM.universeCanvas.height = window.innerHeight;
-    DOM.unknownCanvas.width = window.innerWidth;
-    DOM.unknownCanvas.height = window.innerHeight;
-    DOM.fieldCanvas.width = window.innerWidth;
-    DOM.fieldCanvas.height = window.innerHeight;
+    // device-resolution canvases: sharp on Retina and when the shell zooms in
+    const d = Math.min(window.devicePixelRatio || 1, window.__xsDprMax || 2);
+    const w = window.innerWidth, h = window.innerHeight;
+    [[DOM.universeCanvas, DOM.ctx], [DOM.unknownCanvas, DOM.unknownCtx], [DOM.fieldCanvas, DOM.fieldCtx]].forEach(([c, x]) => {
+        c.width = Math.round(w * d); c.height = Math.round(h * d);
+        c.style.width = w + 'px'; c.style.height = h + 'px';
+        x.setTransform(d, 0, 0, d, 0, 0);
+    });
 }
 
 function initializeUniverse() {
@@ -534,12 +536,12 @@ function setupEventListeners() {
 function animate() {
     // Clear canvases
     DOM.ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
-    DOM.ctx.fillRect(0, 0, DOM.universeCanvas.width, DOM.universeCanvas.height);
+    DOM.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
     DOM.unknownCtx.fillStyle = 'rgba(0, 0, 0, 0.01)';
-    DOM.unknownCtx.fillRect(0, 0, DOM.unknownCanvas.width, DOM.unknownCanvas.height);
+    DOM.unknownCtx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
-    DOM.fieldCtx.clearRect(0, 0, DOM.fieldCanvas.width, DOM.fieldCanvas.height);
+    DOM.fieldCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
     if (STATE.isRunning) {
         // Update all layers
@@ -621,8 +623,8 @@ function drawLayers() {
 }
 
 function drawDimensionalAxes() {
-    const cx = DOM.universeCanvas.width / 2;
-    const cy = DOM.universeCanvas.height / 2;
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
     const length = 100;
 
     // Draw axes

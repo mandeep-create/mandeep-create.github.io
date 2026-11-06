@@ -916,7 +916,7 @@ function init() {
 
 function resizeCanvas() {
     // Render at device resolution so the network stays sharp on Retina screens
-    STATE.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    STATE.dpr = Math.min(window.devicePixelRatio || 1, window.__xsDprMax || 2);
     STATE.W = window.innerWidth;
     STATE.H = window.innerHeight;
     DOM.canvas.width = Math.round(STATE.W * STATE.dpr);
@@ -1075,8 +1075,8 @@ function setupEventListeners() {
 
 function onKey(e) {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.target.closest('input, select, textarea')) return;
-    if (e.target.closest('button') && (e.key === ' ' || e.key === 'Enter')) return;
+    if ((e.target.closest && e.target.closest('input, select, textarea'))) return;
+    if ((e.target.closest && e.target.closest('button')) && (e.key === ' ' || e.key === 'Enter')) return;
 
     switch (e.key.toLowerCase()) {
         case ' ': e.preventDefault(); togglePause(); break;

@@ -774,9 +774,9 @@
         
         let screenWidth = window.innerWidth;
         let screenHeight = window.innerHeight;
-        let DPR = Math.min(2, window.devicePixelRatio || 1);
+        let DPR = Math.min(window.__xsDprMax || 2, window.devicePixelRatio || 1);
         function sizeCanvas() {
-            DPR = Math.min(2, window.devicePixelRatio || 1);
+            DPR = Math.min(window.__xsDprMax || 2, window.devicePixelRatio || 1);
             canvas.width = Math.round(screenWidth * DPR); canvas.height = Math.round(screenHeight * DPR);
             canvas.style.width = screenWidth + 'px'; canvas.style.height = screenHeight + 'px';
             ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -1137,10 +1137,11 @@
 
         // Handle Window Resize
         window.addEventListener('resize', () => {
+            const resized = screenWidth !== window.innerWidth || screenHeight !== window.innerHeight;
             screenWidth = window.innerWidth;
             screenHeight = window.innerHeight;
             sizeCanvas();
-            initColumns();
+            if (resized) initColumns();   // a pixel-ratio change (sharp zoom) keeps the rain flowing
         });
 
         // Modal Click Outside

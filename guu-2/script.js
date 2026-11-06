@@ -181,6 +181,16 @@ function project(x, y, z, out) {
 
 // ===== POLARITY NODE CLASS (orbiting attractor) =====
 
+const POLE_GLOW = {};
+function poleGlow(rgb) {
+    if (POLE_GLOW[rgb]) return POLE_GLOW[rgb];
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gr.addColorStop(0, `rgba(${rgb}, 0.45)`); gr.addColorStop(1, `rgba(${rgb}, 0)`);
+    g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+    return (POLE_GLOW[rgb] = c);
+}
+
 class PolarityNode {
     constructor(layer, strength, charge) {
         const scale = SCALES[layer];
@@ -215,13 +225,10 @@ class PolarityNode {
         if (!project(this.x, this.y, this.z, P)) return;
         const rgb = this.charge > 0 ? '255, 61, 127' : '76, 201, 240';
         const radius = this.radius * P.s;
-        const g = ctx.createRadialGradient(P.x, P.y, 0, P.x, P.y, radius);
-        g.addColorStop(0, `rgba(${rgb}, ${0.45 * alpha})`);
-        g.addColorStop(1, `rgba(${rgb}, 0)`);
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(P.x, P.y, radius, 0, TAU);
-        ctx.fill();
+        // cached glow sprite instead of a fresh radial gradient per node per frame
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(poleGlow(rgb), P.x - radius, P.y - radius, radius * 2, radius * 2);
+        ctx.globalAlpha = 1;
 
         ctx.fillStyle = `rgba(${rgb}, ${alpha})`;
         ctx.beginPath();
@@ -232,6 +239,17 @@ class PolarityNode {
 
 // ===== MULTITARITY LINK CLASS =====
 // Links are born, glow and dissolve continuously, so the web never dies out.
+
+const LINK_BATCH = new Map();
+let LINK_Q = 16;
+function flushLinks(ctx) {
+    // solid faint filament + travelling quanta beads (Safari dashes cost ~10 fps)
+    LINK_BATCH.forEach((b) => {
+        ctx.strokeStyle = `rgba(127, 233, 255, ${b.o * 0.5})`; ctx.lineWidth = b.w * 0.7; ctx.stroke(b.p);
+        ctx.fillStyle = `rgba(190, 245, 255, ${Math.min(1, b.o * 1.6)})`; ctx.fill(b.q);
+    });
+    LINK_BATCH.clear();
+}
 
 class MultitarityLink {
     constructor(a, b) {
@@ -276,12 +294,20 @@ class MultitarityLink {
         const dm = Math.hypot(tx, ty) + 1;
         const bend = Math.min(0.7, (STATE.lensing / 100) * (hs * 3) / dm);
 
-        ctx.strokeStyle = `rgba(127, 233, 255, ${opacity})`;
-        ctx.lineWidth = 0.6 + pulse * 0.6;
-        ctx.beginPath();
-        ctx.moveTo(ax, ay);
-        ctx.quadraticCurveTo(mx + tx * bend, my + ty * bend, P.x, P.y);
-        ctx.stroke();
+        // batched: links of similar brightness and width share one path (a few strokes instead of ~150)
+        const oq = Math.round(opacity * LINK_Q), wq = Math.round((0.6 + pulse * 0.6) * 4), key = oq * 16 + wq;
+        let b = LINK_BATCH.get(key);
+        if (!b) { b = { p: new Path2D(), q: new Path2D(), o: oq / LINK_Q, w: wq / 4 }; LINK_BATCH.set(key, b); }
+        const cx = mx + tx * bend, cy = my + ty * bend, bx = P.x, by = P.y;
+        b.p.moveTo(ax, ay);
+        b.p.quadraticCurveTo(cx, cy, bx, by);
+        // three quanta flow from a to b along the bent link
+        const r = b.w * 0.9 + 0.4, ph = (this.pulsePhase * 0.08) % 1;
+        for (let k = 0; k < 3; k++) {
+            const t = (ph + k / 3) % 1, u = 1 - t;
+            const qx = u * u * ax + 2 * u * t * cx + t * t * bx, qy = u * u * ay + 2 * u * t * cy + t * t * by;
+            b.q.rect(qx - r, qy - r, r * 2, r * 2);
+        }
     }
 }
 
@@ -796,11 +822,10 @@ function render(step) {
     }
 
     if (DOM.showMultitarity.checked) {
-        f.setLineDash([3, 3]);
         STATE.multitarityLinks.forEach((link) => {
             if (isLayerVisible(link.a.layer) || isLayerVisible(link.b.layer)) link.draw(f, hs);
         });
-        f.setLineDash([]);
+        flushLinks(f);
     }
 
     drawHorizon(f, hs);

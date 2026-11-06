@@ -6,3 +6,8 @@ To prove these files are authentic and unchanged, run in the site folder (downlo
 The first must print OK for every file; the second must print "Verified OK".
 Only the holder of the private SpinalXeno key (kept in ~/.spinalxeno, never shared)
 can produce a valid signature.
+
+Quick check in the browser: on any exhibit, open the Cinema Matrix (the
+spinning orb, or Alt+M) → LICENCE · VERIFY → "Verify this page's signature".
+It checks the public key fingerprint, the ECDSA signature on SHA256SUMS, and
+the SHA-256 of the page and of shell/xeno-shell.js, all inside your browser.

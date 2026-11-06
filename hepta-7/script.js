@@ -204,7 +204,7 @@ const S = {
   sx: 0, sy: 0, px: 0, py: 0, hx: 0, hy: 0, phx: 0, hvx: 0,
   base: -Math.PI / 2 + .22, angS: -Math.PI / 2, ang: -Math.PI / 2, spinPh: 0,
   strike: null, strikeDir: 1, lastInput: -1e9, lastAuto: 0, auto: false,
-  geo: null, prev: null, tipSpeed: 0, tipVX: 0, tipVY: 0, hist: [],
+  geo: null, prev: null, angV: 0, pitch: 0, pitchV: 0, hvy: 0, phy: 0, ions: [], tipSpeed: 0, tipVX: 0, tipVY: 0, hist: [],
   shake: 0, hitstop: 0, cineT: 0, flash: 0, flashCol: '#ffffff', ts: 1,
   cam: { x: 0, y: 0, z: 1 }, camT: { x: 0, y: 0, z: 1 }, camHold: 0, lb: 0,
   stats: { cuts: 0, shatters: 0, deflects: 0, peak: 0 }, sc: 1, tossT: 0,
@@ -306,44 +306,56 @@ const AU = {
     const vg = c.createGain(); vg.gain.value = .5; this.verb.connect(vg).connect(this.out);
     const nb = c.createBuffer(1, c.sampleRate * 2, c.sampleRate), d = nb.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; this.nb = nb;
-    // blade hum: detuned saws + sub, overdriven, low-passed, with flutter
-    const pre = c.createGain(); pre.gain.value = .5;
-    const drive = c.createWaveShaper(); drive.curve = this.curve(8);
-    this.humF = c.createBiquadFilter(); this.humF.type = 'lowpass'; this.humF.frequency.value = 600; this.humF.Q.value = 1.5;
+    // blade hum v2 — no buzz-saw: a pure sine core with slow FM, a resonant plasma body (noise rung through
+    // seven narrow band-passes, one harmonic per edge), a dark filtered undertone, Doppler + stereo position
+    this.pan = c.createStereoPanner ? c.createStereoPanner() : c.createGain(); this.pan.connect(this.out);
+    const soft = c.createWaveShaper(); soft.curve = this.curve(1.4);
+    this.humF = c.createBiquadFilter(); this.humF.type = 'lowpass'; this.humF.frequency.value = 900; this.humF.Q.value = .7;
     this.humG = c.createGain(); this.humG.gain.value = 0;
-    pre.connect(drive).connect(this.humF).connect(this.humG).connect(this.out);
-    const hs = c.createGain(); hs.gain.value = .12; this.humG.connect(hs).connect(this.verb);
-    this.o1 = c.createOscillator(); this.o1.type = 'sawtooth'; this.o1.frequency.value = 90;
-    this.o2 = c.createOscillator(); this.o2.type = 'sawtooth'; this.o2.frequency.value = 90.7;
-    this.sub = c.createOscillator(); this.sub.frequency.value = 45; const sg = c.createGain(); sg.gain.value = 1.2;
-    this.o1.connect(pre); this.o2.connect(pre); this.sub.connect(sg).connect(this.humF);
-    const lfo = c.createOscillator(); lfo.frequency.value = 6.5; const lg = c.createGain(); lg.gain.value = .03; lfo.connect(lg).connect(this.humG.gain);
-    [this.o1, this.o2, this.sub, lfo].forEach(o => o.start());
-    // one shimmering partial per edge — the chord changes as edges switch
-    this.pg = EDGES.map((e, i) => { const o = c.createOscillator(); o.frequency.value = 90 * (i + 2) * 1.004; const g = c.createGain(); g.gain.value = 0; o.connect(g).connect(this.humG); o.start(); return g; });
-    // swing whoosh
+    soft.connect(this.humF).connect(this.humG).connect(this.pan);
+    const hs = c.createGain(); hs.gain.value = .2; this.humG.connect(hs).connect(this.verb);
+    const og = (o, v, to = soft) => { const g = c.createGain(); g.gain.value = v; o.connect(g).connect(to); return g; };
+    this.o1 = c.createOscillator(); this.o1.frequency.value = 72; og(this.o1, .9);
+    this.o2 = c.createOscillator(); this.o2.frequency.value = 144.3; og(this.o2, .3);
+    this.sub = c.createOscillator(); this.sub.frequency.value = 36; og(this.sub, .85);
+    this.o3 = c.createOscillator(); this.o3.type = 'sawtooth'; this.o3.frequency.value = 72.4;
+    const uf = c.createBiquadFilter(); uf.type = 'lowpass'; uf.frequency.value = 240; uf.Q.value = 2; og(this.o3, .3, uf); uf.connect(soft);
+    const fm = c.createOscillator(); fm.frequency.value = .37; og(fm, 1.6, this.o1.frequency);
+    const fl = c.createOscillator(); fl.frequency.value = 11.3; og(fl, .018, this.humG.gain);
+    [this.o1, this.o2, this.sub, this.o3, fm, fl].forEach(o => o.start());
+    const nB = c.createBufferSource(); nB.buffer = nb; nB.loop = true; nB.start();
+    this.pg = EDGES.map((e, i) => {
+      const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 72 * (i + 3) * 1.003; bp.Q.value = 30;
+      const g = c.createGain(); g.gain.value = 0; nB.connect(bp).connect(g).connect(this.humG); return g;
+    });
+    // swing: band-passed air through a short comb → the tonal "vwoom" of a moving column of plasma
     const ns = c.createBufferSource(); ns.buffer = nb; ns.loop = true;
-    this.swF = c.createBiquadFilter(); this.swF.type = 'bandpass'; this.swF.frequency.value = 700; this.swF.Q.value = .8;
-    this.swG = c.createGain(); this.swG.gain.value = 0; ns.connect(this.swF).connect(this.swG).connect(this.out);
+    this.swF = c.createBiquadFilter(); this.swF.type = 'bandpass'; this.swF.frequency.value = 700; this.swF.Q.value = .9;
+    this.swG = c.createGain(); this.swG.gain.value = 0; ns.connect(this.swF).connect(this.swG).connect(this.pan);
+    this.comb = c.createDelay(.05); this.comb.delayTime.value = .006; const fb = c.createGain(); fb.gain.value = .6;
+    const cg = c.createGain(); cg.gain.value = .55; this.swG.connect(this.comb); this.comb.connect(fb).connect(this.comb); this.comb.connect(cg).connect(this.pan);
     const ws = c.createGain(); ws.gain.value = .3; this.swG.connect(ws).connect(this.verb); ns.start();
-    // overcharge crackle bed
-    const ns2 = c.createBufferSource(); ns2.buffer = nb; ns2.loop = true;
-    const cf = c.createBiquadFilter(); cf.type = 'highpass'; cf.frequency.value = 2500;
-    this.crG = c.createGain(); this.crG.gain.value = 0; ns2.connect(cf).connect(this.crG).connect(this.out); ns2.start();
+    this.lastU = c.currentTime;
   },
   update(speed) {
     if (!this.c) return;
-    const t = this.c.currentTime, ig = S.ignite, o = oc(), sp = clamp(speed / 3000, 0, 1), slow = .6 + .4 * S.ts;
+    const t = this.c.currentTime, dtA = Math.min(.1, t - this.lastU), ig = S.ignite, o = oc(), sp = clamp(speed / 3000, 0, 1), slow = .6 + .4 * S.ts; this.lastU = t;
     this.out.gain.setTargetAtTime(S.sound ? S.vol : 0, t, .05);
     const bed = S.sndStyle === 'xylo' ? .3 : 1;
-    this.humG.gain.setTargetAtTime(.34 * ig * (o ? 1.4 : 1) * (1 + sp * .6) * bed, t, .04);
-    this.humF.frequency.setTargetAtTime((520 + sp * 3200 + (o ? 700 : 0)) * slow, t, .03);
-    const f = 90 * (1 + sp * .28) * (o ? 1.08 : 1) * slow;   // Doppler-like bend on fast swings
-    this.o1.frequency.setTargetAtTime(f, t, .03); this.o2.frequency.setTargetAtTime(f * 1.008, t, .03); this.sub.frequency.setTargetAtTime(f / 2, t, .03);
-    this.pg.forEach((g, i) => g.gain.setTargetAtTime(S.edges[i] ? .06 * ig : 0, t, .1));
-    this.swG.gain.setTargetAtTime(sp * 1.4 * ig * bed, t, .02);
-    this.swF.frequency.setTargetAtTime(300 + sp * 2400, t, .03);
-    this.crG.gain.setTargetAtTime(o && ig > .5 ? (Math.random() < .3 ? .5 : .05) * bed : 0, t, .01);
+    if (this.pan.pan) this.pan.pan.setTargetAtTime(clamp(S.hx / (W || 1) * 2 - 1, -1, 1) * .7, t, .05);
+    this.humG.gain.setTargetAtTime(.36 * ig * (o ? 1.4 : 1) * (1 + sp * .5) * bed, t, .04);
+    this.humF.frequency.setTargetAtTime((700 + sp * 2600 + (o ? 900 : 0)) * slow, t, .03);
+    // Doppler: the tip's velocity toward / away from the screen centre bends the pitch
+    let rv = 0; if (S.geo) { const ex = S.geo.tx - W / 2, ey = S.geo.ty - H / 2, d = hypot(ex, ey) || 1; rv = (ex * S.tipVX + ey * S.tipVY) / d; }
+    const f = 72 * (1 + sp * .2) * (1 - clamp(rv / 9000, -.12, .12)) * (o ? 1.06 : 1) * slow;
+    this.o1.frequency.setTargetAtTime(f, t, .03); this.o2.frequency.setTargetAtTime(f * 2.004, t, .03);
+    this.sub.frequency.setTargetAtTime(f / 2, t, .03); this.o3.frequency.setTargetAtTime(f * 1.006, t, .03);
+    this.pg.forEach((g, i) => g.gain.setTargetAtTime(S.edges[i] ? 1.1 * ig * (1 + sp) : 0, t, .1));
+    this.swG.gain.setTargetAtTime(sp * 1.3 * ig * bed, t, .02);
+    this.swF.frequency.setTargetAtTime(250 + sp * 2600, t, .03);
+    this.comb.delayTime.setTargetAtTime(.0025 + .008 * (1 - sp), t, .04);
+    // arc discharges: sparse grains at rest, a storm when overcharged or whipping fast
+    if (ig > .5 && S.sound) { const rate = (o ? 28 : 2.2) + sp * 12; if (Math.random() < rate * dtA) this.noise(rand(.004, .02), 'highpass', rand(2500, 6500), rand(.15, .5) * (o ? 1 : .45) * bed, .8, 0, .15); }
   },
   dst(wet) {
     const g = this.c.createGain(); g.connect(this.fxBus);
@@ -448,7 +460,7 @@ function sfx(name, amt = 1) {
     case 'chime':    // coherent matter wave: glassy bells in a big space
       A.modal(880, [1, 1.5, 2, 3, 4.2], [2.2, 1.8, 1.5, 1.1, .8], .45 * k, .75); A.tone(3520, 3530, 1.2, 'sine', .08, .05, .8); break;
     case 'spawn': A.tone(200, 1200, .45, 'sine', .25, 0, .55); A.noise(.4, 'highpass', 4000, .2, 1, 0, .5); break;
-    case 'click': A.tone(1800, 1800, .025, 'square', .15, 0, 0); break;
+    case 'click': A.tone(2600, 2350, .035, 'sine', .14, 0, .2); A.noise(.012, 'bandpass', 6500, .12, 3, 0, .1); break;
     case 'vent': A.noise(1.5, 'bandpass', 2500, 1, .5, 0, .4, 700); break;
     case 'impact':   // the slam under every hit
       A.noise(.02, 'highpass', 1500, 2.4 * k, .5, 0, .3);
@@ -457,7 +469,7 @@ function sfx(name, amt = 1) {
       A.noise(.25, 'bandpass', 5000, 1 * k, .8, 0, .3, 400);
       if (k > 1) A.noise(1, 'lowpass', 900, 1.2 * (k - .6), .6, .02, .5, 110);
       break;
-    case 'miss': A.tone(160, 80, .3, 'square', .18, 0, .15); break;
+    case 'miss': A.tone(220, 85, .4, 'sine', .25, 0, .35); A.noise(.35, 'bandpass', 700, .25, .8, 0, .4, 180); break;
     case 'appear': A.tone(500, 1400, .12, 'sine', .18, 0, .3); A.noise(.08, 'highpass', 5000, .15, 1, 0, .3); break;
     case 'freeze': A.tone(2400, 110, 1.1, 'sine', .45, 0, .8); A.noise(.7, 'highpass', 7000, .35, 1, 0, .6); break;
   }
@@ -589,9 +601,13 @@ function sparks(x, y, n, cols, dx = 0, dy = 0, spread = 1, spd = 600) {
   const base = Math.atan2(dy, dx);
   for (let i = 0; i < n; i++) {
     const a = base + rand(-1, 1) * Math.PI * spread, v = rand(.25, 1) * spd, l = rand(.25, .75);
-    addFx({ k: 'spark', x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: l, max: l, c: pick(cols), s: rand(1, 2.4) });
+    addFx({ k: 'spark', x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: l, max: l, c: pick(cols), s: rand(.8, 2.4), sp: Math.random() < .3 ? 0 : 1 });
   }
+  if (n >= 18) for (let i = 0; i < n / 7; i++) { const l = rand(1.4, 3); addFx({ k: 'smoke', x: x + rand(-6, 6), y: y + rand(-6, 6), vx: rand(-40, 40) + dx * .03, vy: rand(-80, -20), s: rand(7, 14), life: l, max: l, r: rand(0, TAU) }); }
 }
+// thermal colour of a cooling spark: white-hot → yellow → orange → cherry red
+const SPARK_T = ['#7a1606', '#c8300f', '#ff6a1f', '#ffae42', '#ffe39a', '#fffaf0'];
+const sparkCol = (h, c) => h > .82 ? c : SPARK_T[Math.min(5, h * 6.6 | 0)];
 const flash = (x, y, s, c) => addFx({ k: 'flash', x, y, s, c, life: .22, max: .22 });
 const ring = (x, y, c, R) => addFx({ k: 'ring', x, y, r: 4, R, c, life: .55, max: .55 });
 const bolt = (ax, ay, bx, by, c, life = .12) => addFx({ k: 'bolt', ax, ay, bx, by, c, life, max: life });
@@ -609,10 +625,13 @@ function updateFx(dt) {
     const p = fx[i]; p.life -= dt; if (p.life <= 0) continue;
     switch (p.k) {
       case 'spark': case 'glit': {
+        if (p.k === 'spark' && !p.sp && p.life < p.max * .55) {   // pyro split: a spark bursts into two smaller ones
+          p.sp = 1; for (let q = 0; q < 2; q++) { const l = p.life * rand(.4, .8); fx.push({ k: 'spark', x: p.x, y: p.y, vx: p.vx * .6 + rand(-160, 160), vy: p.vy * .6 + rand(-160, 60), life: l, max: l, c: p.c, s: p.s * .6, sp: 1 }); } }
         const d = Math.exp(-1.6 * dt); p.vx *= d; p.vy = p.vy * d + G * (p.k === 'spark' ? .5 : .2) * dt;
         p.x += p.vx * dt; p.y += p.vy * dt; if (p.y > floorY && p.vy > 0) { p.y = floorY; p.vy *= -.35; p.vx *= .6; } break;
       }
       case 'ember': p.vy += G * dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.y > floorY && p.vy > 0) { p.y = floorY; p.vy *= -.2; p.vx *= .5; } break;
+      case 'smoke': p.vy -= 18 * dt; p.vx *= Math.exp(-.8 * dt); p.x += p.vx * dt; p.y += p.vy * dt; p.s += 16 * dt; break;
       case 'steam': p.vy -= 50 * dt; p.vx *= Math.exp(-dt); p.x += p.vx * dt; p.y += p.vy * dt; p.s += 24 * dt; break;
       case 'ring': p.r += (p.R - p.r) * (1 - Math.exp(-dt * 7)); break;
       case 'dust': p.vx *= Math.exp(-2 * dt); p.vy += (30 - p.vy) * 1.5 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.s += 12 * dt; break;
@@ -634,10 +653,15 @@ function drawFx(pass) {
   ctx.lineCap = 'round';
   for (const p of fx) {
     const t = p.life / p.max;
-    if (pass === 'steam') { if (p.k === 'steam') glow(p.x, p.y, p.s, '#dfe8f5', .14 * t); else if (p.k === 'dust') glow(p.x, p.y, p.s, p.c, .3 * t); continue; }
+    if (pass === 'steam') { if (p.k === 'smoke') { const e = 1 - t; glow(p.x, p.y, p.s, '#3a3640', .32 * Math.min(1, e * 5) * t); } else if (p.k === 'steam') glow(p.x, p.y, p.s, '#dfe8f5', .14 * t); else if (p.k === 'dust') glow(p.x, p.y, p.s, p.c, .3 * t); continue; }
     switch (p.k) {
-      case 'spark': ctx.globalAlpha = t; ctx.strokeStyle = p.c; ctx.lineWidth = p.s; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - p.vx * .022, p.y - p.vy * .022); ctx.stroke(); glow(p.x, p.y, 6, p.c, t * .35); break;
-      case 'ember': glow(p.x, p.y, 5 + 3 * t, p.c, t); glow(p.x, p.y, 1.5, '#ffffff', t); break;
+      case 'spark': {   // motion-blurred streak: coloured sheath + white-hot filament, length follows speed
+        const c = sparkCol(t, p.c), k = .03 + .012 * t, ex = p.x - p.vx * k, ey = p.y - p.vy * k, fl = .75 + .25 * Math.sin(p.life * 90 + p.x);
+        ctx.globalAlpha = Math.min(1, t * 1.8) * fl; ctx.strokeStyle = c; ctx.lineWidth = p.s * 1.9; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(ex, ey); ctx.stroke();
+        ctx.globalAlpha = Math.min(1, t * 2) * .9; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = p.s * .55; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(lerp(p.x, ex, .6), lerp(p.y, ey, .6)); ctx.stroke();
+        glow(p.x, p.y, 5 + 7 * t, c, t * .45); break;
+      }
+      case 'ember': { const fl = .6 + .4 * Math.sin(p.life * 31 + p.x * .1); glow(p.x, p.y, 5 + 3 * t, sparkCol(t * .9, p.c), t * fl); glow(p.x, p.y, 1.5, '#ffffff', t * fl); break; }
       case 'glit': glow(p.x, p.y, p.s * 2, p.c, t * (.5 + .5 * Math.sin(p.life * 40))); break;
       case 'flash': glow(p.x, p.y, p.s * (1.3 - .3 * t), p.c, t); break;
       case 'ring': ctx.globalAlpha = t * .8; ctx.strokeStyle = p.c; ctx.lineWidth = 3 * t + 1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.stroke(); break;
@@ -1263,7 +1287,9 @@ function updateBlade(rdt, tnow) {
   const k = 1 - Math.exp(-rdt * 30);
   S.hx += (tx - S.hx) * k; S.hy += (ty - S.hy) * k;
   S.hvx = lerp(S.hvx, (S.hx - S.phx) / rdt, .25); S.phx = S.hx;
-  S.angS += (S.base + clamp(-S.hvx * .0008, -.85, .85) - S.angS) * (1 - Math.exp(-rdt * 14));
+  S.hvy = lerp(S.hvy, (S.hy - S.phy) / rdt, .25); S.phy = S.hy;
+  // weighted blade: an under-damped spring, so a swing overshoots and settles like real mass
+  { const tgt = S.base + clamp(-S.hvx * .0008, -.85, .85); S.angV += ((tgt - S.angS) * 190 - S.angV * 17) * rdt; S.angS += S.angV * rdt; }
   let off = 0; const st = S.strike;
   if (st) {
     st.t += rdt; const up = .12, back = .3; let f;
@@ -1273,6 +1299,9 @@ function updateBlade(rdt, tnow) {
     off = f * st.amp * st.dir;
   }
   S.ang = S.angS + off + (Math.random() - .5) * S.buzz * .12;
+  // depth: the blade pitches toward / away from the viewer on vertical moves and through every strike arc
+  { const sw = st ? Math.sin(clamp(st.t / .42, 0, 1) * Math.PI) * .8 * st.dir : 0, tgt = clamp(-S.hvy * .0007, -.55, .55) + sw;
+    S.pitchV += ((tgt - S.pitch) * 160 - S.pitchV * 16) * rdt; S.pitch = clamp(S.pitch + S.pitchV * rdt, -1.05, 1.05); }
   if (S.energized && S.ignite < 1) S.ignite = Math.min(1, S.ignite + rdt / .55);
   if (!S.energized && S.ignite > 0) S.ignite = Math.max(0, S.ignite - rdt / .4);
   S.spinPh += rdt * S.spin * TAU * (oc() ? 1.8 : 1);
@@ -1280,11 +1309,18 @@ function updateBlade(rdt, tnow) {
   else S.heat = Math.max(0, S.heat - rdt * (S.vent ? .3 : .12));
   if (S.vent && S.heat < .35) S.vent = false;
   if (S.vent && Math.random() < rdt * 30) steamAt(S.hx, S.hy, 1);
-  const dx = Math.cos(S.ang), dy = Math.sin(S.ang), L = S.len * easeOut(S.ignite), hs = 1.5 * S.bs, bx = S.hx + dx * 38 * hs, by = S.hy + dy * 38 * hs;
+  const dx = Math.cos(S.ang), dy = Math.sin(S.ang), L = S.len * easeOut(S.ignite) * Math.max(.62, Math.cos(S.pitch)), hs = 1.5 * S.bs, bx = S.hx + dx * 38 * hs, by = S.hy + dy * 38 * hs;
   S.prev = S.geo; S.geo = { dx, dy, bx, by, tx: bx + dx * L, ty: by + dy * L, L };
   if (S.prev) { S.tipVX = (S.geo.tx - S.prev.tx) / rdt; S.tipVY = (S.geo.ty - S.prev.ty) / rdt; S.tipSpeed = lerp(S.tipSpeed, hypot(S.tipVX, S.tipVY), .5); }
   S.hist.push({ bx, by, tx: S.geo.tx, ty: S.geo.ty, dx, dy });
   const maxH = S.ts < .5 ? 30 : 16; while (S.hist.length > maxH) S.hist.shift();
+  // ions streaming hilt → tip inside the blade; fast swings shed them into the air
+  { const ions = S.ions, cs = edgeCols(), want = S.ignite > .05 ? 110 : 0, sp = 1 + S.tipSpeed / 1800;
+    while (ions.length < want) ions.push({ f: Math.random(), v: rand(.35, 1.1), ph: rand(0, TAU), w: rand(-6, 6), r: rand(.2, 1.25), c: pick(cs), z: Math.random() });
+    if (ions.length > want) ions.length = want;
+    for (const p of ions) { p.f += p.v * rdt * sp * S.ts; p.ph += p.w * rdt; if (p.f > 1) { p.f = 0; p.c = pick(cs); p.r = rand(.2, 1.25); } }
+    if (S.ignite > .9 && S.tipSpeed > 1400 && Math.random() < rdt * 40) { const f = rand(.4, 1);
+      addFx({ k: 'glit', x: lerp(bx, S.geo.tx, f), y: lerp(by, S.geo.ty, f), vx: S.tipVX * rand(.05, .2), vy: S.tipVY * rand(.05, .2), life: .7, max: .7, c: pick(cs), s: rand(1.2, 2.6) }); } }
   if (oc() && S.ignite > .9 && Math.random() < rdt * 25) {
     const t0 = rand(0, .8), t1 = t0 + rand(.08, .2);
     bolt(lerp(bx, S.geo.tx, t0), lerp(by, S.geo.ty, t0), lerp(bx, S.geo.tx, t1) + rand(-14, 14), lerp(by, S.geo.ty, t1) + rand(-14, 14), pick(edgeCols()), .08);
@@ -1437,47 +1473,80 @@ function drawFloorLight() {
 }
 function drawTrail() {
   if (!S.trails || S.ignite < .5 || S.hist.length < 3) return;
-  const hs = S.hist, n = hs.length, cols = EDGES.map((e, i) => S.edges[i] ? e.color : null);
+  const hs = S.hist, n = hs.length, cols = edgeCols();
+  const avg = '#' + (S.avgCol || [255, 255, 255]).map(v => (v | 0).toString(16).padStart(2, '0')).join('');
   ctx.lineCap = 'round';
   for (let i = 1; i < n; i++) {
-    const a = hs[i - 1], b = hs[i], seg = hypot(b.tx - a.tx, b.ty - a.ty), f = i / n, al = clamp(seg / 25, 0, 1) * f;
+    const a = hs[i - 1], b = hs[i], seg = hypot(b.tx - a.tx, b.ty - a.ty), f = i / n, al = clamp(seg / 22, 0, 1) * f * f;
     if (al < .02) continue;
-    ctx.globalAlpha = al * .09; ctx.fillStyle = '#ffffff';
+    // swept volume between two blade poses: coloured body, hot leading edge
+    const gr = ctx.createLinearGradient(a.bx, a.by, a.tx, a.ty);
+    gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.35, avg); gr.addColorStop(1, '#ffffff');
+    ctx.globalAlpha = al * .26; ctx.fillStyle = gr;
     ctx.beginPath(); ctx.moveTo(a.bx, a.by); ctx.lineTo(a.tx, a.ty); ctx.lineTo(b.tx, b.ty); ctx.lineTo(b.bx, b.by); ctx.fill();
-    cols.forEach((c, j) => {
-      if (!c) return; const fr = 1 - j * .05;
-      ctx.globalAlpha = al * .55; ctx.strokeStyle = c; ctx.lineWidth = 2.2;
+    for (let j = 0; j < cols.length; j++) {
+      const fr = .55 + .45 * (j + 1) / cols.length;
+      ctx.globalAlpha = al * .16; ctx.strokeStyle = cols[j]; ctx.lineWidth = 3 + 5 * f;
       ctx.beginPath(); ctx.moveTo(lerp(a.bx, a.tx, fr), lerp(a.by, a.ty, fr)); ctx.lineTo(lerp(b.bx, b.tx, fr), lerp(b.by, b.ty, fr)); ctx.stroke();
-    });
+    }
+    ctx.globalAlpha = al * .8; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.5 * f + .5;
+    ctx.beginPath(); ctx.moveTo(a.tx, a.ty); ctx.lineTo(b.tx, b.ty); ctx.stroke();
   }
 }
 function drawBlade(t) {
   const ig = S.ignite; if (ig <= .001) return;
-  const g = S.geo, nx = -g.dy, ny = g.dx, o = oc(), bs = S.bs * (o ? 1.25 : 1), flick = .9 + .1 * Math.random();
-  const gap = 6.5 * bs, N = 28;
+  const g = S.geo, nx = -g.dy, ny = g.dx, o = oc(), bs = S.bs * (o ? 1.25 : 1), flick = .86 + .14 * Math.random();
+  const gap = 6.5 * bs, N = 44, R = 8 * bs, sp = Math.sin(S.pitch);
+  const persp = f => 1 / (1 - clamp(sp * f * .55, -.5, .6));          // points swinging toward the viewer swell
+  const avg = '#' + (S.avgCol || [255, 255, 255]).map(v => (v | 0).toString(16).padStart(2, '0')).join('');
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  // 7 parallel plasma bands that converge into the tip; the spin shows as a flowing ripple
-  const band = (i, Li) => {
-    const off0 = (i - 3) * gap; ctx.beginPath();
+  const es = [];
+  for (let i = 0; i < 7; i++) if (S.edges[i]) es.push({ i, c: EDGES[i].color, Li: clamp(ig * 1.35 - i * .05, 0, 1), pulse: .75 + .25 * Math.sin(S.spinPh * 3 - i * TAU / 7) });
+  const maxF = es.length ? Math.max(...es.map(e => e.Li)) : ig;
+  const P = f => ({ x: g.bx + g.dx * g.L * f, y: g.by + g.dy * g.L * f });
+  // 1 · volumetric corona: soft light stamped along the length, breathing with the plasma
+  for (let k = 0; k <= N; k++) {
+    const f = k / N; if (f > maxF) break;
+    const p = P(f), w = persp(f) * (1 - .5 * f * f), br = .9 + .1 * Math.sin(t * 23 + k * 1.7) + .06 * Math.sin(t * 7.1 - k * .4);
+    glow(p.x, p.y, 44 * bs * w * br, avg, .13 * flick * ig * (o ? 1.5 : 1));
+  }
+  // 2 · seven edges braided as a helix around the core; the far half is drawn first, dimmer and thinner
+  const strand = (e, front) => {
+    ctx.beginPath(); let pen = false;
     for (let k = 0; k <= N; k++) {
-      const f = k / N, s = Li * f, taper = 1 - .78 * Math.pow(f, 1.6);
-      const wv = Math.sin(s * .045 - S.spinPh * 2 + i * 1.7) * 1.4 * bs * (1 - f * .6);
-      const off = off0 * taper + wv, x = g.bx + g.dx * s + nx * off, y = g.by + g.dy * s + ny * off;
-      k ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      const f = k / N; if (f > e.Li) break;
+      const s = g.L * f, ph = S.spinPh * 2 + e.i * TAU / 7 + s * .021, taper = 1 - .82 * Math.pow(f, 1.7);
+      const r = (R + Math.sin(s * .05 - t * 9 + e.i) * 1.2 * bs) * taper * persp(f), dep = Math.sin(ph);
+      if ((dep >= 0) !== front) { pen = false; continue; }
+      const off = Math.cos(ph) * r, x = g.bx + g.dx * s + nx * off, y = g.by + g.dy * s + ny * off;
+      pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true;
     }
     ctx.stroke();
   };
-  const core = (wd, a) => { ctx.globalAlpha = a; ctx.lineWidth = wd; ctx.beginPath(); ctx.moveTo(g.bx, g.by); ctx.lineTo(g.tx, g.ty); ctx.stroke(); };
-  const es = [];
-  for (let i = 0; i < 7; i++) if (S.edges[i]) es.push({ i, c: EDGES[i].color, Li: S.len * clamp(ig * 1.35 - i * .05, 0, 1), pulse: .75 + .25 * Math.sin(S.spinPh * 3 - i * TAU / 7) });
-  // outer aura
-  for (const e of es) { ctx.strokeStyle = e.c; ctx.globalAlpha = .06 * flick * (o ? 1.6 : 1); ctx.lineWidth = 46 * bs; band(e.i, e.Li); }
-  ctx.strokeStyle = '#ffffff'; core(52 * bs, .05 * flick); core(30 * bs, .1 * flick);
-  for (const e of es) { ctx.strokeStyle = e.c; ctx.globalAlpha = .22 * e.pulse * flick; ctx.lineWidth = 13 * bs; band(e.i, e.Li); }
-  for (const e of es) { ctx.strokeStyle = e.c; ctx.globalAlpha = .55 * e.pulse; ctx.lineWidth = 6 * bs; band(e.i, e.Li); }
-  for (const e of es) { ctx.strokeStyle = e.c; ctx.globalAlpha = .95; ctx.lineWidth = 2.6 * bs; band(e.i, e.Li); }
-  for (const e of es) { ctx.strokeStyle = '#ffffff'; ctx.globalAlpha = .45 * e.pulse; ctx.lineWidth = .9 * bs; band(e.i, e.Li); }
-  glow(g.tx, g.ty, 26 * bs, '#ffffff', .5 * ig);
+  for (const e of es) { ctx.strokeStyle = e.c; ctx.globalAlpha = .16 * e.pulse * flick; ctx.lineWidth = 8 * bs; strand(e, false); ctx.globalAlpha = .45; ctx.lineWidth = 2.4 * bs; strand(e, false); }
+  // 3 · the white-hot core, thickest at the emitter
+  const core = (wd, a, c) => { ctx.strokeStyle = c; ctx.globalAlpha = a; ctx.lineWidth = wd; ctx.beginPath(); const p0 = P(0), p1 = P(maxF); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke(); };
+  core(26 * bs, .09 * flick, avg); core(12 * bs, .32 * flick, '#ffffff'); core(5 * bs, .85, '#ffffff'); core(2 * bs, 1, '#ffffff');
+  for (let k = 0; k <= 10; k++) { const f = k / 10 * maxF, p = P(f); glow(p.x, p.y, 13 * bs * persp(f) * (1 - .4 * f), '#ffffff', .22 * ig); }
+  // 4 · near half of the braid, over the core
+  for (const e of es) {
+    ctx.strokeStyle = e.c; ctx.globalAlpha = .26 * e.pulse * flick; ctx.lineWidth = 12 * bs; strand(e, true);
+    ctx.globalAlpha = .7 * e.pulse; ctx.lineWidth = 4.6 * bs; strand(e, true);
+    ctx.globalAlpha = 1; ctx.lineWidth = 2 * bs; strand(e, true);
+    ctx.strokeStyle = '#ffffff'; ctx.globalAlpha = .55 * e.pulse; ctx.lineWidth = .8 * bs; strand(e, true);
+  }
+  // 5 · ions riding the field lines toward the tip
+  for (const p of S.ions) {
+    if (p.f > maxF) continue;
+    const s = g.L * p.f, taper = 1 - .7 * p.f, off = Math.cos(p.ph) * R * 1.5 * p.r * taper * persp(p.f), dep = Math.sin(p.ph);
+    const x = g.bx + g.dx * s + nx * off, y = g.by + g.dy * s + ny * off, a = (.45 + .55 * (dep * .5 + .5)) * ig;
+    glow(x, y, (2.2 + 2.8 * p.z) * bs, p.c, a); glow(x, y, .9 * bs, '#ffffff', a);
+  }
+  // 6 · tip: white star plus an anamorphic lens streak
+  const tp = P(maxF), tw = persp(maxF);
+  glow(tp.x, tp.y, 30 * bs * tw, '#ffffff', .55 * ig);
+  ctx.globalAlpha = .32 * ig * flick; ctx.drawImage(sprite('#bcd6ff'), tp.x - 150 * bs * tw, tp.y - 3 * bs, 300 * bs * tw, 6 * bs);
+  ctx.globalAlpha = .18 * ig; ctx.drawImage(sprite(avg), g.bx - 110 * bs, g.by - 2 * bs, 220 * bs, 4 * bs);
   if (ig < 1 && S.energized) glow(g.bx, g.by, 70 * (1 - ig) * bs + 14, '#ffffff', .8);
   // edge name tags after ignition / when an edge is switched
   if (S.labelT > 0 && ig > .8) {
@@ -1562,6 +1631,7 @@ function render(rdt, t) {
   ctx.globalCompositeOperation = 'source-over'; drawHilt();
 
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  bloom();
   if (S.flash > .01) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = S.flash * .45; ctx.fillStyle = S.flashCol; ctx.fillRect(0, 0, W, H); }
   if (S.chroma > .01) {   // colour-split shudder on heavy hits
     const off = 4 + 30 * S.chroma; ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = Math.min(.5, S.chroma * 1.4);
@@ -1575,6 +1645,19 @@ function render(rdt, t) {
   if (S.lb > .01) { ctx.globalAlpha = 1; ctx.fillStyle = '#000'; const h = H * .085 * S.lb; ctx.fillRect(0, 0, W, h); ctx.fillRect(0, H - h, W, h); }
   ctx.globalAlpha = 1;
   drawXsec();
+}
+
+// bloom: a 1/5-scale thresholded, blurred copy of the frame added back on top — light bleeds like a real lens
+let bloomCan = null, bctx = null;
+const HAS_FILTER = (() => { try { const c = document.createElement('canvas').getContext('2d'); c.filter = 'blur(1px)'; return c.filter === 'blur(1px)'; } catch (e) { return false; } })();
+function bloom() {
+  const bw = Math.max(2, W / 5 | 0), bh = Math.max(2, H / 5 | 0);
+  if (!bloomCan) { bloomCan = document.createElement('canvas'); bctx = bloomCan.getContext('2d'); }
+  if (bloomCan.width !== bw || bloomCan.height !== bh) { bloomCan.width = bw; bloomCan.height = bh; }
+  bctx.globalCompositeOperation = 'copy'; if (HAS_FILTER) bctx.filter = 'brightness(.4) contrast(5) saturate(1.4) blur(3px)';
+  bctx.drawImage(cvs, 0, 0, bw, bh); if (HAS_FILTER) bctx.filter = 'none';
+  ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = HAS_FILTER ? .45 : .12; ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(bloomCan, 0, 0, W, H); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
 }
 
 // ---------- UI ----------

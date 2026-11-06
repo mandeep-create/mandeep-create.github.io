@@ -8,7 +8,16 @@ The work may be viewed and run through its published link and the kit
 offered on that page. The source code (HTML, CSS, JavaScript, batch, shell,
 Perl and PowerShell) and all other technical files are proprietary and
 confidential. No part may be copied, modified, distributed, or used to
-create derivative works without written permission from Mandeep S. Bhullar.
+create derivative software without written permission from Mandeep S. Bhullar.
+
+Free for everyone
+Anyone may view, use online, watch, play and experience this work, at no
+cost and without asking. Anything you make by using it (screenshots, screen
+recordings, captured frames, performances, the sounds you play) is yours to
+use, share and build on; a credit to "Mandeep S. Bhullar · SpinalXeno™" is
+appreciated. This permission covers what the work produces, not the work
+itself: the source code, programming, synthesis engines, designs and all
+other intellectual property are owned solely by Mandeep S. Bhullar.
 
 Engines
 The 4D glyph renderer, motion, gear and particle engines, the transmission

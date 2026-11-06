@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"><script src="/shell/xeno-shell.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matrix CryptoGraph</title>
     <!--! Matrix CryptoGraph
@@ -774,8 +774,14 @@
         
         let screenWidth = window.innerWidth;
         let screenHeight = window.innerHeight;
-        canvas.width = screenWidth;
-        canvas.height = screenHeight;
+        let DPR = Math.min(2, window.devicePixelRatio || 1);
+        function sizeCanvas() {
+            DPR = Math.min(2, window.devicePixelRatio || 1);
+            canvas.width = Math.round(screenWidth * DPR); canvas.height = Math.round(screenHeight * DPR);
+            canvas.style.width = screenWidth + 'px'; canvas.style.height = screenHeight + 'px';
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        }
+        sizeCanvas();
 
         // Matrix Column Class
         class MatrixColumn {
@@ -865,54 +871,44 @@
             }
 
             draw(ctx, colorScheme, showCryptography) {
+                // Glyph atlas: every glyph is rendered once (with its shadow layer, or its blurred glow for the
+                // leading glyph) into a cached sprite, then stamped with drawImage — far cheaper than fillText + shadowBlur.
                 const colors = CONFIG.COLORS[colorScheme] || rainbowColors(this.x);
-                const primaryColor = colors.primary;
-                const shadowColor = colors.shadow;
-
-                this.characters.forEach((c, i) => {
-                    ctx.save();
-
-                    const isLast = i === this.characters.length - 1;
-                    let char = c.char;
-
-                    // Encryption effect
-                    if (showCryptography && Math.random() < 0.1) {
-                        char = getRandomChar(STATE.alphabet);
-                    }
-
-                    // Position
-                    ctx.translate(this.x + 2, c.y + this.fontSize / 2);
-                    ctx.rotate(c.angle);
-                    ctx.scale(c.scale, c.scale);
-
-                    // Shadow/Glow
-                    ctx.fillStyle = `rgba(${hexToRgb(shadowColor).r}, ${hexToRgb(shadowColor).g}, ${hexToRgb(shadowColor).b}, ${c.opacity * STATE.glowIntensity / 100 * 0.5})`;
-                    ctx.shadowColor = shadowColor;
-                    ctx.shadowBlur = STATE.glowIntensity;
-                    ctx.shadowOffsetX = 2;
-                    ctx.shadowOffsetY = 2;
-
-                    ctx.font = `bold ${this.fontSize}px 'Courier New'`;
-                    ctx.fillText(char, 0, 0);
-
-                    // Bright character
-                    ctx.fillStyle = `rgba(${hexToRgb(primaryColor).r}, ${hexToRgb(primaryColor).g}, ${hexToRgb(primaryColor).b}, ${c.opacity})`;
-                    ctx.shadowColor = primaryColor;
-                    ctx.shadowBlur = STATE.glowIntensity * 2;
-                    ctx.shadowOffsetX = 0;
-                    ctx.shadowOffsetY = 0;
-
-                    if (isLast) {
-                        ctx.font = `bold ${Math.floor(this.fontSize * 1.2)}px 'Courier New'`;
-                        ctx.fillStyle = `rgba(${hexToRgb(primaryColor).r}, ${hexToRgb(primaryColor).g}, ${hexToRgb(primaryColor).b}, 1)`;
-                    }
-
-                    ctx.fillText(char, 0, 0);
-
-                    ctx.restore();
-                });
+                const n = this.characters.length, g = STATE.glowIntensity, fs = this.fontSize, cx = this.x + 2;
+                for (let i = 0; i < n; i++) {
+                    const c = this.characters[i], isLast = i === n - 1;
+                    let ch = c.char;
+                    if (showCryptography && Math.random() < 0.1) ch = getRandomChar(STATE.alphabet);
+                    const k = c.scale, ca = Math.cos(c.angle) * k, sa = Math.sin(c.angle) * k;
+                    ctx.setTransform(DPR * ca, DPR * sa, -DPR * sa, DPR * ca, DPR * cx, DPR * (c.y + fs / 2));
+                    const sp = glyphSprite(ch, colors.primary, colors.shadow, g, fs, isLast);
+                    ctx.globalAlpha = isLast ? 1 : c.opacity;
+                    ctx.drawImage(sp.c, -sp.ox, -sp.oy, sp.w, sp.h);
+                }
+                ctx.globalAlpha = 1;
+                ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
             }
         }
+
+        const _glyphs = new Map();
+        function glyphSprite(ch, prim, shad, g, fs, head) {
+            const key = ch + '|' + prim + '|' + (head ? 'H' : shad) + '|' + g + '|' + fs + '|' + DPR;
+            let sp = _glyphs.get(key); if (sp) return sp;
+            if (_glyphs.size > 6000) _glyphs.clear();
+            const f = head ? Math.floor(fs * 1.2) : fs, pad = head ? g * 2 + 4 : 4;
+            const w = f * 1.4 + pad * 2, h = f * 1.5 + pad * 2, c = document.createElement('canvas');
+            c.width = Math.ceil(w * DPR); c.height = Math.ceil(h * DPR);
+            const x = c.getContext('2d'); x.scale(DPR, DPR); x.font = `bold ${f}px 'Courier New'`;
+            const ox = pad, oy = pad + f * 1.05;
+            if (head) { x.shadowColor = prim; x.shadowBlur = g * 2; x.fillStyle = prim; x.fillText(ch, ox, oy); x.shadowBlur = 0; x.fillText(ch, ox, oy); }
+            else {
+                if (g > 0) { x.globalAlpha = Math.min(1, g / 100 * 0.5); x.fillStyle = shad; x.fillText(ch, ox + 2, oy + 2); x.globalAlpha = 1; }
+                x.fillStyle = prim; x.fillText(ch, ox, oy);
+            }
+            sp = { c, ox, oy, w, h }; _glyphs.set(key, sp); return sp;
+        }
+        const _rgbC = {};
+        function rgbCache(hex) { let v = _rgbC[hex]; if (!v) { const r = hexToRgb(hex); v = _rgbC[hex] = `${r.r},${r.g},${r.b}`; } return v; }
 
         // Utility Functions
         function getRandomChar(alphabetName) {
@@ -948,7 +944,7 @@
         }
 
         function rainbowColors(x) {
-            const hue = (Date.now() / 20 + x / screenWidth * 360) % 360;
+            const hue = Math.round(((Date.now() / 20 + x / screenWidth * 360) % 360) / 15) * 15;
             return { primary: hslToHex(hue, 100, 55), shadow: hslToHex(hue, 100, 35), secondary: hslToHex((hue + 40) % 360, 100, 60) };
         }
 
@@ -1143,8 +1139,7 @@
         window.addEventListener('resize', () => {
             screenWidth = window.innerWidth;
             screenHeight = window.innerHeight;
-            canvas.width = screenWidth;
-            canvas.height = screenHeight;
+            sizeCanvas();
             initColumns();
         });
 

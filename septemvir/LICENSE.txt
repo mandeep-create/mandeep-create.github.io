@@ -1,0 +1,33 @@
+SEPTEMVIR HX-7 · AN/HXQ-7 Hyperdimensional Extraction Imaging Engine
+© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+Engine concept, operation order and the six plates (photographs and paintings) © 2026 Mandeep S. Bhullar.
+
+The engine may be viewed and operated through its published link.
+The source code (HTML, CSS, JavaScript) and all other technical files are
+proprietary and confidential. No part may be copied, modified, distributed,
+or used to create derivative software without written permission from
+Mandeep S. Bhullar.
+
+Free for everyone
+Anyone may view, use online, watch, play and experience this work, at no
+cost and without asking. Anything you make by using it (screenshots, screen
+recordings, captured frames, performances, the sounds you play) is yours to
+use, share and build on; a credit to "Mandeep S. Bhullar · SpinalXeno™" is
+appreciated. This permission covers what the work produces, not the work
+itself: the source code, programming, synthesis engines, designs and all
+other intellectual property are owned solely by Mandeep S. Bhullar.
+
+Engine, sound synthesis and effects
+The hyperdimensional geometry engine, off-axis "window" projection, laser and
+sacred-geometry renderers, post-processing grades and the live-synthesised
+score in Septemvir HX-7 are produced by custom engines designed by Claude,
+an AI model made by Anthropic, for SpinalXeno. These engines are part of the
+proprietary work described above: they may not be copied, extracted, adapted
+or reused without written permission from Mandeep S. Bhullar.
+No samples from any third-party product are used; every sound is synthesized
+live in the browser. three.js (MIT licence) is loaded from a public CDN.
+
+Every file is digitally signed with the SpinalXeno signing key
+(ECDSA P-256, SHA-256). Key fingerprint:
+25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3

@@ -1646,6 +1646,7 @@ function drawSky(ctx, hs) {
 // + poles, lifted by − poles and rippled by gravitational waves after a bounce
 const GRID_COLORS_LIGHT = [[60, 50, 170], [110, 30, 170], [170, 0, 120], [120, 0, 80]];
 
+const GRID_CACHE = { side: 0, v: null, f: null, stamp: 0 };
 function drawSpacetimeGrid(ctx) {
     const lines = 30;
     const samples = 60;
@@ -1656,6 +1657,7 @@ function drawSpacetimeGrid(ctx) {
     const poles = [];
     STATE.polarityNodes.forEach((layer) => layer.forEach((n) => poles.push(n)));
     const sigma2 = Math.pow(STATE.radius * 0.06, 2);
+    const poleCut = 18.5 * sigma2;
     const ripples = STATE.ripples;
     const waveSpeed = 7 * STATE.unit;
     const waveWidth = STATE.radius * 0.12;
@@ -1669,7 +1671,9 @@ function drawSpacetimeGrid(ctx) {
             const n = poles[i];
             const dx = x - n.x;
             const dz = z - n.z;
-            y -= n.charge * n.strength * 6 * STATE.unit * Math.exp(-(dx * dx + dz * dz) / (2 * sigma2));
+            const d2 = dx * dx + dz * dz;
+            if (d2 > poleCut) continue; // beyond ~6σ the well is under 1e-4 of its depth
+            y -= n.charge * n.strength * 6 * STATE.unit * Math.exp(-d2 / (2 * sigma2));
         }
         for (let i = 0; i < ripples.length; i++) {
             const rp = ripples[i];
@@ -1684,6 +1688,10 @@ function drawSpacetimeGrid(ctx) {
     const buckets = [];
     for (let i = 0; i < 20; i++) buckets.push(new Path2D());
 
+    // Lines in both directions share lattice points: evaluate height + projection once per point
+    const step = samples / lines, side = samples + 1;
+    if (GRID_CACHE.side !== side) { GRID_CACHE.side = side; GRID_CACHE.v = new Float64Array(side * side * 3); GRID_CACHE.f = new Uint32Array(side * side); }
+    const gv = GRID_CACHE.v, gf = GRID_CACHE.f, stamp = ++GRID_CACHE.stamp;
     for (let axis = 0; axis < 2; axis++) {
         for (let i = 0; i <= lines; i++) {
             const a = -extent + (2 * extent * i) / lines;
@@ -1694,8 +1702,15 @@ function drawSpacetimeGrid(ctx) {
                 const b = -extent + (2 * extent * j) / samples;
                 const x = axis ? a : b;
                 const z = axis ? b : a;
-                const y = height(x, z);
-                const ok = project(x, y, z, P);
+                const cell = axis ? j * side + i * step : i * step * side + j;
+                let y, ok;
+                if (gf[cell] === stamp) {
+                    y = gv[cell * 3]; P.x = gv[cell * 3 + 1]; P.y = gv[cell * 3 + 2]; ok = P.y === P.y;
+                } else {
+                    y = height(x, z);
+                    ok = project(x, y, z, P);
+                    gf[cell] = stamp; gv[cell * 3] = y; gv[cell * 3 + 1] = P.x; gv[cell * 3 + 2] = ok ? P.y : NaN;
+                }
                 if (ok && prevOk) {
                     const fade = Math.max(0, 1 - Math.hypot(x, z) / extent);
                     if (fade > 0.02) {
@@ -1735,6 +1750,9 @@ function drawLensHalo(ctx, hs) {
 
 // The disk lies in the spin plane: segments behind the singularity are drawn
 // before the shadow, nearer ones after it. Beaming brightens the approaching side.
+const DISK_BINS = 16;
+const diskBins = new Array(DISK_BINS).fill(null);
+
 function drawAccretionDisk(ctx, front, hs) {
     const rings = 18;
     const segments = 90;
@@ -1756,6 +1774,8 @@ function drawAccretionDisk(ctx, front, hs) {
         const omega = STATE.time * spinRate / Math.pow(f + 0.4, 1.5);
         ctx.lineWidth = clamp((1.4 + (1 - f) * 2.2) * STATE.unit * SING.s, 0.5, 9);
 
+        // Segments are batched into DISK_BINS alpha steps (one stroke per step, not per segment): Safari rasterises each stroke() separately
+        for (let b = 0; b < DISK_BINS; b++) diskBins[b] = null;
         let prevOk = false;
         let px = 0;
         let py = 0;
@@ -1768,16 +1788,22 @@ function drawAccretionDisk(ctx, front, hs) {
                 const vlos = dir * (-Math.sin(th) * CAM.fx + Math.cos(th) * CAM.fz);
                 const beam = 1 - 0.7 * vlos;
                 const streak = 0.5 + 0.5 * Math.sin(th * 5 - dir * omega);
-                ctx.strokeStyle = rgba(color, Math.min(1, baseAlpha * beam * streak));
-                ctx.beginPath();
-                ctx.moveTo(px, py);
-                ctx.lineTo(P.x, P.y);
-                ctx.stroke();
+                const bin = Math.round(Math.max(0, Math.min(1, baseAlpha * beam * streak)) * (DISK_BINS - 1));
+                if (bin > 0) {
+                    const path = diskBins[bin] || (diskBins[bin] = new Path2D());
+                    path.moveTo(px, py);
+                    path.lineTo(P.x, P.y);
+                }
             }
             prevOk = ok;
             px = P.x;
             py = P.y;
             pz = P.z;
+        }
+        for (let b = 1; b < DISK_BINS; b++) {
+            if (!diskBins[b]) continue;
+            ctx.strokeStyle = rgba(color, b / (DISK_BINS - 1));
+            ctx.stroke(diskBins[b]);
         }
 
         // Lensed image of the far side, bent up and over the shadow

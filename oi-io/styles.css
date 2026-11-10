@@ -68,7 +68,10 @@ canvas {
 }
 
 #gridCanvas   { z-index: 0; }
+#gridGL       { z-index: 0; pointer-events: none; }
 #matterCanvas { z-index: 1; }
+#matterGL     { z-index: 1; pointer-events: none; }
+#linkGL       { z-index: 1; pointer-events: none; }
 
 #fieldCanvas {
     z-index: 2;
@@ -81,7 +84,7 @@ canvas {
 }
 
 /* Bloom: a blurred, low-resolution copy of everything bright, screened on top */
-#bloomCanvas {
+#bloomCanvas, #bloomGL {
     z-index: 3;
     pointer-events: none;
     display: none;
@@ -90,11 +93,11 @@ canvas {
     opacity: 0.8;
 }
 
-.viewport.bloom #bloomCanvas {
+.viewport.bloom #bloomCanvas, .viewport.bloom #bloomGL {
     display: block;
 }
 
-.viewport.light-bg #bloomCanvas {
+.viewport.light-bg #bloomCanvas, .viewport.light-bg #bloomGL {
     mix-blend-mode: multiply;
     opacity: 0;
 }
@@ -757,7 +760,7 @@ canvas {
 .legend-item.known .legend-color    { background: var(--known); box-shadow: 0 0 8px var(--known); }
 .legend-item.unknown .legend-color  { background: var(--unknown); box-shadow: 0 0 8px var(--unknown); }
 .legend-item.hawking .legend-color  { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
-.legend-item.polarity .legend-color { background: linear-gradient(90deg, #ff2e2e 50%, #2e7bff 50%); box-shadow: 0 0 6px #ff2e2e; }
+.legend-item.polarity .legend-color { background: linear-gradient(90deg, #ff2e2e 33%, #2e7bff 33% 66%, #78ffaa 66%); box-shadow: 0 0 6px #ff2e2e; }
 
 .legend-item.gravity-line .legend-color,
 .legend-item.magnetic-line .legend-color,
@@ -1058,3 +1061,16 @@ canvas {
 .hue-slider {
     background: linear-gradient(90deg, #00f0ff, #4d6bff, #b44dff, #ff3ea5, #ff8a00, #ffe14d, #7dff4d, #00f0ff);
 }
+
+/* Status tiers on every physics and theory control: Established · Research ongoing · Theory · Concept (if it existed) · Display */
+.tier { display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 3px; font-size: 8.5px; letter-spacing: .06em; text-transform: uppercase; line-height: 14px; vertical-align: 1px; border: 1px solid currentColor; opacity: .9; cursor: help; }
+.tier.t-est { color: #22d6a0; }
+.tier.t-res { color: #5fd0ff; }
+.tier.t-thy { color: #f2b33d; }
+.tier.t-con { color: #c08cff; border-style: dashed; }
+.tier.t-dsp { color: #8b8798; }
+.concept-switch { display: flex; align-items: center; gap: 8px; margin: 2px 0 12px; font-size: 11px; color: #c08cff; letter-spacing: .04em; cursor: pointer; }
+/* While the concept layer is on, the stage wears a dashed frame and a banner, so concept is never mistaken for observation */
+.viewport.concept-on::after { content: ''; position: absolute; inset: 6px; border: 1px dashed rgba(192, 140, 255, .45); border-radius: 10px; pointer-events: none; z-index: 4; }
+.concept-banner { position: absolute; left: 50%; bottom: 58px; transform: translateX(-50%); z-index: 5; padding: 3px 10px; border: 1px dashed rgba(192, 140, 255, .6); border-radius: 4px; background: rgba(20, 8, 40, .55); color: #c08cff; font-size: 9.5px; letter-spacing: .14em; pointer-events: auto; cursor: help; white-space: nowrap; }
+.viewport:not(.concept-on) .concept-banner { display: none; }

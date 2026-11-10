@@ -1,0 +1,22 @@
+SINGULARITY SECTOR · the interior of OI.IO's black hole
+© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+Exhibit concept and the inversion law at the horizon (colour inversion, reversal and balancing of all
+fields, parameters and forces) © 2026 Mandeep S. Bhullar.
+
+This software and its source code are proprietary. You may view and use the published page.
+You may not copy, modify, redistribute, sublicense or create derivative works from the code
+without written permission from Mandeep S. Bhullar.
+Harmless-use condition: this work may be used only for harmless purposes, for the good of one and all.
+No humans or animals may be harmed using this engine.
+
+Physics shown as Established or Research follows published general relativity (Schwarzschild and
+Kerr solutions, Bardeen-Press-Teukolsky ISCO). The interior view approximates published infall
+visualisations (A. Hamilton, JILA, University of Colorado). Concept-tier content shows what an idea
+would do if it existed; it is not observed.
+
+Built with the help of Epsilon Enforcement Officer Claude (Claude Opus 5.5 by Anthropic; Claude is a trademark of Anthropic).
+Copyright and ownership remain solely with Mandeep S. Bhullar.
+
+Digitally signed by SpinalXeno. Signing key fingerprint (SHA-256):
+25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3

@@ -27,7 +27,8 @@ const NEON = {
     link: [217, 194, 255],
     hawking: [255, 246, 168],
     plus: [255, 46, 46],
-    minus: [46, 123, 255]
+    minus: [46, 123, 255],
+    neutral: [120, 255, 170]
 };
 
 // Iridescent disk: white-hot → cyan → azure → violet → magenta
@@ -181,7 +182,22 @@ const THEORY = {
     // Effective mass: core mass plus every particle held inside the horizon
     effectiveMass: (core, contained, m) => core + contained * m,
 
-    schwarzschild: (mass) => 8 + mass * 0.9,
+    // Schwarzschild radius r_s = 2GM/c² is strictly proportional to mass (scaled so M₀ = 30 keeps its size)
+    schwarzschild: (mass) => mass * (35 / 30),
+
+    // Innermost stable circular orbit, prograde (Bardeen, Press & Teukolsky 1972): 3 r_s at a = 0, ½ r_s at a = 1
+    iscoPrograde: (rs, a) => {
+        const z1 = 1 + Math.cbrt(1 - a * a) * (Math.cbrt(1 + a) + Math.cbrt(1 - a));
+        const z2 = Math.sqrt(3 * a * a + z1 * z1);
+        return 0.5 * rs * (3 + z2 - Math.sqrt((3 - z1) * (3 + z1 + 2 * z2)));
+    },
+
+    // Apparent shadow radius seen from far away: √27·GM/c² = (√27/2)·r_s (EHT: M87*, Sgr A*).
+    // Spin flattens and shifts it by a few percent; that refinement is not modelled.
+    shadowRadius: (rs) => rs * Math.sqrt(27) / 2,
+
+    // Ergosphere (static limit): r_E(θ) = ½ r_s (1 + √(1 − a² cos²θ)): exactly r_s at the equator, the horizon at the poles, none at a = 0
+    ergosphere: (rs, a, cosT) => 0.5 * rs * (1 + Math.sqrt(1 - a * a * cosT * cosT)),
 
     // Kerr outer horizon: r₊ = ½ r_s (1 + √(1 − a²)), so spin shrinks the horizon
     kerrHorizon: (rs, a) => 0.5 * rs * (1 + Math.sqrt(1 - a * a)),
@@ -191,15 +207,19 @@ const THEORY = {
     // Hawking temperature ∝ 1/M: light singularities radiate hardest
     hawkingRate: (hawking, mass) => (hawking / 100) * 1.2 * (30 / mass),
 
-    // Gravitational time dilation near the horizon
-    timeDilation: (r, rh) => Math.sqrt(Math.max(0.04, 1 - rh / r)),
+    // Gravitational time dilation √(1 − r_s/r) (Schwarzschild factor; floored so frozen matter still moves)
+    timeDilation: (r, rs) => Math.sqrt(Math.max(0.04, 1 - rs / r)),
 
     // Polygarity: pole pairs per shell grow with dimensionality and strength
     polePairsPerShell: (dimensionality, strength) =>
         Math.max(1, Math.min(7, Math.floor(Math.pow(dimensionality, strength / 2.2) / 2))),
 
     // Multitarity: how many cross-scale links the field keeps alive
-    targetLinks: (particles, density) => Math.floor(particles * density / 100 * 0.25)
+    targetLinks: (particles, density) => Math.floor(particles * density / 100 * 0.25),
+
+    // Multiversal Codependence Theory (Mandeep S. Bhullar), axiom of dimensional tanglement:
+    // T(dᵢ, dⱼ) = T₀ · e^(−|dᵢ − dⱼ| / λ) — links weaken with dimensional distance (concept, not observed)
+    tanglement: (t0, di, dj, lambda) => t0 * Math.exp(-Math.abs(di - dj) / lambda)
 };
 
 // ===== STATE =====
@@ -251,7 +271,9 @@ const STATE = {
     dimensionality: 4,
     polarityStrength: 2,
     multitarityDensity: 50,
+    tangleLambda: 1.5,              // λ in T = T₀·e^(−|Δd|/λ), in shells
     decoherence: 30,
+    concept: true,                  // concept layer (if it existed): polarity triads, tanglement, ∞ depth
 
     // Visualization & camera
     speed: 1,
@@ -415,7 +437,110 @@ function makeSprite(rgb) {
     grad.addColorStop(1, rgba(rgb, 0));
     g.fillStyle = grad;
     g.fillRect(0, 0, 48, 48);
+    c.rgb = [rgb[0] / 255, rgb[1] / 255, rgb[2] / 255];   // the WebGL matter layer redraws this gradient in a shader
     return c;
+}
+
+// Matter on WebGL (#matterGL): the ~1,400 particle sprites were ~2,800 canvas commands a frame, which Safari
+// replays on the main thread; here they are one draw. The shader reproduces makeSprite's gradient stops exactly,
+// trails fade with a destination-out quad, and sprites add up like 'lighter'. Falls back to the canvas path.
+function makeMatterGL(id) {
+    try {
+        const c = document.getElementById(id);
+        const gl = c && c.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: false, preserveDrawingBuffer: true });
+        if (!gl) return null;
+        const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+        const link = (vs, fs) => { const pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pr); if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error('link'); return pr; };
+        const sprite = link(
+            'attribute vec2 p;attribute vec2 q;attribute vec4 c;uniform vec2 s;varying vec2 vq;varying vec4 vc;void main(){vq=q;vc=c;gl_Position=vec4(p.x*s.x-1.0,1.0-p.y*s.y,0.0,1.0);}',
+            'precision mediump float;varying vec2 vq;varying vec4 vc;void main(){float t=length(vq);vec4 k;' +
+            'if(t<0.13)k=vec4(mix(vec3(1.0),vc.rgb,t/0.13),1.0);else if(t<0.38)k=vec4(vc.rgb,mix(1.0,0.3,(t-0.13)/0.25));else k=vec4(vc.rgb,max(0.0,mix(0.3,0.0,(t-0.38)/0.62)));' +
+            'float a=k.a*vc.a;gl_FragColor=vec4(k.rgb*a,a);}');
+        const fade = link('attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}', 'precision mediump float;uniform float k;void main(){gl_FragColor=vec4(0.0,0.0,0.0,k);}');
+        const quad = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+        return { c, gl, sprite, fade, quad, buf: gl.createBuffer(),
+            sp: gl.getAttribLocation(sprite, 'p'), sq: gl.getAttribLocation(sprite, 'q'), sc: gl.getAttribLocation(sprite, 'c'), ss: gl.getUniformLocation(sprite, 's'),
+            fp: gl.getAttribLocation(fade, 'p'), fk: gl.getUniformLocation(fade, 'k'),
+            v: new Float32Array(6 * 8 * 4096), n: 0 };
+    } catch (e) { return null; }
+}
+const MATTER_GL = makeMatterGL('matterGL');
+// The matter glow gets its own 1/3-scale WebGL canvas (same blur + screen styling as #bloomCanvas): copying a
+// WebGL canvas into the 2D bloom canvas forced a GPU read-back that cost ~10 ms a frame.
+const BLOOM_GL = MATTER_GL ? makeMatterGL('bloomGL') : null;
+const matterTargets = () => (BLOOM_GL && DOM.bloomToggle.checked ? [MATTER_GL, BLOOM_GL] : [MATTER_GL]);
+
+function matterGLResize() {
+    if (!MATTER_GL) return;
+    MATTER_GL.c.width = Math.floor(STATE.w * STATE.dpr);
+    MATTER_GL.c.height = Math.floor(STATE.h * STATE.dpr);
+    MATTER_GL.gl.viewport(0, 0, MATTER_GL.c.width, MATTER_GL.c.height);
+    if (BLOOM_GL) {
+        BLOOM_GL.c.width = Math.max(1, Math.floor(STATE.w / 3));
+        BLOOM_GL.c.height = Math.max(1, Math.floor(STATE.h / 3));
+        BLOOM_GL.gl.viewport(0, 0, BLOOM_GL.c.width, BLOOM_GL.c.height);
+    }
+}
+
+function matterGLClear() {
+    [MATTER_GL, BLOOM_GL].forEach((M) => {
+        if (!M) return;
+        M.gl.clearColor(0, 0, 0, 0);
+        M.gl.clear(M.gl.COLOR_BUFFER_BIT);
+    });
+}
+
+// Trails: dest *= (1 − k), the same as the canvas destination-out fill
+function matterGLFade(k) {
+    matterTargets().forEach((M) => fadeOne(M, k));
+}
+function fadeOne(M, k) {
+    const gl = M.gl;
+    if (k >= 0.999) { gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT); return; }
+    gl.useProgram(M.fade);
+    gl.bindBuffer(gl.ARRAY_BUFFER, M.quad);
+    gl.enableVertexAttribArray(M.fp);
+    gl.vertexAttribPointer(M.fp, 2, gl.FLOAT, false, 8, 0);
+    gl.uniform1f(M.fk, k);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.disableVertexAttribArray(M.fp);
+}
+
+function matterGLPush(x, y, d, rgb, alpha) {
+    const M = MATTER_GL, v = M.v;
+    if ((M.n + 6) * 8 > v.length) return;
+    const h = d / 2, x0 = x - h, x1 = x + h, y0 = y - h, y1 = y + h;
+    let o = M.n * 8;
+    const put = (px, py, qx, qy) => { v[o++] = px; v[o++] = py; v[o++] = qx; v[o++] = qy; v[o++] = rgb[0]; v[o++] = rgb[1]; v[o++] = rgb[2]; v[o++] = alpha; };
+    put(x0, y0, -1, -1); put(x1, y0, 1, -1); put(x0, y1, -1, 1);
+    put(x0, y1, -1, 1); put(x1, y0, 1, -1); put(x1, y1, 1, 1);
+    M.n += 6;
+}
+
+function matterGLFlush() {
+    const n = MATTER_GL.n;
+    if (!n) return;
+    const data = MATTER_GL.v.subarray(0, n * 8);
+    matterTargets().forEach((M) => flushOne(M, data, n));
+    MATTER_GL.n = 0;
+}
+function flushOne(M, data, n) {
+    const gl = M.gl;
+    gl.useProgram(M.sprite);
+    gl.bindBuffer(gl.ARRAY_BUFFER, M.buf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(M.sp); gl.vertexAttribPointer(M.sp, 2, gl.FLOAT, false, 32, 0);
+    gl.enableVertexAttribArray(M.sq); gl.vertexAttribPointer(M.sq, 2, gl.FLOAT, false, 32, 8);
+    gl.enableVertexAttribArray(M.sc); gl.vertexAttribPointer(M.sc, 4, gl.FLOAT, false, 32, 16);
+    gl.uniform2f(M.ss, 2 / STATE.w, 2 / STATE.h);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);   // 'lighter'
+    gl.drawArrays(gl.TRIANGLES, 0, n);
+    gl.disableVertexAttribArray(M.sp); gl.disableVertexAttribArray(M.sq); gl.disableVertexAttribArray(M.sc);
 }
 
 function buildSprites() {
@@ -481,7 +606,7 @@ class PolarityNode {
 
     draw(ctx, alpha) {
         if (!project(this.x, this.y, this.z, P)) return;
-        const rgb = this.charge > 0 ? NEON.plus : NEON.minus;
+        const rgb = this.charge > 0 ? NEON.plus : this.charge < 0 ? NEON.minus : NEON.neutral;
         const radius = Math.min(400, this.radius * P.s);
         const sx = P.x;
         const sy = P.y;
@@ -496,7 +621,7 @@ class PolarityNode {
         ctx.strokeStyle = rgba(rgb, 0.85 * alpha);
         ctx.lineWidth = 0.7;
         ctx.setLineDash([3, 4]);
-        ctx.lineDashOffset = -STATE.time * 0.4 * this.charge;
+        ctx.lineDashOffset = -STATE.time * 0.4 * (this.charge || 0.25);
         ctx.beginPath();
         for (let j = 0; j <= 28; j++) {
             const th = (j / 28) * TAU + this.phase;
@@ -515,7 +640,73 @@ class PolarityNode {
 }
 
 const LINK_BATCH = new Map();
+// Multitarity links on WebGL (#linkGL, between matter and the field layer): Safari's dashed curve strokes were
+// the single most expensive thing on the field canvas. Each curve is tessellated into 12 pieces and the shader
+// cuts the same [2, 4] px dash from the running length. Falls back to the canvas path.
+const LINK_GL = (() => {
+    try {
+        const c = document.getElementById('linkGL');
+        const gl = c && c.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true });
+        if (!gl) return null;
+        const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+        const prog = gl.createProgram();
+        gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec4 p;uniform vec2 s;varying float L;varying float A;void main(){L=p.z;A=p.w;gl_Position=vec4(p.x*s.x-1.0,1.0-p.y*s.y,0.0,1.0);}'));
+        gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, 'precision mediump float;uniform vec3 col;varying float L;varying float A;void main(){if(mod(L,6.0)>=2.0)discard;gl_FragColor=vec4(col*A,A);}'));
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+        return { c, gl, prog, buf: gl.createBuffer(), aP: gl.getAttribLocation(prog, 'p'), uS: gl.getUniformLocation(prog, 's'), uC: gl.getUniformLocation(prog, 'col'),
+            v: new Float32Array(4 * 2 * 12 * 2048), n: 0, drawn: false };
+    } catch (e) { return null; }
+})();
+
+function linkGLResize() {
+    if (!LINK_GL) return;
+    LINK_GL.c.width = Math.floor(STATE.w * STATE.dpr);
+    LINK_GL.c.height = Math.floor(STATE.h * STATE.dpr);
+    LINK_GL.gl.viewport(0, 0, LINK_GL.c.width, LINK_GL.c.height);
+}
+
+function linkGLCurve(x0, y0, cx, cy, x1, y1, opacity, width) {
+    const G = LINK_GL, v = G.v;
+    if ((G.n + 24) * 4 > v.length) return;
+    // a GL line is one device pixel: scale alpha by the canvas stroke's coverage
+    const a = Math.min(1, opacity * Math.min(1, width * STATE.dpr));
+    let px = x0, py = y0, len = 0, o = G.n * 4;
+    for (let k = 1; k <= 12; k++) {
+        const s = k / 12, u = 1 - s;
+        const qx = u * u * x0 + 2 * u * s * cx + s * s * x1, qy = u * u * y0 + 2 * u * s * cy + s * s * y1;
+        const seg = Math.sqrt((qx - px) * (qx - px) + (qy - py) * (qy - py));
+        v[o++] = px; v[o++] = py; v[o++] = len; v[o++] = a;
+        len += seg;
+        v[o++] = qx; v[o++] = qy; v[o++] = len; v[o++] = a;
+        px = qx; py = qy;
+    }
+    G.n += 24;
+}
+
+function linkGLFlush() {
+    const G = LINK_GL, gl = G.gl;
+    if (!G.n && !G.drawn) return;
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    G.drawn = G.n > 0;
+    if (G.n) {
+        gl.useProgram(G.prog);
+        gl.bindBuffer(gl.ARRAY_BUFFER, G.buf);
+        gl.bufferData(gl.ARRAY_BUFFER, G.v.subarray(0, G.n * 4), gl.DYNAMIC_DRAW);
+        gl.enableVertexAttribArray(G.aP);
+        gl.vertexAttribPointer(G.aP, 4, gl.FLOAT, false, 16, 0);
+        gl.uniform2f(G.uS, 2 / STATE.w, 2 / STATE.h);
+        gl.uniform3f(G.uC, NEON.link[0] / 255, NEON.link[1] / 255, NEON.link[2] / 255);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE);   // drawn with 'lighter' on the field layer
+        gl.drawArrays(gl.LINES, 0, G.n);
+    }
+    G.n = 0;
+}
+
 function flushLinks(ctx) {
+    if (LINK_GL) { linkGLFlush(); return; }
     LINK_BATCH.forEach((b) => { ctx.strokeStyle = rgba(NEON.link, b.o); ctx.lineWidth = b.w; ctx.stroke(b.p); });
     LINK_BATCH.clear();
 }
@@ -531,7 +722,8 @@ class MultitarityLink {
         this.genB = b.gen;
         this.age = 0;
         this.life = 240 + Math.random() * 360;
-        this.strength = 0.4 + Math.random() * 0.6;
+        // T = T₀ · e^(−|Δd|/λ): dimensional distance between the two shells weakens the link
+        this.strength = THEORY.tanglement(0.4 + Math.random() * 0.6, a.layer, b.layer, STATE.tangleLambda);
         this.pulsePhase = Math.random() * TAU;
     }
 
@@ -565,6 +757,7 @@ class MultitarityLink {
         const dm = Math.hypot(tx, ty) + 1;
         const bend = Math.min(0.7, (STATE.lensing / 100) * (hs * 3) / dm);
 
+        if (LINK_GL) { linkGLCurve(ax, ay, mx + tx * bend, my + ty * bend, P.x, P.y, opacity, 0.5 + pulse * 0.4); return; }
         // batched: links sharing a (1/32-step) opacity and width are stroked together in one path
         const oq = Math.round(opacity * 32), wq = Math.round((0.5 + pulse * 0.4) * 8), key = oq * 64 + wq;
         let b = LINK_BATCH.get(key);
@@ -635,7 +828,7 @@ class UniverseParticle {
         if (r < STATE.rh) return 'absorbed';
         if (r > STATE.radius * 1.9) return 'escaped';
 
-        const h = step * THEORY.timeDilation(r, STATE.rh);
+        const h = step * THEORY.timeDilation(r, STATE.rs);
         const nx = this.x / r;
         const ny = this.y / r;
         const nz = this.z / r;
@@ -654,7 +847,13 @@ class UniverseParticle {
             const py = node.y - this.y;
             const pz = node.z - this.z;
             const d2 = px * px + py * py + pz * pz;
-            if (d2 > node.reach2) continue;
+            if (d2 > node.reach2 || !STATE.concept) continue;
+            if (node.charge === 0) {
+                // No-node: neither pushes nor pulls; it balances, calming the matter that passes through it
+                const k = 1 - 0.01 * node.strength * (1 - d2 / node.reach2) * h;
+                this.vx *= k; this.vy *= k; this.vz *= k;
+                continue;
+            }
             const d = Math.sqrt(d2) + 10 * STATE.unit;
             const f = node.charge * node.strength * 0.08 * STATE.unit * STATE.unit / d;
             ax += (px / d) * f;
@@ -674,8 +873,8 @@ class UniverseParticle {
 
         // Frame dragging inside the ergosphere: matter co-rotates with the spin
         const a = Math.abs(STATE.spin);
-        const ergo = STATE.rs * (2 + a * 2);
-        if (r < ergo) {
+        const ergo = THEORY.ergosphere(STATE.rs, a, this.y / r);
+        if (r < ergo && a > 0) {
             const rxz = Math.hypot(this.x, this.z) || 0.001;
             const tx = STATE.dir * -this.z / rxz;
             const tz = STATE.dir * this.x / rxz;
@@ -684,6 +883,15 @@ class UniverseParticle {
             const dv = (a * Math.sqrt(STATE.GM / r) - vt) * kd;
             this.vx += dv * tx;
             this.vz += dv * tz;
+        }
+
+        // Inside the ISCO no circular orbit is stable: matter near the disk plane sheds its orbit and plunges
+        if (r < STATE.isco && Math.abs(this.y) < r * 0.35) {
+            const rxz = Math.sqrt(this.x * this.x + this.z * this.z) || 0.001;
+            const tx = -this.z / rxz, tz = this.x / rxz;
+            const vt = this.vx * tx + this.vz * tz;
+            this.vx -= vt * tx * 0.02 * h;
+            this.vz -= vt * tz * 0.02 * h;
         }
 
         // Accretion viscosity: matter spirals inward and settles into the disk
@@ -707,7 +915,7 @@ class UniverseParticle {
             this.isKnown = true;
         }
 
-        this.depth += h * 0.001 * Math.log(STATE.infinityParam) * (STATE.rh / r);
+        if (STATE.concept) this.depth += h * 0.001 * Math.log(STATE.infinityParam) * (STATE.rh / r);
         if (this.hawking > 0) this.hawking = Math.max(0, this.hawking - 0.02 * h);
         return null;
     }
@@ -833,6 +1041,7 @@ const SLIDERS = [
     ['dimensionalitySlider', 'dimensionality', (v) => v + 'D', buildPolarityNodes],
     ['polaritySlider', 'polarityStrength', (v) => v.toFixed(1), buildPolarityNodes],
     ['multitaritySlider', 'multitarityDensity', (v) => v + '%'],
+    ['tangleSlider', 'tangleLambda', (v) => 'λ ' + Number(v).toFixed(2)],
     ['decoherenceSlider', 'decoherence', (v) => v + '%'],
     ['speedSlider', 'speed', (v) => v.toFixed(1) + 'x'],
     ['particleSlider', 'particleCount', (v) => v.toFixed(0), syncParticleCount],
@@ -876,6 +1085,9 @@ function resizeCanvases() {
     [DOM.gridCtx, DOM.matterCtx, DOM.fieldCtx].forEach((ctx) => {
         ctx.setTransform(STATE.dpr, 0, 0, STATE.dpr, 0, 0);
     });
+    gridGLResize();
+    matterGLResize();
+    linkGLResize();
     DOM.bloomCanvas.width = Math.max(1, Math.floor(STATE.w / 3));
     DOM.bloomCanvas.height = Math.max(1, Math.floor(STATE.h / 3));
 
@@ -894,6 +1106,8 @@ function updateSingularity() {
     STATE.effMass = THEORY.effectiveMass(STATE.mass, STATE.pool.length, STATE.particleMass);
     STATE.rs = Math.min(STATE.radius * 0.3, THEORY.schwarzschild(STATE.effMass) * STATE.unit);
     STATE.rh = THEORY.kerrHorizon(STATE.rs, a);
+    STATE.rsh = THEORY.shadowRadius(STATE.rs);
+    STATE.isco = THEORY.iscoPrograde(STATE.rs, a);   // the disk co-rotates with the spin, so it is always prograde
     // Shell theorem: matter that falls in was already pulling on everything
     // outside it, so the pull on the field follows the core mass alone
     STATE.GM = THEORY.gravity(STATE.mass) * Math.pow(STATE.unit, 3);
@@ -953,7 +1167,7 @@ function buildSky() {
     });
 }
 
-// Poles come in ± pairs so the net charge of the universe is always zero
+// Poles come in triads: node (+), antinode (−) and no-node (0), so the net charge of the universe is always zero
 function buildPolarityNodes() {
     const pairs = THEORY.polePairsPerShell(STATE.dimensionality, STATE.polarityStrength);
     STATE.polarityNodes = [[], [], [], [], []];
@@ -962,6 +1176,7 @@ function buildPolarityNodes() {
             const strength = 0.3 + Math.random() * STATE.polarityStrength;
             STATE.polarityNodes[layer].push(new PolarityNode(layer, strength, 1));
             STATE.polarityNodes[layer].push(new PolarityNode(layer, strength, -1));
+            STATE.polarityNodes[layer].push(new PolarityNode(layer, strength, 0));   // no-node: the neutral balance point
         }
     }
     if (STATE.follow && STATE.follow.obj instanceof PolarityNode) setFocus('core');
@@ -985,6 +1200,7 @@ function syncParticleCount() {
 
 function clearTrails() {
     if (DOM.matterCtx) DOM.matterCtx.clearRect(0, 0, STATE.w, STATE.h);
+    matterGLClear();
 }
 
 // ===== FOCUS =====
@@ -1021,7 +1237,7 @@ function setFocus(name, obj) {
     if (name === 'whole') zoom = 1;
     else if (name === 'core') zoom = 0.2 * STATE.radius / STATE.rh;
     else if (name === 'photon') zoom = 0.32 * STATE.radius / STATE.rh;
-    else if (name === 'disk') zoom = 0.45 * STATE.radius / (STATE.rs * 4.8);
+    else if (name === 'disk') zoom = 0.45 * STATE.radius / (STATE.isco + STATE.rs * 3.4);
     else if (name === 'toroidal') zoom = 0.42 * STATE.radius / (STATE.rs * 5.2);
     else if (name === 'jetN' || name === 'jetS') zoom = 0.55 * STATE.radius / (jetLength() * 0.55);
     else if (name.indexOf('shell') === 0) zoom = 0.95 / SCALES[parseInt(name.slice(5))].shell[1];
@@ -1210,6 +1426,7 @@ function simulate(step) {
 }
 
 function updateMultitarityLinks(step) {
+    if (!STATE.concept) { STATE.multitarityLinks.length = 0; return; }   // established-only view: no tanglement
     STATE.multitarityLinks = STATE.multitarityLinks.filter((link) => link.update(step));
 
     const particles = STATE.particles;
@@ -1223,6 +1440,8 @@ function updateMultitarityLinks(step) {
         for (let tries = 0; tries < 8; tries++) {
             const b = particles[Math.floor(Math.random() * particles.length)];
             if (!b.active || b.layer === a.layer) continue;
+            // links form in proportion to their tanglement, so distant dimensions link rarely
+            if (Math.random() > Math.exp(-Math.abs(a.layer - b.layer) / STATE.tangleLambda)) continue;
             const dx = a.x - b.x;
             const dy = a.y - b.y;
             const dz = a.z - b.z;
@@ -1402,8 +1621,6 @@ function buildFieldLines() {
     return lines;
 }
 
-const GLOW_DEC = 3;   // the soft glow only needs every third point
-const GLOW_BY_RGB = new Map();
 function strokeFieldLines(ctx, lines, front) {
     // Lines that share colour, (1/32-step) brightness, width and dash rhythm are stroked as one path:
     // the same three neon passes as before, a fraction of the draw calls.
@@ -1414,38 +1631,28 @@ function strokeFieldLines(ctx, lines, front) {
         const aq = Math.round(L.alpha * 32), oq = Math.round(L.dashOffset * 2);
         const key = L.rgb.join(',') + '|' + aq + '|' + L.width + '|' + L.dash.join(',') + '|' + oq;
         let bk = B.get(key);
-        if (!bk) { const gk = L.rgb.join(','); let G = GLOW_BY_RGB.get(gk); if (!G) { G = { g: new Path2D(), rgb: L.rgb, a: 0, n: 0, w: 0 }; GLOW_BY_RGB.set(gk, G); } bk = { p: new Path2D(), g: G.g, G, rgb: L.rgb, alpha: aq / 32, width: L.width, dash: L.dash, off: oq / 2, any: false }; B.set(key, bk); }
-        const p = L.pts, path = bk.p, gp = bk.g;
-        let pen = false, k = 0;
+        if (!bk) { bk = { p: new Path2D(), rgb: L.rgb, alpha: aq / 32, width: L.width, dash: L.dash, off: oq / 2, any: false }; B.set(key, bk); }
+        const p = L.pts, path = bk.p;
+        let pen = false;
         for (let i = 1; i < L.n; i++) {
             const a = (i - 1) * 4;
             const b = i * 4;
             if (!p[a + 3] || !p[b + 3] || ((p[a + 2] + p[b + 2]) * 0.5 < depth) !== front) {
-                if (pen && k % GLOW_DEC) gp.lineTo(p[a], p[a + 1]);   // close the glow run at the true end
                 pen = false;
                 continue;
             }
             if (!pen) {
                 path.moveTo(p[a], p[a + 1]);
-                gp.moveTo(p[a], p[a + 1]);
-                pen = true; k = 0;
+                pen = true;
             }
             path.lineTo(p[b], p[b + 1]);
-            if (++k % GLOW_DEC === 0 || i === L.n - 1) gp.lineTo(p[b], p[b + 1]);   // the soft glow needs only every few points
             bk.any = true;
         }
     }
-    // Neon: one soft glow stroke per colour, then per line a thin bright filament and racing white-hot pulses
-    GLOW_BY_RGB.forEach((G) => {
-        if (!G.n) return;
-        ctx.setLineDash([]); ctx.lineWidth = G.w * 4; ctx.strokeStyle = rgba(G.rgb, (G.a / G.n) * 0.1); ctx.stroke(G.g);
-    });
-    GLOW_BY_RGB.clear();
+    // Neon: per bucket a thin bright filament and racing white-hot pulses (the soft glow comes from the bloom layer)
     B.forEach((bk) => {
         if (!bk.any) return;
         ctx.setLineDash([]);
-        // the wide soft glow goes to the 1/3-scale bloom layer when bloom is on (it is blurred there anyway)
-        bk.G.a += bk.alpha; bk.G.n++; bk.G.w = Math.max(bk.G.w, bk.width);
         ctx.lineWidth = bk.width;
         ctx.strokeStyle = rgba(bk.rgb, bk.alpha * 0.75);
         ctx.stroke(bk.p);
@@ -1473,17 +1680,25 @@ function render(step) {
     g.clearRect(0, 0, STATE.w, STATE.h);
     if (DOM.showStars.checked) drawSky(g, hs);
     if (DOM.gridToggle.checked) drawSpacetimeGrid(g);
+    if (GRID_GL) gridGLFlush();
 
     if (STATE.isRunning || STATE.dragging || CAM.moving > 0.0005) {
         frontParticles.length = 0;
         const moving = STATE.dragging || CAM.moving > 0.002 || STATE.follow;
-        m.globalCompositeOperation = 'destination-out';
-        m.fillStyle = `rgba(0, 0, 0, ${moving ? 0.55 : 1 - STATE.trails / 100})`;
-        m.fillRect(0, 0, STATE.w, STATE.h);
-        m.globalCompositeOperation = 'lighter';
-        drawParticles(m, hs, false);
-        m.globalCompositeOperation = 'source-over';
-        m.globalAlpha = 1;
+        const fadeK = moving ? 0.55 : 1 - STATE.trails / 100;
+        if (MATTER_GL) {
+            matterGLFade(fadeK);
+            drawParticles(m, hs, false);
+            matterGLFlush();
+        } else {
+            m.globalCompositeOperation = 'destination-out';
+            m.fillStyle = `rgba(0, 0, 0, ${fadeK})`;
+            m.fillRect(0, 0, STATE.w, STATE.h);
+            m.globalCompositeOperation = 'lighter';
+            drawParticles(m, hs, false);
+            m.globalCompositeOperation = 'source-over';
+            m.globalAlpha = 1;
+        }
     }
 
     const lines = buildFieldLines();
@@ -1494,7 +1709,7 @@ function render(step) {
     if (DOM.showDisk.checked) drawAccretionDisk(f, false, hs);
     strokeFieldLines(f, lines, false);
 
-    if (DOM.showPolarity.checked) {
+    if (DOM.showPolarity.checked && STATE.concept) {
         STATE.polarityNodes.forEach((layer, idx) => {
             if (!isLayerVisible(idx)) return;
             layer.forEach((node) => node.draw(f, STATE.currentLayer === 5 ? 0.75 : 1));
@@ -1508,7 +1723,7 @@ function render(step) {
         });
         flushLinks(f);
         f.setLineDash([]);
-    }
+    } else if (LINK_GL) linkGLFlush();   // clears the layer once
 
     f.globalCompositeOperation = 'source-over';
     if (SING.ok) drawHorizon(f, hs);
@@ -1530,7 +1745,7 @@ function render(step) {
         const bw = DOM.bloomCanvas.width;
         const bh = DOM.bloomCanvas.height;
         b.clearRect(0, 0, bw, bh);
-        b.drawImage(DOM.matterCanvas, 0, 0, bw, bh);
+        if (!BLOOM_GL) b.drawImage(MATTER_GL ? MATTER_GL.c : DOM.matterCanvas, 0, 0, bw, bh);
         b.drawImage(DOM.fieldCanvas, 0, 0, bw, bh);
     }
 }
@@ -1548,6 +1763,7 @@ function drawParticles(ctx, hs, frontPass) {
     const hs2 = Math.pow(hs * 1.1, 2);
     const list = frontPass ? frontParticles : STATE.particles;
     const depth = SING.ok ? SING.z : -Infinity;
+    const toGL = !frontPass && !!MATTER_GL;
 
     for (let i = 0; i < list.length; i++) {
         const p = list[i];
@@ -1593,6 +1809,7 @@ function drawParticles(ctx, hs, frontPass) {
 
         const r = Math.min(48, scale.size * (0.8 + p.heat * 1.1 + p.hawking * 1.6) * P.s);
         const d = Math.max(1.2, r * 5);
+        if (toGL) { matterGLPush(P.x, P.y, d, sprite.rgb, Math.min(1, alpha)); continue; }
         ctx.globalAlpha = Math.min(1, alpha);
         ctx.drawImage(sprite, P.x - d / 2, P.y - d / 2, d, d);
     }
@@ -1637,6 +1854,17 @@ function drawSky(ctx, hs) {
         }
         const tw = 0.55 + 0.45 * Math.sin(t * s.rate + s.twinkle);
         const size = s.size * Math.sqrt(mag);
+        if (GRID_GL) {   // two triangles per star in the WebGL layer instead of one canvas fillRect each
+            const sv = GRID_GL.sv;
+            if (GRID_GL.ns + 6 > sv.length / 6) return;
+            const r = light ? 40 / 255 : s.color[0] / 255, gg = light ? 30 / 255 : s.color[1] / 255, b = light ? 90 / 255 : s.color[2] / 255;
+            const al = light ? 0.5 * tw : Math.min(1, 0.85 * tw * mag), h = size / 2;
+            const x0 = x - h, x1 = x + h, y0 = y - h, y1 = y + h;
+            let o = GRID_GL.ns * 6;
+            for (const [vx, vy] of [[x0, y0], [x1, y0], [x0, y1], [x0, y1], [x1, y0], [x1, y1]]) { sv[o++] = vx; sv[o++] = vy; sv[o++] = r; sv[o++] = gg; sv[o++] = b; sv[o++] = al; }
+            GRID_GL.ns += 6;
+            return;
+        }
         ctx.fillStyle = light ? `rgba(40, 30, 90, ${0.5 * tw})` : rgba(s.color, Math.min(1, 0.85 * tw * mag));
         ctx.fillRect(x - size / 2, y - size / 2, size, size);
     });
@@ -1646,7 +1874,61 @@ function drawSky(ctx, hs) {
 // + poles, lifted by − poles and rippled by gravitational waves after a bounce
 const GRID_COLORS_LIGHT = [[60, 50, 170], [110, 30, 170], [170, 0, 120], [120, 0, 80]];
 
-const GRID_CACHE = { side: 0, v: null, f: null, stamp: 0 };
+const GRID_CACHE = { side: 0, v: null, f: null, h: null, key: '', stamp: 0 };
+
+// Spacetime grid on WebGL (#gridGL, stacked just above the sky canvas). Safari replays every 2D path
+// command each frame; ~3,700 grid segments as one GL_LINES draw cost almost nothing. Falls back to canvas 2D.
+const GRID_GL = (() => {
+    try {
+        const c = document.getElementById('gridGL');
+        const gl = c && c.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true });
+        if (!gl) return null;
+        const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+        const prog = gl.createProgram();
+        gl.attachShader(prog, sh(gl.VERTEX_SHADER, 'attribute vec2 p;attribute vec4 c;uniform vec2 s;varying vec4 v;void main(){v=c;gl_Position=vec4(p.x*s.x-1.0,1.0-p.y*s.y,0.0,1.0);}'));
+        gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, 'precision mediump float;varying vec4 v;void main(){gl_FragColor=vec4(v.rgb*v.a,v.a);}'));
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+        const buf = gl.createBuffer();
+        return { c, gl, prog, buf, aP: gl.getAttribLocation(prog, 'p'), aC: gl.getAttribLocation(prog, 'c'), uS: gl.getUniformLocation(prog, 's'),
+            v: new Float32Array(2 * 31 * 60 * 12), sv: new Float32Array(6 * 6 * 4096), col: new Float32Array(80), ns: 0, nl: 0, drawn: false };
+    } catch (e) { return null; }
+})();
+
+function gridGLResize() {
+    if (!GRID_GL) return;
+    GRID_GL.c.width = Math.floor(STATE.w * STATE.dpr);
+    GRID_GL.c.height = Math.floor(STATE.h * STATE.dpr);
+    GRID_GL.gl.viewport(0, 0, GRID_GL.c.width, GRID_GL.c.height);
+}
+
+// Draws what drawSky (stars) and drawSpacetimeGrid (lines) queued this frame, then resets the queues
+function gridGLFlush() {
+    const G = GRID_GL, gl = G.gl;
+    if (!G.ns && !G.nl && !G.drawn) return;   // already blank
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    G.drawn = G.ns + G.nl > 0;
+    if (G.drawn) {
+        gl.useProgram(G.prog);
+        gl.bindBuffer(gl.ARRAY_BUFFER, G.buf);
+        gl.enableVertexAttribArray(G.aP);
+        gl.enableVertexAttribArray(G.aC);
+        gl.uniform2f(G.uS, 2 / STATE.w, 2 / STATE.h);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        const pass = (arr, n, mode) => {
+            if (!n) return;
+            gl.bufferData(gl.ARRAY_BUFFER, arr.subarray(0, n * 6), gl.DYNAMIC_DRAW);
+            gl.vertexAttribPointer(G.aP, 2, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(G.aC, 4, gl.FLOAT, false, 24, 8);
+            gl.drawArrays(mode, 0, n);
+        };
+        pass(G.sv, G.ns, gl.TRIANGLES);   // stars first, grid over them (same order as the canvas version)
+        pass(G.v, G.nl, gl.LINES);
+    }
+    G.ns = 0; G.nl = 0;
+}
 function drawSpacetimeGrid(ctx) {
     const lines = 30;
     const samples = 60;
@@ -1672,7 +1954,7 @@ function drawSpacetimeGrid(ctx) {
             const dx = x - n.x;
             const dz = z - n.z;
             const d2 = dx * dx + dz * dz;
-            if (d2 > poleCut) continue; // beyond ~6σ the well is under 1e-4 of its depth
+            if (d2 > poleCut || !n.charge || !STATE.concept) continue; // beyond ~6σ the well is under 1e-4 of its depth; no-nodes leave the sheet flat
             y -= n.charge * n.strength * 6 * STATE.unit * Math.exp(-d2 / (2 * sigma2));
         }
         for (let i = 0; i < ripples.length; i++) {
@@ -1686,18 +1968,37 @@ function drawSpacetimeGrid(ctx) {
 
     // Batch segments by brightness and color so the grid is ~20 strokes
     const buckets = [];
-    for (let i = 0; i < 20; i++) buckets.push(new Path2D());
+    if (!GRID_GL) for (let i = 0; i < 20; i++) buckets.push(new Path2D());
 
     // Lines in both directions share lattice points: evaluate height + projection once per point
     const step = samples / lines, side = samples + 1;
     if (GRID_CACHE.side !== side) { GRID_CACHE.side = side; GRID_CACHE.v = new Float64Array(side * side * 3); GRID_CACHE.f = new Uint32Array(side * side); }
     const gv = GRID_CACHE.v, gf = GRID_CACHE.f, stamp = ++GRID_CACHE.stamp;
+    // Heights change slowly (poles orbit, the well follows the mass): refresh them every third frame,
+    // or every frame while a ripple is travelling or the sheet's size/depth changed. Projection stays per frame.
+    if (!GRID_CACHE.h || GRID_CACHE.h.length !== side * side) { GRID_CACHE.h = new Float64Array(side * side); GRID_CACHE.key = ''; }
+    const hKey = extent.toFixed(2) + '|' + depth.toFixed(2) + '|' + base.toFixed(2) + '|' + poles.length + '|' + STATE.concept;
+    const fresh = ripples.length > 0 || stamp % 3 === 0 || hKey !== GRID_CACHE.key;
+    GRID_CACHE.key = hKey;
+    const gh = GRID_CACHE.h;
+    // WebGL path: every segment goes into one vertex buffer and one GL_LINES draw
+    const glv = GRID_GL ? GRID_GL.v : null;
+    let gn = 0;
+    if (glv) {
+        // a GL line is one device pixel wide; scale alpha to match the 0.7 px canvas stroke's coverage
+        const cov = Math.min(1, 0.7 * STATE.dpr);
+        for (let i = 0; i < 20; i++) {
+            const fade = (Math.floor(i / 4) + 0.5) / 5, rgb = palette[i % 4];
+            GRID_GL.col[i * 4] = rgb[0] / 255; GRID_GL.col[i * 4 + 1] = rgb[1] / 255; GRID_GL.col[i * 4 + 2] = rgb[2] / 255; GRID_GL.col[i * 4 + 3] = 0.5 * fade * cov;
+        }
+    }
     for (let axis = 0; axis < 2; axis++) {
         for (let i = 0; i <= lines; i++) {
             const a = -extent + (2 * extent * i) / lines;
             let prevOk = false;
             let px = 0;
             let py = 0;
+            let run = -1;   // bucket of the polyline being extended (one subpath per run, not per segment)
             for (let j = 0; j <= samples; j++) {
                 const b = -extent + (2 * extent * j) / samples;
                 const x = axis ? a : b;
@@ -1707,7 +2008,7 @@ function drawSpacetimeGrid(ctx) {
                 if (gf[cell] === stamp) {
                     y = gv[cell * 3]; P.x = gv[cell * 3 + 1]; P.y = gv[cell * 3 + 2]; ok = P.y === P.y;
                 } else {
-                    y = height(x, z);
+                    y = fresh ? (gh[cell] = height(x, z)) : gh[cell];
                     ok = project(x, y, z, P);
                     gf[cell] = stamp; gv[cell * 3] = y; gv[cell * 3 + 1] = P.x; gv[cell * 3 + 2] = ok ? P.y : NaN;
                 }
@@ -1716,10 +2017,18 @@ function drawSpacetimeGrid(ctx) {
                     if (fade > 0.02) {
                         const dip = clamp((base - y) / depth, 0, 0.999);
                         const bucket = Math.min(4, Math.floor(fade * 5)) * 4 + Math.floor(dip * 4);
-                        buckets[bucket].moveTo(px, py);
-                        buckets[bucket].lineTo(P.x, P.y);
-                    }
-                }
+                        if (glv) {
+                            if (gn + 12 <= glv.length) {
+                                const c = GRID_GL.col, o = bucket * 4;
+                                glv[gn++] = px; glv[gn++] = py; glv[gn++] = c[o]; glv[gn++] = c[o + 1]; glv[gn++] = c[o + 2]; glv[gn++] = c[o + 3];
+                                glv[gn++] = P.x; glv[gn++] = P.y; glv[gn++] = c[o]; glv[gn++] = c[o + 1]; glv[gn++] = c[o + 2]; glv[gn++] = c[o + 3];
+                            }
+                        } else {
+                            if (bucket !== run) { buckets[bucket].moveTo(px, py); run = bucket; }
+                            buckets[bucket].lineTo(P.x, P.y);
+                        }
+                    } else run = -1;
+                } else run = -1;
                 prevOk = ok;
                 px = P.x;
                 py = P.y;
@@ -1727,6 +2036,7 @@ function drawSpacetimeGrid(ctx) {
         }
     }
 
+    if (glv) { GRID_GL.nl = gn / 6; return; }
     ctx.lineWidth = 0.7;
     for (let i = 0; i < 20; i++) {
         const fade = (Math.floor(i / 4) + 0.5) / 5;
@@ -1750,7 +2060,7 @@ function drawLensHalo(ctx, hs) {
 
 // The disk lies in the spin plane: segments behind the singularity are drawn
 // before the shadow, nearer ones after it. Beaming brightens the approaching side.
-const DISK_BINS = 16;
+const DISK_BINS = 10;
 const diskBins = new Array(DISK_BINS).fill(null);
 
 function drawAccretionDisk(ctx, front, hs) {
@@ -1767,7 +2077,7 @@ function drawAccretionDisk(ctx, front, hs) {
 
     for (let i = 0; i < rings; i++) {
         const f = i / (rings - 1);
-        const r = STATE.rs * (1.6 + f * 3.4);
+        const r = STATE.isco + f * STATE.rs * 3.4;   // inner edge at the ISCO
         const shimmer = 0.06 * Math.sin(STATE.time * 0.01 + i * 0.7);
         const color = diskColor(f + shimmer);
         const baseAlpha = (0.55 - f * 0.33) * (0.75 + c * 0.5);
@@ -1936,6 +2246,14 @@ function drawRings(ctx) {
     ctx.arc(SING.x, SING.y, STATE.rs * 1.5 * SING.s, 0, TAU);
     ctx.stroke();
 
+    // Apparent shadow: the scene is drawn at true (unlensed) positions, so the black disk is the horizon itself.
+    // A distant telescope sees the shadow enlarged by lensing to (√27/2) r_s ≈ 2.6 r_s (EHT: M87*, Sgr A*); marked here.
+    ctx.strokeStyle = 'rgba(255, 214, 140, 0.32)';
+    ctx.setLineDash([1, 5]);
+    ctx.beginPath();
+    ctx.arc(SING.x, SING.y, STATE.rsh * SING.s, 0, TAU);
+    ctx.stroke();
+
     // Ergosphere equator at r_s in the spin plane
     if (a > 0.01) {
         ctx.strokeStyle = 'rgba(180, 120, 255, 0.55)';
@@ -2031,10 +2349,9 @@ function updateStats() {
     DOM.hawkingCount.textContent = STATE.hawkingTotal;
     DOM.bounceCount.textContent = STATE.bounces;
 
-    let poles = 0;
-    let charge = 0;
-    STATE.polarityNodes.forEach((layer) => layer.forEach((n) => { poles++; charge += n.charge; }));
-    DOM.polarityNodes.textContent = `${poles} · ${charge}`;
+    let plus = 0, minus = 0, zero = 0;
+    STATE.polarityNodes.forEach((layer) => layer.forEach((n) => { if (n.charge > 0) plus++; else if (n.charge < 0) minus++; else zero++; }));
+    DOM.polarityNodes.textContent = `+${plus} −${minus} ○${zero}`;
     DOM.multitarityLinks.textContent = STATE.multitarityLinks.length;
     DOM.fpsCount.textContent = STATE.fps;
 
@@ -2213,6 +2530,10 @@ function setupEventListeners() {
     DOM.resetColorsBtn.addEventListener('click', resetColors);
     [DOM.bloomToggle, DOM.gridToggle].forEach((el) => el.addEventListener('change', applyLook));
     DOM.cinematicToggle.addEventListener('change', () => { applyLook(); clearTrails(); });
+    const conceptToggle = $('conceptToggle');
+    const applyConcept = () => { STATE.concept = conceptToggle.checked; DOM.viewport.classList.toggle('concept-on', STATE.concept); };
+    conceptToggle.addEventListener('change', applyConcept);
+    applyConcept();
 
     DOM.pauseBtn.addEventListener('click', togglePause);
     DOM.resetBtn.addEventListener('click', resetUniverse);
@@ -2360,12 +2681,29 @@ function exportImage() {
     ctx.fillStyle = backgroundStops()[1];
     ctx.fillRect(0, 0, out.width, out.height);
     ctx.drawImage(DOM.gridCanvas, 0, 0);
-    ctx.drawImage(DOM.matterCanvas, 0, 0);
+    if (GRID_GL) {   // the GL buffer is only readable in the task that drew it: queue, draw and copy now
+        const hs = SING.ok ? STATE.rh * SING.s : 0;
+        const scratch = document.createElement('canvas').getContext('2d');   // nebulae are already on gridCanvas
+        if (DOM.showStars.checked) drawSky(scratch, hs);
+        if (DOM.gridToggle.checked) drawSpacetimeGrid(scratch);
+        gridGLFlush();
+        ctx.drawImage(GRID_GL.c, 0, 0);
+    }
+    ctx.drawImage(MATTER_GL ? MATTER_GL.c : DOM.matterCanvas, 0, 0);
+    if (LINK_GL && DOM.showMultitarity.checked) {   // GL buffer is only readable in the task that drew it
+        const hs = SING.ok ? STATE.rh * SING.s : 0;
+        STATE.multitarityLinks.forEach((link) => { if (isLayerVisible(link.a.layer) || isLayerVisible(link.b.layer)) link.draw(null, hs); });
+        linkGLFlush();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.drawImage(LINK_GL.c, 0, 0);
+        ctx.globalCompositeOperation = 'source-over';
+    }
     ctx.drawImage(DOM.fieldCanvas, 0, 0);
     if (DOM.bloomToggle.checked) {
         ctx.globalCompositeOperation = 'screen';
         ctx.globalAlpha = 0.5;
         ctx.drawImage(DOM.bloomCanvas, 0, 0, out.width, out.height);
+        if (BLOOM_GL) ctx.drawImage(BLOOM_GL.c, 0, 0, out.width, out.height);
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = 'source-over';
     }

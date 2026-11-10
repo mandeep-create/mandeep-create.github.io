@@ -21,9 +21,14 @@
         <!-- Viewport: background + canvas layers (sky & grid, matter with trails, fields, bloom) -->
         <div id="viewport" class="viewport cinematic">
             <canvas id="gridCanvas"></canvas>
+            <canvas id="gridGL"></canvas>
             <canvas id="matterCanvas"></canvas>
+            <canvas id="matterGL"></canvas>
+            <canvas id="linkGL"></canvas>
             <canvas id="fieldCanvas"></canvas>
             <canvas id="bloomCanvas"></canvas>
+            <canvas id="bloomGL"></canvas>
+            <div id="conceptBanner" class="concept-banner" title="Concept tier: polarity triads, Multitarity tanglement and ∞ depth are Mandeep S. Bhullar's Multiversal Codependence Theory, shown as they would act if they existed. Not observed.">CONCEPT LAYER · IF IT EXISTED · NOT OBSERVED</div>
         </div>
 
         <!-- Header -->
@@ -192,43 +197,43 @@
                     <h3 class="section-toggle">Singularity</h3>
                     <div class="section-body">
                         <div class="control-group">
-                            <label for="massSlider">Core Mass M₀</label>
+                            <label for="massSlider">Core Mass M₀ <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="massSlider" min="5" max="100" step="1" value="30" class="slider">
                             <span id="massValue" class="value-display">30</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="spinSlider">Spin ⟳ · ⟲</label>
+                            <label for="spinSlider">Spin ⟳ · ⟲ <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="spinSlider" min="-0.99" max="0.99" step="0.01" value="0.6" class="slider spin-slider">
                             <span id="spinValue" class="value-display">⟲ 0.60</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="hawkingSlider">Hawking Radiation</label>
+                            <label for="hawkingSlider">Hawking Radiation <span class="tier t-res" title="Research ongoing: predicted or partly observed, still being studied">Research</span></label>
                             <input type="range" id="hawkingSlider" min="0" max="100" step="5" value="30" class="slider">
                             <span id="hawkingValue" class="value-display">30%</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="bounceSlider">Bounce Threshold</label>
+                            <label for="bounceSlider">Bounce Threshold <span class="tier t-thy" title="Theory: unproven, no evidence yet">Theory</span></label>
                             <input type="range" id="bounceSlider" min="10" max="90" step="5" value="40" class="slider">
                             <span id="bounceValue" class="value-display">40%</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="particleMassSlider">Matter Mass m</label>
+                            <label for="particleMassSlider">Matter Mass m <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="particleMassSlider" min="0" max="0.2" step="0.01" value="0.05" class="slider">
                             <span id="particleMassValue" class="value-display">0.05</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="viscositySlider">Accretion Viscosity</label>
+                            <label for="viscositySlider">Accretion Viscosity <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="viscositySlider" min="0" max="100" step="5" value="30" class="slider">
                             <span id="viscosityValue" class="value-display">30%</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="lensingSlider">Gravitational Lensing</label>
+                            <label for="lensingSlider">Gravitational Lensing <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="lensingSlider" min="0" max="100" step="5" value="60" class="slider">
                             <span id="lensingValue" class="value-display">60%</span>
                         </div>
@@ -287,25 +292,25 @@
                     <h3 class="section-toggle">Fields &amp; Quasar</h3>
                     <div class="section-body">
                         <div class="control-group">
-                            <label for="fieldIntensitySlider">Field Intensity</label>
+                            <label for="fieldIntensitySlider">Field Intensity <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="fieldIntensitySlider" min="0" max="200" step="5" value="100" class="slider">
                             <span id="fieldIntensityValue" class="value-display">100%</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="blinkSlider">Neon Blink Rate</label>
+                            <label for="blinkSlider">Neon Blink Rate <span class="tier t-dsp" title="Display setting only">Display</span></label>
                             <input type="range" id="blinkSlider" min="0" max="100" step="5" value="50" class="slider">
                             <span id="blinkValue" class="value-display">50%</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="fieldDensitySlider">Field Line Density</label>
+                            <label for="fieldDensitySlider">Field Line Density <span class="tier t-dsp" title="Display setting only">Display</span></label>
                             <input type="range" id="fieldDensitySlider" min="1" max="3" step="1" value="2" class="slider">
                             <span id="fieldDensityValue" class="value-display">2</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="jetPowerSlider">Quasar Jet Power</label>
+                            <label for="jetPowerSlider">Quasar Jet Power <span class="tier t-res" title="Research ongoing: predicted or partly observed, still being studied">Research</span></label>
                             <input type="range" id="jetPowerSlider" min="0" max="200" step="5" value="100" class="slider">
                             <span id="jetPowerValue" class="value-display">100%</span>
                         </div>
@@ -316,38 +321,45 @@
                 <div class="control-section closed">
                     <h3 class="section-toggle">Theory</h3>
                     <div class="section-body">
+                        <label class="concept-switch" title="Off shows established physics only: no polarity triads, no tanglement links, no ∞ depth"><input type="checkbox" id="conceptToggle" checked> Concept layer · if it existed</label>
                         <div class="control-group">
-                            <label for="knownRatioSlider">Known / Total</label>
+                            <label for="knownRatioSlider">Known / Total <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="knownRatioSlider" min="0" max="100" step="1" value="5" class="slider">
                             <span id="knownRatioValue" class="value-display">5%</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="infinitySlider">Infinity ∞</label>
+                            <label for="infinitySlider">Infinity ∞ <span class="tier t-con" title="Concept: what it would do if it existed (Mandeep S. Bhullar's Multiversal Codependence Theory)">Concept</span></label>
                             <input type="range" id="infinitySlider" min="100" max="5000" step="100" value="1000" class="slider">
                             <span id="infinityValue" class="value-display">1000</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="dimensionalitySlider">Dimensionality n</label>
+                            <label for="dimensionalitySlider">Dimensionality n <span class="tier t-thy" title="Theory: unproven, no evidence yet">Theory</span></label>
                             <input type="range" id="dimensionalitySlider" min="2" max="11" step="1" value="4" class="slider">
                             <span id="dimensionalityValue" class="value-display">4D</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="polaritySlider">Polygarity Strength</label>
+                            <label for="polaritySlider">Polygarity Strength <span class="tier t-con" title="Concept: what it would do if it existed (Mandeep S. Bhullar's Multiversal Codependence Theory)">Concept</span></label>
                             <input type="range" id="polaritySlider" min="0.1" max="5" step="0.1" value="2" class="slider">
                             <span id="polarityValue" class="value-display">2.0</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="multitaritySlider">Multitarity Density</label>
+                            <label for="multitaritySlider">Multitarity Density <span class="tier t-con" title="Concept: what it would do if it existed (Mandeep S. Bhullar's Multiversal Codependence Theory)">Concept</span></label>
                             <input type="range" id="multitaritySlider" min="0" max="100" step="5" value="50" class="slider">
                             <span id="multitarityValue" class="value-display">50%</span>
                         </div>
 
                         <div class="control-group">
-                            <label for="decoherenceSlider">Decoherence</label>
+                            <label for="tangleSlider">Tanglement λ <span class="tier t-con" title="Concept: what it would do if it existed (Mandeep S. Bhullar's Multiversal Codependence Theory)">Concept</span></label>
+                            <input type="range" id="tangleSlider" min="0.25" max="5" step="0.25" value="1.5" class="slider" title="T = T₀ · e^(−|dᵢ − dⱼ| / λ): small λ keeps links within neighbouring shells, large λ lets them span all five">
+                            <span id="tangleValue" class="value-display">λ 1.50</span>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="decoherenceSlider">Decoherence <span class="tier t-est" title="Established physics: observed or confirmed">Established</span></label>
                             <input type="range" id="decoherenceSlider" min="0" max="100" step="5" value="30" class="slider">
                             <span id="decoherenceValue" class="value-display">30%</span>
                         </div>
@@ -396,7 +408,7 @@
                                 <label><input type="checkbox" id="showMultitarity" checked> Multitarity Links</label>
                                 <label><input type="checkbox" id="showDisk" checked> Accretion Disk</label>
                                 <label><input type="checkbox" id="showJets" checked> Quasar Jets</label>
-                                <label><input type="checkbox" id="showRings" checked> Photon Sphere &amp; Ergosphere</label>
+                                <label><input type="checkbox" id="showRings" checked> Photon Sphere, Ergosphere &amp; Apparent Shadow</label>
                                 <label><input type="checkbox" id="enableBounce" checked> Big Bounce</label>
                             </div>
                         </div>
@@ -454,7 +466,7 @@
             </div>
 
             <div class="stat-row">
-                <div class="stat-item"><span class="stat-label">Poles · Q</span><span id="polarityNodes" class="stat-value">0</span></div>
+                <div class="stat-item"><span class="stat-label">Poles + − ○</span><span id="polarityNodes" class="stat-value">0</span></div>
                 <div class="stat-item"><span class="stat-label">Links</span><span id="multitarityLinks" class="stat-value">0</span></div>
                 <div class="stat-item"><span class="stat-label">FPS</span><span id="fpsCount" class="stat-value">60</span></div>
             </div>
@@ -484,7 +496,7 @@
                 <div class="legend-item known"><span class="legend-color"></span><span>Known Matter</span></div>
                 <div class="legend-item unknown"><span class="legend-color"></span><span>Unknown Matter</span></div>
                 <div class="legend-item hawking"><span class="legend-color"></span><span>Hawking Emission</span></div>
-                <div class="legend-item polarity"><span class="legend-color"></span><span>Polarity Pole ±</span></div>
+                <div class="legend-item polarity"><span class="legend-color"></span><span>Polarity Triad + − ○</span></div>
                 <div class="legend-item gravity-line"><span class="legend-color"></span><span>Gravity Field</span></div>
                 <div class="legend-item magnetic-line"><span class="legend-color"></span><span>Magnetic Field</span></div>
                 <div class="legend-item toroidal-line"><span class="legend-color"></span><span>Toroidal Field</span></div>
@@ -510,12 +522,12 @@
 
                 <div class="info-section">
                     <h3>⚖ Conservation</h3>
-                    <p>Matter is never created or destroyed. Each particle that crosses the horizon is held inside it and adds its mass m to the singularity, so the horizon grows. Hawking radiation can only return matter the singularity holds, and each emission takes that mass back out: <em>In Field + In Horizon = Σ Matter</em> at every instant. Polarity poles are born in ± pairs, so net charge Q stays zero. Gravity on the field follows the shell theorem, so swallowing matter grows the horizon without changing the pull on distant orbits. Energy lost to viscosity leaves as the disk's light.</p>
+                    <p>Matter is never created or destroyed. Each particle that crosses the horizon is held inside it and adds its mass m to the singularity, so the horizon grows. Hawking radiation can only return matter the singularity holds, and each emission takes that mass back out: <em>In Field + In Horizon = Σ Matter</em> at every instant. Polarity poles are born in triads, node (+), antinode (−) and no-node (○), so net charge Q stays zero. Gravity on the field follows the shell theorem, so swallowing matter grows the horizon without changing the pull on distant orbits. Energy lost to viscosity leaves as the disk's light.</p>
                 </div>
 
                 <div class="info-section">
                     <h3>⟲ Spin &amp; Frame Dragging</h3>
-                    <p>The spin slider runs from clockwise ⟳ (left) through zero to anticlockwise ⟲ (right), seen from above the north pole; its size is the spin speed. The disk, the orbits, the poles and every field line turn with it. Faster spin shrinks the horizon and widens the ergosphere.</p>
+                    <p>The spin slider runs from clockwise ⟳ (left) through zero to anticlockwise ⟲ (right), seen from above the north pole; its size is the spin speed. The disk, the orbits, the poles and every field line turn with it. Faster spin shrinks the horizon and widens the ergosphere (the static limit stays at r<sub>s</sub> on the equator, and at zero spin there is none). It also pulls the disk's inner edge, the innermost stable circular orbit, inward from 3 r<sub>s</sub> toward ½ r<sub>s</sub>; inside it matter cannot orbit and plunges.</p>
                 </div>
 
                 <div class="info-section">
@@ -530,13 +542,19 @@
 
                 <div class="info-section">
                     <h3>🌌 Lensing &amp; Gravitational Waves</h3>
-                    <p>Starlight passing the black hole is bent into an Einstein ring around its shadow, and light from the far side of the disk is lifted over the top. Every Big Bounce sends gravitational-wave ripples racing across the spacetime grid.</p>
+                    <p>Starlight passing the black hole is bent into an Einstein ring around its shadow, and light from the far side of the disk is lifted over the top. The scene is drawn at true, unlensed positions, so the black disk is the horizon itself. A distant telescope sees a larger shadow, enlarged by lensing to about 2.6 r<sub>s</sub> (√27 GM/c²), the size the Event Horizon Telescope measured for M87* and Sgr A*. The faint gold dotted ring (Photon Sphere &amp; Ergosphere overlay) marks it. Spin flattens it by a few percent; that refinement is not modelled. Every Big Bounce sends gravitational-wave ripples racing across the spacetime grid.</p>
                 </div>
 
                 <div class="info-section">
                     <h3>✧ Hawking Radiation &amp; the Big Bounce</h3>
                     <p>Hawking radiation returns swallowed matter as Known matter; lighter singularities radiate harder (T<sub>H</sub> ∝ 1/M). When the horizon holds the Bounce Threshold share of all matter it turns critical and rebounds, throwing everything it held back into its shells.</p>
                 </div>
+
+                <div class="info-section">
+                    <h3>◇ Status tiers &amp; the concept layer</h3>
+                    <p>Every physics and theory control carries its status. <strong>Established</strong>: observed or confirmed (mass, spin, lensing, the disk, decoherence, the ≈5% known share). <strong>Research</strong>: predicted or partly observed, still being studied (Hawking radiation, jet launching). <strong>Theory</strong>: unproven (the Big Bounce, extra dimensions). <strong>Concept</strong>: what it would do if it existed. The polarity triads, Multitarity tanglement T = T₀·e<sup>−|dᵢ−dⱼ|/λ</sup> and ∞ depth come from Mandeep S. Bhullar's Multiversal Codependence Theory and are not observed. While the concept layer is on, the stage wears a dashed frame. Switch it off in Theory to see established physics alone.</p>
+                </div>
+
 
                 <div class="info-section">
                     <h3>🎨 Color &amp; Spectrum</h3>

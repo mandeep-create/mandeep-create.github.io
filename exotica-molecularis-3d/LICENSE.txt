@@ -1,0 +1,15 @@
+Exotica Molecularis
+© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+SpinalXeno™ is a trademark of Mandeep S. Bhullar.
+
+Proprietary. No part of this source may be copied, modified, redistributed or
+reused without written permission from Mandeep S. Bhullar.
+
+For harmless use only, for the good of one and all: no humans or animals may be
+harmed using this engine.
+
+Built with the help of Epsilon Enforcement Officer Claude (Claude Opus 5.5 by
+Anthropic; Claude is a trademark of Anthropic).
+
+Signing key fingerprint:
+25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3

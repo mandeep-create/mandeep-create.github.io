@@ -63,13 +63,13 @@
   </main>
   <section id="deck" aria-label="Instrument controls"></section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/CopyShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/EffectComposer.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/RenderPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/ShaderPass.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js" integrity="sha384-vV17nr/rMaJqmeZkFUzXLpHdQ+ME5QHKdydaqqN+3Ga39RJlNrTatJxHwGV4ml2C" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/CopyShader.js" integrity="sha384-jEqYdJwVhbnk5LMD7OzkM7Zn+m7ziM3b+VsGVfa/5BJobkk7Y0Gv8UWSFMs6lww0" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/LuminosityHighPassShader.js" integrity="sha384-pemnF+L/kioV52+hCxIKwYFCATMpS1eg1Jsq8tKbIwG9j4G3v6v1OpEuBnwFDfHe" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/EffectComposer.js" integrity="sha384-R0mna39OFXOi0vozEMV5F7tgsuOL4JYlJA1zMRSF/G36T6DdB9tLl4u4sGx195Te" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/RenderPass.js" integrity="sha384-MvqV+yMfQqfT4GMD7NmeHbAcLhOaki0I2139ZAxe6+VyME2ys9TLRrRTsFtBJK21" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/ShaderPass.js" integrity="sha384-ZiGZOW8SNIUe2yogdaaTRbEdiEpMlAIx9hL5bw50EwSpa4fbthhT67TiAHlC9x5U" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/UnrealBloomPass.js" integrity="sha384-EYOqTmLl8GhcXCeuHZ88cRp7inJaG/+pOg9hPG2GjQp535CVdHPNqMDbJMBbOypa" crossorigin="anonymous"></script>
 <script type="text/plain" id="wk">/*! ISTOORFIRMXS string engine · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. Designed by Claude (Anthropic AI) for SpinalXeno™; proprietary. */const M=8191;class Line{constructor(){this.b=new Float32Array(M+1);this.w=0;this.len=100;this.lp=0;this.g=0.99;this.s=0.3;this.bar=9;this.sComp=0;}
 clear(){this.b.fill(0);this.w=0;this.lp=0;}
 read(){const r=this.w-this.len,i=Math.floor(r),f=r-i;return this.b[i&M]*(1-f)+this.b[(i+1)&M]*f;}

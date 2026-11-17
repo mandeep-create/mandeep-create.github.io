@@ -23,7 +23,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05070b;color:var(--
 #cv{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
 .hud{position:fixed;pointer-events:none;z-index:5}
 #bars{top:14px;left:50%;transform:translateX(-50%);width:min(860px,calc(100vw - 32px));display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
-.bar{display:grid;gap:4px}.bar .nm{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between}
+.bar{display:grid;gap:4px;min-width:0}.bar .nm{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between}
 .bar .tr{height:12px;border:1px solid var(--line);background:rgba(0,0,0,.45);clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);position:relative;overflow:hidden}
 .bar .fl,.bar .gh{position:absolute;inset:0;transform-origin:left}.bar .gh{background:rgba(255,255,255,.35);transition:transform .6s .25s}
 #pb .fl{background:linear-gradient(90deg,#1d6fff,var(--you))}#eb .fl{background:linear-gradient(90deg,#b0102c,var(--foe))}
@@ -71,7 +71,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05070b;color:var(--
 #m-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}#m-list button{text-align:left;font-size:12px;letter-spacing:.04em;font-weight:500}#m-list .here{opacity:.45;cursor:default}
 #menu .hint{font-family:var(--m);font-size:11px;color:var(--dim);margin:14px 0 0}
 .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-@media (max-width:720px){#keys{display:none}#bars{top:8px}}
+@media (max-width:720px){#keys{display:none}#bars{top:8px;gap:10px;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}.bar .nm{min-width:0}#where{max-width:34vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.1em}.bar .nm{font-size:10px;letter-spacing:.08em;gap:6px}.bar .nm span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}}
+#flyb{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.12em;padding:5px 10px 5px 7px;border:1px solid rgba(90,168,255,.4);background:rgba(5,8,12,.6);color:#8fb8e8;cursor:pointer;pointer-events:auto;font-family:var(--f);width:max-content}
+#flyb.on{color:#06101f;background:linear-gradient(#8cc4ff,#3d7fe0);border-color:#8cc4ff;box-shadow:0 0 14px rgba(90,168,255,.6)}#flyb:focus-visible{outline:2px solid #fff;outline-offset:2px}
+/* on-screen pad: shown on touch screens, or anywhere with H */
+#tpad{position:fixed;inset:0;z-index:7;pointer-events:none;display:none;touch-action:none}html.touch #tpad,html.osc #tpad{display:block}
+html.touch #keys,html.touch .stats,html.osc #keys{display:none}
+html.touch #modes,html.osc #modes{display:none}html.touch #joy,html.osc #joy{bottom:72px}html.touch #tb,html.osc #tb{bottom:calc(104px + env(safe-area-inset-bottom))}
+#joy{position:absolute;left:0;bottom:0;width:44vw;height:52vh;pointer-events:auto;touch-action:none}
+#joy i{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%)}
+#joy .ring{width:124px;height:124px;border:2px solid rgba(233,236,243,.28);background:radial-gradient(rgba(255,255,255,.06),rgba(255,255,255,.01));left:110px;bottom:auto;top:calc(100% - 120px)}
+#joy .knob{width:54px;height:54px;background:radial-gradient(circle at 40% 35%,#fff,#9fb3d1 60%,#4b5a72);box-shadow:0 0 18px rgba(79,183,255,.45);left:110px;top:calc(100% - 120px)}
+#tb{position:absolute;right:max(12px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,58px);gap:9px;pointer-events:auto;touch-action:none}
+#tb button{width:58px;height:58px;border-radius:50%;border:1px solid rgba(233,236,243,.25);background:rgba(10,14,22,.62);color:var(--ink);font:600 19px/1 var(--f);display:grid;place-items:center;align-content:center;gap:2px;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;backdrop-filter:blur(4px)}
+#tb button small{font-size:8px;letter-spacing:.12em;color:var(--dim);font-weight:500}
+#tb button.big{grid-column:span 2;grid-row:span 2;width:126px;height:126px;font-size:34px;background:radial-gradient(rgba(243,177,60,.35),rgba(10,14,22,.7));border-color:rgba(243,177,60,.6)}
+#tb button.held,#tb button:active{background:rgba(79,183,255,.35);border-color:#4fb7ff}#tb button.on{background:linear-gradient(#8cc4ff,#3d7fe0);color:#06101f}#tb button.on small{color:#06101f}
+#tb .fly svg{width:24px;height:24px}
+@media (max-width:720px){#tb{grid-template-columns:repeat(4,50px);gap:7px}#tb button{width:50px;height:50px;font-size:16px}#tb button.big{width:107px;height:107px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js" integrity="sha384-vV17nr/rMaJqmeZkFUzXLpHdQ+ME5QHKdydaqqN+3Ga39RJlNrTatJxHwGV4ml2C" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/environments/RoomEnvironment.js" integrity="sha384-NG9Vjao8FDKsRPhzsQGvMRSCrkgzJlysZlYZ69P52mH1tEpkurCHq0M8jbSP7/gl" crossorigin="anonymous"></script>
@@ -93,13 +110,23 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05070b;color:var(--
 <div class="hud" id="reticle"></div>
 <div class="hud" id="call"></div>
 <div id="dmg" aria-hidden="true"></div>
+<div id="tpad" aria-label="On-screen controls">
+  <div id="joy" aria-label="Move: drag"><i class="ring"></i><i class="knob"></i></div>
+  <div id="tb">
+    <button data-a="up" aria-label="Rise">▲<small>RISE</small></button><button data-a="fly" class="fly" aria-label="Flight on or off"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="12.00,2.00 20.29,5.99 22.33,14.96 16.60,22.15 7.40,22.15 1.67,14.96 3.71,5.99"/><path d="M12 9V18.4M12 12.6C10.5 10.9 8.6 10.5 6.9 8.7M12 12.6C13.5 10.9 15.4 10.5 17.1 8.7M12 14.6C10.8 13.4 9.4 13.2 8.1 11.9M12 14.6C13.2 13.4 14.6 13.2 15.9 11.9M10 17.6 12 16.1 14 17.6" stroke-width="1.5"/><circle cx="12" cy="6.7" r="1.15" fill="currentColor" stroke="none"/></svg><small>FLY</small></button><button data-a="mode" aria-label="Change node mode">◈<small>MODE</small></button><button data-a="pause" aria-label="Pause">❚❚<small>MENU</small></button>
+    <button data-a="dn" aria-label="Dive">▼<small>DIVE</small></button><button data-a="bolt" aria-label="Plasma bolt">✸<small>BOLT</small></button><button data-a="atk" class="big" aria-label="Slash: tap, or swipe in the direction to cut">⚔<small>SWIPE · SLASH</small></button>
+    <button data-a="guard" aria-label="Guard: hold">⛨<small>GUARD</small></button><button data-a="thrust" aria-label="Thrust">➤<small>THRUST</small></button>
+    <button data-a="dash" aria-label="Dash or boost">»<small>DASH</small></button><button data-a="jump" aria-label="Jump to the next build">⇢<small>BUILD</small></button>
+  </div>
+</div>
 <div class="hud" id="feed"></div>
 <div class="hud" id="modes">
   <div class="tri"><b data-m="node" class="on">Z · NODE</b><b data-m="anti">X · ANTINODE</b><b data-m="none">C · NO-NODE</b></div>
+  <button id="flyb" title="Volans glyph: flight (F). Capes out, fly in and out of the builds"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="12.00,2.00 20.29,5.99 22.33,14.96 16.60,22.15 7.40,22.15 1.67,14.96 3.71,5.99"/><path d="M12 9V18.4M12 12.6C10.5 10.9 8.6 10.5 6.9 8.7M12 12.6C13.5 10.9 15.4 10.5 17.1 8.7M12 14.6C10.8 13.4 9.4 13.2 8.1 11.9M12 14.6C13.2 13.4 14.6 13.2 15.9 11.9M10 17.6 12 16.1 14 17.6" stroke-width="1.5"/><circle cx="12" cy="6.7" r="1.15" fill="currentColor" stroke="none"/></svg><span>F · FLY</span></button>
   <div id="dims">D <u>3</u><u>4</u><u>5</u><u>6</u><u>7</u> <span id="dimlab" style="margin-left:6px">throughput</span></div>
   <div class="stats"><span>Tip speed</span><i id="s-tip">0 m/s</i><span>Plasma motes</span><i id="s-pm">0 /s</i><span>Phase planes</span><i id="s-pp">3</i><span>Combo</span><i id="s-cb">0</i><span>fps</span><i id="s-fps">–</i></div>
 </div>
-<div class="hud" id="keys"><b>WASD</b> move · <b>Shift</b> dash · <b>Space</b> sidestep<br><b>Flick mouse + click</b> slash that way · <b>←↑→↓</b> slash<br><b>Right-click / Q</b> guard · <b>E</b> thrust<br><b>Z X C</b> node / antinode / no-node · <b>3–7</b> dimension<br><b>J / K</b> jump to the next / previous build · <b>G</b> dock · <b>Wheel / + −</b> zoom · <b>Tab</b> lock-on · <b>V</b> camera · <b>Esc</b> pause · <b>M</b> sound</div>
+<div class="hud" id="keys"><b>WASD</b> move · <b>Shift</b> dash · <b>Space</b> sidestep<br><b>F</b> fly · <b>Space / R</b> rise · <b>Ctrl / T</b> dive · <b>Shift</b> boost (+ dive = slam) · <b>B</b> plasma bolt · <b>H</b> touch pad<br><b>Flick mouse + click</b> slash that way · <b>←↑→↓</b> slash<br><b>Right-click / Q</b> guard · <b>E</b> thrust<br><b>Z X C</b> node / antinode / no-node · <b>3–7</b> dimension<br><b>J / K</b> jump to the next / previous build · <b>G</b> dock · <b>Wheel / + −</b> zoom · <b>Tab</b> lock-on · <b>V</b> camera · <b>Esc</b> pause · <b>M</b> sound</div>
 
 <div id="start" role="dialog" aria-modal="true" aria-labelledby="t1">
   <div class="card">
@@ -111,6 +138,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05070b;color:var(--
       <span><b>Right-click / Q</b> guard</span><span><b>E</b> thrust · <b>Arrows</b> slash</span>
       <span><b>Wheel</b> zoom in / out</span><span><b>3–7</b> blade dimension</span>
       <span><b>J / K</b> jump between builds</span><span><b>Gamepad</b> sticks, triggers</span>
+      <span><b>F</b> fly · <b>Space·R / Ctrl·T</b> rise, dive</span><span><b>B</b> plasma bolt · <b>H</b> touch pad</span>
     </div>
     <div class="tri3"><b>NODE</b> cuts, but a guard stops it · <b>ANTINODE</b> repulses and breaks a guard · <b>NO-NODE</b> phases through a guard, light damage</div>
     <div class="btns"><button id="go"><span class="hall-only">ENTER THE ARENA</span><span class="ov-only">FIGHT HERE</span></button><button class="btn2 hall-only" id="go-site">PLAY ACROSS THE SITE ▸</button><button class="btn2 ov-only" id="go-exit">EXIT GAME MODE</button></div>
@@ -121,6 +149,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#05070b;color:var(--
 <div id="menu" role="dialog" aria-modal="true" aria-labelledby="m-h"><div class="card">
   <h2 id="m-h">PAUSED</h2><div class="sub">INSIDE · <span id="m-where"></span></div>
   <div class="row"><button class="pri" id="m-resume">Resume</button><button id="m-dock" title="Dock the game as the square switch (G)">▣ Dock</button><button id="m-exit">Exit game mode</button></div>
+  <div class="row"><button id="m-fly"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="12.00,2.00 20.29,5.99 22.33,14.96 16.60,22.15 7.40,22.15 1.67,14.96 3.71,5.99"/><path d="M12 9V18.4M12 12.6C10.5 10.9 8.6 10.5 6.9 8.7M12 12.6C13.5 10.9 15.4 10.5 17.1 8.7M12 14.6C10.8 13.4 9.4 13.2 8.1 11.9M12 14.6C13.2 13.4 14.6 13.2 15.9 11.9M10 17.6 12 16.1 14 17.6" stroke-width="1.5"/><circle cx="12" cy="6.7" r="1.15" fill="currentColor" stroke="none"/></svg> Flight</button><button id="m-osc">On-screen controls</button></div>
   <div class="sub">JUMP INTO ANOTHER BUILD</div><div id="m-list"></div>
   <p class="hint">J / K jump to the next / previous build · the score, the round and your blade carry across · Esc resumes</p>
 </div></div>

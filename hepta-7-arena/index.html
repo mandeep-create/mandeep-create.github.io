@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' blob: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"><script src="/shell/xeno-shell.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HEPTA-7 Arena</title>
+<meta name="author" content="Mandeep S. Bhullar">
+<meta name="copyright" content="© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.">
+<meta name="spinalxeno:key-fingerprint" content="25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3">
+<meta name="description" content="HEPTA-7 Arena: a third-person plasma-sword sparring game in a real hall, with the 3D–7D blade lattice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<!--! HEPTA-7 Arena · © 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved.
+   SpinalXeno™ is a trademark of Mandeep S. Bhullar. Unauthorized copying, modification or redistribution of this code is prohibited.
+   For harmless use only, for the good of one and all: no humans or animals may be harmed using this engine.
+   Built with the help of Epsilon Enforcement Officer Claude (Claude Opus 5.5 by Anthropic; Claude is a trademark of Anthropic).
+   Key fingerprint 25666eb2cf27368640bb41154733bfdc1f8a07b194aec7661659fc7b565155b3 -->
+<style>
+:root{--ink:#e9ecf3;--dim:#8a93a8;--line:rgba(233,236,243,.14);--node:#f3b13c;--anti:#5cc8f0;--none:#59d49f;--foe:#ff3b5c;--you:#4fb7ff;--f:'Chakra Petch',system-ui,sans-serif;--m:'IBM Plex Mono',ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#05070b;color:var(--ink);font-family:var(--f);-webkit-user-select:none;user-select:none}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+.hud{position:fixed;pointer-events:none;z-index:5}
+#bars{top:14px;left:50%;transform:translateX(-50%);width:min(860px,calc(100vw - 32px));display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
+.bar{display:grid;gap:4px}.bar .nm{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between}
+.bar .tr{height:12px;border:1px solid var(--line);background:rgba(0,0,0,.45);clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);position:relative;overflow:hidden}
+.bar .fl,.bar .gh{position:absolute;inset:0;transform-origin:left}.bar .gh{background:rgba(255,255,255,.35);transition:transform .6s .25s}
+#pb .fl{background:linear-gradient(90deg,#1d6fff,var(--you))}#eb .fl{background:linear-gradient(90deg,#b0102c,var(--foe))}
+#eb .fl,#eb .gh{transform-origin:right}#eb .nm{flex-direction:row-reverse}
+#clock{text-align:center;font-weight:700;font-size:22px;line-height:1;min-width:92px}#clock small{display:block;font-size:11px;letter-spacing:.2em;color:var(--dim);font-weight:500;margin-top:3px}
+#modes{left:16px;bottom:78px;display:grid;gap:8px}
+.tri{display:flex;gap:6px}.tri b{font-size:11px;letter-spacing:.12em;padding:6px 10px;border:1px solid var(--line);background:rgba(5,8,12,.6);color:var(--dim);clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.tri b.on[data-m=node]{color:#160c00;background:var(--node);border-color:var(--node)}.tri b.on[data-m=anti]{color:#001018;background:var(--anti);border-color:var(--anti)}.tri b.on[data-m=none]{color:#00140b;background:var(--none);border-color:var(--none)}
+.stats{font-family:var(--m);font-size:11px;color:var(--dim);background:rgba(5,8,12,.55);border:1px solid var(--line);padding:7px 10px;display:grid;grid-template-columns:auto auto;gap:2px 14px}.stats i{font-style:normal;color:var(--ink);text-align:right}
+#dims{display:flex;gap:4px;align-items:center;font-size:11px;letter-spacing:.1em;color:var(--dim)}#dims u{text-decoration:none;width:26px;text-align:center;padding:4px 0;border:1px solid var(--line);background:rgba(5,8,12,.6)}#dims u.on{background:#b48cff;color:#120624;border-color:#b48cff}
+#keys{right:16px;bottom:16px;font-family:var(--m);font-size:10.5px;color:var(--dim);text-align:right;line-height:1.6;background:rgba(5,8,12,.45);padding:8px 10px;border:1px solid var(--line)}#keys b{color:var(--ink);font-weight:500}
+#call{top:38%;left:50%;transform:translate(-50%,-50%);text-align:center;font-weight:700;font-size:clamp(28px,6vw,64px);letter-spacing:.08em;text-shadow:0 0 30px rgba(0,0,0,.8);opacity:0;transition:opacity .25s}#call small{display:block;font-size:.3em;letter-spacing:.3em;color:var(--dim);font-weight:500;margin-top:8px}#call.on{opacity:1}
+#feed{top:64px;right:16px;font-family:var(--m);font-size:11px;text-align:right;display:grid;gap:3px}#feed div{background:rgba(5,8,12,.55);padding:3px 8px;border-right:2px solid var(--line);animation:fd 3.2s forwards}
+@keyframes fd{0%{opacity:0;transform:translateX(12px)}8%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
+#reticle{left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border:1px solid rgba(255,255,255,.35);border-radius:50%}
+#start{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,rgba(10,14,22,.55),rgba(3,4,7,.92));padding:16px}
+#start .card{max-width:640px;text-align:center}
+#start h1{font-size:clamp(40px,9vw,88px);letter-spacing:.06em;line-height:.95;font-weight:700}#start h1 span{color:var(--node)}
+#start .sub{color:var(--dim);letter-spacing:.24em;font-size:12px;margin:10px 0 18px}
+#start .grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;text-align:left;font-family:var(--m);font-size:12px;color:var(--dim);margin:0 auto 16px;max-width:520px}#start .grid b{color:var(--ink);font-weight:500}
+#start .tri3{font-size:12px;color:var(--dim);margin-bottom:16px;line-height:1.6}#start .tri3 b:nth-child(1){color:var(--node)}#start .tri3 b:nth-child(2){color:var(--anti)}#start .tri3 b:nth-child(3){color:var(--none)}
+#go{font-family:var(--f);font-weight:700;font-size:18px;letter-spacing:.2em;color:#160c00;background:var(--node);border:0;padding:14px 34px;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%)}
+#go:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.status{font-family:var(--m);font-size:11px;color:var(--dim);margin-top:16px;line-height:1.6}.status em{font-style:normal;padding:1px 6px;border:1px solid}.status .e{color:#86e08f}.status .c{color:#b48cff}
+.legal{font-family:var(--m);font-size:10px;color:#5d6578;margin-top:12px;line-height:1.5}
+#zoomui{position:fixed;right:16px;top:64px;z-index:6;display:none}
+.ov,.ov body{background:transparent!important}
+.ov #start{place-items:center end;background:linear-gradient(90deg,rgba(3,4,7,0) 30%,rgba(4,6,10,.78) 62%);padding:16px 3vw}
+.ov #start .card{max-width:min(470px,100%)}.ov #start h1{font-size:clamp(34px,5vw,60px)}
+.ov #call{left:var(--side,70%)}.ov #reticle{left:var(--side,70%)}
+@media (max-width:720px){.ov #start{place-items:end center;background:linear-gradient(180deg,rgba(3,4,7,0) 30%,rgba(4,6,10,.8) 60%)}.ov #call,.ov #reticle{left:50%}}
+.ov .hall-only,.hall-only-hide{display:none!important}html:not(.ov) .ov-only{display:none!important}
+#where{display:block;font-size:10px;letter-spacing:.22em;color:#9fd3ff;margin-top:4px;font-weight:500}
+#dmg{position:fixed;inset:0;pointer-events:none;z-index:6;overflow:hidden}
+.dn{position:absolute;left:0;top:0;font-weight:700;font-size:20px;letter-spacing:.04em;text-shadow:0 0 12px rgba(0,0,0,.9),0 0 2px #000;white-space:nowrap;will-change:transform}
+.dn.big{font-size:30px}
+#reticle.hit{animation:hm .28s}@keyframes hm{0%{transform:rotate(45deg) scale(1.6);border-color:#fff;border-radius:2px}100%{transform:none;border-color:rgba(255,255,255,.35)}}
+#menu{position:fixed;inset:0;z-index:8;display:none;place-items:center;background:rgba(3,5,9,.72);padding:16px}#menu.on{display:grid}
+#menu .card{width:min(720px,100%);max-height:calc(100vh - 32px);overflow:auto;background:rgba(10,13,20,.92);border:1px solid var(--line);padding:22px}
+#menu h2{font-size:28px;letter-spacing:.12em}#menu .sub{color:var(--dim);font-size:12px;letter-spacing:.18em;margin:4px 0 16px}
+#menu .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+#menu button,.btn2{font-family:var(--f);font-weight:600;font-size:13px;letter-spacing:.12em;color:var(--ink);background:rgba(255,255,255,.06);border:1px solid var(--line);padding:9px 14px;cursor:pointer}
+#menu button:hover,.btn2:hover{background:rgba(79,183,255,.18);border-color:#4fb7ff}#menu button:focus-visible,.btn2:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#menu .pri{background:var(--node);color:#160c00;border-color:var(--node)}
+#m-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}#m-list button{text-align:left;font-size:12px;letter-spacing:.04em;font-weight:500}#m-list .here{opacity:.45;cursor:default}
+#menu .hint{font-family:var(--m);font-size:11px;color:var(--dim);margin:14px 0 0}
+.btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+@media (max-width:720px){#keys{display:none}#bars{top:8px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js" integrity="sha384-vV17nr/rMaJqmeZkFUzXLpHdQ+ME5QHKdydaqqN+3Ga39RJlNrTatJxHwGV4ml2C" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/environments/RoomEnvironment.js" integrity="sha384-NG9Vjao8FDKsRPhzsQGvMRSCrkgzJlysZlYZ69P52mH1tEpkurCHq0M8jbSP7/gl" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/CopyShader.js" integrity="sha384-jEqYdJwVhbnk5LMD7OzkM7Zn+m7ziM3b+VsGVfa/5BJobkk7Y0Gv8UWSFMs6lww0" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/shaders/LuminosityHighPassShader.js" integrity="sha384-pemnF+L/kioV52+hCxIKwYFCATMpS1eg1Jsq8tKbIwG9j4G3v6v1OpEuBnwFDfHe" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/EffectComposer.js" integrity="sha384-R0mna39OFXOi0vozEMV5F7tgsuOL4JYlJA1zMRSF/G36T6DdB9tLl4u4sGx195Te" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/RenderPass.js" integrity="sha384-MvqV+yMfQqfT4GMD7NmeHbAcLhOaki0I2139ZAxe6+VyME2ys9TLRrRTsFtBJK21" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/ShaderPass.js" integrity="sha384-ZiGZOW8SNIUe2yogdaaTRbEdiEpMlAIx9hL5bw50EwSpa4fbthhT67TiAHlC9x5U" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/postprocessing/UnrealBloomPass.js" integrity="sha384-EYOqTmLl8GhcXCeuHZ88cRp7inJaG/+pOg9hPG2GjQp535CVdHPNqMDbJMBbOypa" crossorigin="anonymous"></script>
+</head>
+<body>
+<canvas id="cv" aria-label="HEPTA-7 Arena: third-person plasma-sword sparring hall"></canvas>
+
+<div class="hud" id="bars">
+  <div class="bar" id="pb"><div class="nm"><span>You · sparring shield</span><span class="v">100</span></div><div class="tr"><div class="gh"></div><div class="fl"></div></div></div>
+  <div><div id="clock">1:30<small>ROUND 1</small></div><span id="where" class="ov-only"></span></div>
+  <div class="bar" id="eb"><div class="nm"><span>Sentinel SX-7 · integrity</span><span class="v">100</span></div><div class="tr"><div class="gh"></div><div class="fl"></div></div></div>
+</div>
+<div class="hud" id="reticle"></div>
+<div class="hud" id="call"></div>
+<div id="dmg" aria-hidden="true"></div>
+<div class="hud" id="feed"></div>
+<div class="hud" id="modes">
+  <div class="tri"><b data-m="node" class="on">Z · NODE</b><b data-m="anti">X · ANTINODE</b><b data-m="none">C · NO-NODE</b></div>
+  <div id="dims">D <u>3</u><u>4</u><u>5</u><u>6</u><u>7</u> <span id="dimlab" style="margin-left:6px">throughput</span></div>
+  <div class="stats"><span>Tip speed</span><i id="s-tip">0 m/s</i><span>Plasma motes</span><i id="s-pm">0 /s</i><span>Phase planes</span><i id="s-pp">3</i><span>Combo</span><i id="s-cb">0</i><span>fps</span><i id="s-fps">–</i></div>
+</div>
+<div class="hud" id="keys"><b>WASD</b> move · <b>Shift</b> dash · <b>Space</b> sidestep<br><b>Flick mouse + click</b> slash that way · <b>←↑→↓</b> slash<br><b>Right-click / Q</b> guard · <b>E</b> thrust<br><b>Z X C</b> node / antinode / no-node · <b>3–7</b> dimension<br><b>J / K</b> jump to the next / previous build · <b>G</b> dock · <b>Wheel / + −</b> zoom · <b>Tab</b> lock-on · <b>V</b> camera · <b>Esc</b> pause · <b>M</b> sound</div>
+
+<div id="start" role="dialog" aria-modal="true" aria-labelledby="t1">
+  <div class="card">
+    <h1 id="t1">HEPTA-7 <span>ARENA</span></h1>
+    <div class="sub hall-only">PLASMA-SWORD SPARRING · SPARRING HALL 7</div>
+    <div class="sub ov-only">GAME MODE · INSIDE <b id="s-where" style="color:#9fd3ff;font-weight:600"></b> · A GLASS ROOM IN THE BUILD</div>
+    <div class="grid">
+      <span><b>WASD</b> move · <b>Shift</b> dash</span><span><b>Mouse flick + click</b> slash</span>
+      <span><b>Right-click / Q</b> guard</span><span><b>E</b> thrust · <b>Arrows</b> slash</span>
+      <span><b>Wheel</b> zoom in / out</span><span><b>3–7</b> blade dimension</span>
+      <span><b>J / K</b> jump between builds</span><span><b>Gamepad</b> sticks, triggers</span>
+    </div>
+    <div class="tri3"><b>NODE</b> cuts, but a guard stops it · <b>ANTINODE</b> repulses and breaks a guard · <b>NO-NODE</b> phases through a guard, light damage</div>
+    <div class="btns"><button id="go"><span class="hall-only">ENTER THE ARENA</span><span class="ov-only">FIGHT HERE</span></button><button class="btn2 hall-only" id="go-site">PLAY ACROSS THE SITE ▸</button><button class="btn2 ov-only" id="go-exit">EXIT GAME MODE</button></div>
+    <div class="status"><em class="e">Established</em> perspective, light, shadow, sound in a hall · <em class="c">Concept</em> the seven-edge plasma blade and its D4–D7 lattice</div>
+    <div class="legal">Sparring only: the opponent is a training android and both fighters wear sparring fields. For harmless use only, for the good of one and all: no humans or animals may be harmed using this engine.<br>© 2026 Mandeep S. Bhullar · SpinalXeno™. All rights reserved. Built with the help of Epsilon Enforcement Officer Claude.</div>
+  </div>
+</div>
+<div id="menu" role="dialog" aria-modal="true" aria-labelledby="m-h"><div class="card">
+  <h2 id="m-h">PAUSED</h2><div class="sub">INSIDE · <span id="m-where"></span></div>
+  <div class="row"><button class="pri" id="m-resume">Resume</button><button id="m-dock" title="Dock the game as the square switch (G)">▣ Dock</button><button id="m-exit">Exit game mode</button></div>
+  <div class="sub">JUMP INTO ANOTHER BUILD</div><div id="m-list"></div>
+  <p class="hint">J / K jump to the next / previous build · the score, the round and your blade carry across · Esc resumes</p>
+</div></div>
+<script src="arena.js"></script>
+</body>
+</html>

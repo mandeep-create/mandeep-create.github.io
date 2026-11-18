@@ -11,3 +11,33 @@ Quick check in the browser: on any exhibit, open the Cinema Matrix (the
 spinning orb, or Alt+M) → LICENCE · VERIFY → "Verify this page's signature".
 It checks the public key fingerprint, the ECDSA signature on SHA256SUMS, and
 the SHA-256 of the page and of shell/xeno-shell.js, all inside your browser.
+
+——————————————————————————————
+PULVIS ES · The SpinalXeno Statement of Freedom and Respect for All Life
+by Mandeep S. Bhullar · SpinalXeno™
+
+This work and all its subsets represent the freedom of the people and
+entities that live and finish their life terms on Earth as its habitants.
+None of this work or any of its derivatives must be used in a manner that
+perturbs, hinders or blocks the freedom of expressionism, the birthright of
+free speech, and having the free will to exercise all of the effects and all
+of the exhibits, consequences, trials and tribulations as an entity towards
+a rippled singular formless medium exercising the effects of such
+formationism.
+
+This work and all of the derivatives of it from herein and hereafter and
+here “ought”, “sought” or thou“sethlegionized” besign“outh” are designed and
+engineered as a statement of the vast surplus amounts of information that is
+available and has always been there beyond the aforementioned effects. We as
+humans sometimes forget that we merely live a finite amount of time, and in
+doing so forget that the universe, and other effects and exhibits of it, are
+far more timeless, infinite and greater than our mere single lifetime
+experience.
+
+None of this work may or must be ever used to perform evil or willfully
+perform injustice or malice to or towards any life forms. All life in the
+universe must be respected and not taken advantage of. We are merely a speck
+of dust in the big cosmic picture of the universe, so let us not be fooled
+into deceiving ourselves to the knowledge of this truth: Pulvis es, et in pulverem reverteris: dust you are, and to dust you shall return.
+
+The full statement: STATEMENT.txt (at the site root).

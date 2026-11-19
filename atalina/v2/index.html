@@ -847,10 +847,10 @@ function buildParticles(q) {
 
 // Starfield
 {
-  const sg = new THREE.BufferGeometry(), sp = new Float32Array(5000 * 3);
-  for (let i = 0; i < 5000; i++) { const p = sph(120 + R() * 150); sp.set(p, i * 3); }
+  const sg = new THREE.BufferGeometry(), sp = new Float32Array(16000 * 3);
+  for (let i = 0; i < 16000; i++) { const p = sph(120 + R() * 150); sp.set(p, i * 3); }
   sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
-  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xbfb2ff, size: 0.45, transparent: true, opacity: 0.7, depthWrite: false })));
+  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xbfb2ff, size: 0.3, transparent: true, opacity: 0.6, depthWrite: false })));
 }
 
 // 4D tesseract: rotated in the XW and YW planes, projected into 3D every frame

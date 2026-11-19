@@ -303,7 +303,7 @@ EVENTS.sort((x, y) => x.t - y.t);
 
 // ===== VISUALS =====
 const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.5 : 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 $('stage').appendChild(renderer.domElement);
@@ -313,7 +313,8 @@ const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 40
 camera.position.set(0, 0, 34);
 
 // Sacred forms: every form is N target positions for the same points
-const N = MOBILE ? 12000 : 24000;
+const N = MOBILE ? 40000 : 120000;
+const HD = Math.sqrt((MOBILE ? 12000 : 24000) / N) * 1.15;   // smaller points as the count grows
 const g = Math.random;
 function form(i) {
   const P = new Float32Array(N * 3);
@@ -356,7 +357,7 @@ const cur = new Float32Array(FORMS[0]);
 geo.setAttribute('position', new THREE.BufferAttribute(cur, 3));
 const seed = new Float32Array(N); for (let k = 0; k < N; k++) seed[k] = g();
 geo.setAttribute('seed', new THREE.BufferAttribute(seed, 1));
-const U = { time: { value: 0 }, col: { value: new THREE.Color(1, 0.8, 0.5) }, wave: { value: 0 }, swirl: { value: 0 }, burst: { value: 0 }, size: { value: MOBILE ? 2.2 : 2.6 } };
+const U = { time: { value: 0 }, col: { value: new THREE.Color(1, 0.8, 0.5) }, wave: { value: 0 }, swirl: { value: 0 }, burst: { value: 0 }, size: { value: (MOBILE ? 2.2 : 2.6) * HD } };
 const pmat = new THREE.ShaderMaterial({
   uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
   vertexShader: `uniform float time, wave, swirl, burst, size; attribute float seed; varying float vS; varying float vD;
@@ -366,10 +367,10 @@ const pmat = new THREE.ShaderMaterial({
       p += normalize(p + 0.001) * burst * (2.0 + seed * 6.0);
       p += 0.15 * vec3(sin(time * 0.7 + seed * 40.0), cos(time * 0.9 + seed * 31.0), sin(time * 0.5 + seed * 17.0));
       vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
-      vS = seed; vD = -mv.z; gl_PointSize = size * (0.6 + seed * 1.4) * (60.0 / -mv.z); }`,
+      vS = seed; vD = -mv.z; gl_PointSize = max(1.0, size * (0.6 + seed * 1.4) * (60.0 / -mv.z)); }`,
   fragmentShader: `uniform vec3 col; uniform float time; varying float vS; varying float vD;
     void main(){ vec2 q = gl_PointCoord - 0.5; float d = length(q); if (d > 0.5) discard;
-      float glow = smoothstep(0.5, 0.0, d); float tw = 0.7 + 0.3 * sin(time * 3.0 + vS * 60.0);
+      float glow = smoothstep(0.5, 0.15, d) * 0.7; float tw = 0.7 + 0.3 * sin(time * 3.0 + vS * 60.0);
       vec3 c = mix(col, vec3(1.0), smoothstep(0.85, 1.0, vS) * 0.8);
       gl_FragColor = vec4(c * glow * tw, glow * 0.85); }`
 });
@@ -378,10 +379,10 @@ scene.add(points);
 
 // Starfield
 {
-  const sg = new THREE.BufferGeometry(), sp = new Float32Array(3000 * 3);
-  for (let i = 0; i < 3000; i++) { const r = 120 + g() * 150, th = TAU * g(), ph = Math.acos(2 * g() - 1); sp[i * 3] = r * Math.sin(ph) * Math.cos(th); sp[i * 3 + 1] = r * Math.cos(ph); sp[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th); }
+  const sg = new THREE.BufferGeometry(), sp = new Float32Array(12000 * 3);
+  for (let i = 0; i < 12000; i++) { const r = 120 + g() * 150, th = TAU * g(), ph = Math.acos(2 * g() - 1); sp[i * 3] = r * Math.sin(ph) * Math.cos(th); sp[i * 3 + 1] = r * Math.cos(ph); sp[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th); }
   sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
-  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xbfb2ff, size: 0.6, transparent: true, opacity: 0.7, depthWrite: false })));
+  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xbfb2ff, size: 0.35, transparent: true, opacity: 0.6, depthWrite: false })));
 }
 
 // 4D tesseract: rotated in the XW and YW planes, projected into 3D every frame
@@ -411,7 +412,7 @@ function updateTesseract(t, scale) {
 // Post-processing: bloom and a sacred film grade
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 1.1, 0.7, 0.12);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.77, 0.5, 0.22);
 composer.addPass(bloom);
 const film = new ShaderPass({
   uniforms: { tDiffuse: { value: null }, time: { value: 0 }, flash: { value: 0 }, ca: { value: 0.0015 }, grain: { value: 0.06 }, bars: { value: 0.1 }, gold: { value: 0.35 } },
@@ -584,7 +585,7 @@ function frame() {
   film.uniforms.time.value = vis;
   film.uniforms.ca.value = 0.0015 + flashV * 0.006;
   film.uniforms.gold.value = act === 4 ? 0.1 : act === 2 ? 0.8 : 0.35;
-  bloom.strength = 1.0 + flashV * 1.5 + (act === 6 ? 0.4 : 0);
+  bloom.strength = (1.0 + flashV * 1.5 + (act === 6 ? 0.4 : 0)) * 0.7;
 
   composer.render();
   if (recorder) drawRecFrame();
